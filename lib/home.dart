@@ -11,7 +11,9 @@ class _HomeState extends State<Home> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(),
+      appBar: AppBar(
+        title: const Text('PACSPLUS2'),
+      ),
     );
   }
 }
