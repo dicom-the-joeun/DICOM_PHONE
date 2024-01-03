@@ -14,6 +14,18 @@ class _HomeState extends State<Home> {
       appBar: AppBar(
         title: const Text('PACSPLUS2'),
       ),
+      body: Center(
+        child: Column(
+          children: [
+            ElevatedButton(
+              onPressed: () {
+
+              }, 
+              child: const Text("홈페이지로 이동"),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }
