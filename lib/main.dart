@@ -1,6 +1,7 @@
 import 'package:dicom_phone/home.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:get/get.dart';
 
 void main() {
   /// 앱 초기화 및 바인딩
@@ -18,7 +19,7 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return GetMaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData(
         scaffoldBackgroundColor: Colors.black, // 바탕화면 검은색으로 고정
