@@ -11,8 +11,7 @@ class DetailPage extends StatefulWidget {
 class _DetailPageState extends State<DetailPage> {
   int _currentIndex = 0;
   late List<String> fruitList;
-  
-  
+  bool zoomin = false;
 
   @override
   void initState() {
@@ -27,7 +26,6 @@ class _DetailPageState extends State<DetailPage> {
     ];
   }
 
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -35,15 +33,23 @@ class _DetailPageState extends State<DetailPage> {
         title: const Text('PACSPLUS3'),
         iconTheme: IconThemeData(color: Colors.red),
       ),
-      body: ListView.builder(
-        itemCount: fruitList.length,
-        itemBuilder: (context, index) {
-          return Image.asset(
-            'images/${fruitList[index]}',
-            height: 100,
-          );
-        },
+body: ListView.builder(
+  itemCount: fruitList.length,
+  itemBuilder: (context, index) {
+    return SizedBox(
+      height: 500, // 이미지 크기
+      child: PhotoView(
+        imageProvider: AssetImage('images/${fruitList[index]}'), // 이미지 인덱스 
+        minScale: PhotoViewComputedScale.contained * 0.8 , // 축소 배율
+        maxScale: PhotoViewComputedScale.covered *1.0, // 확대 배율
+        enableRotation: true, 
+        heroAttributes: PhotoViewHeroAttributes(tag: 'tag'),
       ),
+    );
+  },
+),
+
+
       bottomNavigationBar: BottomNavigationBar(
           currentIndex: _currentIndex,
           onTap: (index) {
