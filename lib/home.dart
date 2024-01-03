@@ -1,3 +1,4 @@
+import 'package:dicom_phone/View/homepage.dart';
 import 'package:dicom_phone/secondpage.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -24,6 +25,12 @@ class _HomeState extends State<Home> {
                 Get.to(SecondPage());
               }, 
               child: const Text("두번째 페이지 이동"),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                Get.to(() => const HomePage());
+              }, 
+              child: const Text("홈페이지 이동"),
             ),
           ],
         ),
