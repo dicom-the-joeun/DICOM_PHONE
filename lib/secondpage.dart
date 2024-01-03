@@ -1,4 +1,4 @@
-import 'package:dicom_phone/thirdpage.dart';
+import 'package:dicom_phone/Detailpage.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
