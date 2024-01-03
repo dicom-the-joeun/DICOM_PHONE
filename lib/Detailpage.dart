@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:photo_view/photo_view.dart';
 
 class DetailPage extends StatefulWidget {
   const DetailPage({super.key});
@@ -9,6 +10,23 @@ class DetailPage extends StatefulWidget {
 
 class _DetailPageState extends State<DetailPage> {
   int _currentIndex = 0;
+  late List<String> fruitList;
+  
+  
+
+  @override
+  void initState() {
+    super.initState();
+    fruitList = [
+      'Apple.png',
+      'Banana.png',
+      'Grape.png',
+      'Orange.png',
+      'Pineapple.png',
+      'Watermelon.png',
+    ];
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -16,6 +34,15 @@ class _DetailPageState extends State<DetailPage> {
       appBar: AppBar(
         title: const Text('PACSPLUS3'),
         iconTheme: IconThemeData(color: Colors.red),
+      ),
+      body: ListView.builder(
+        itemCount: fruitList.length,
+        itemBuilder: (context, index) {
+          return Image.asset(
+            'images/${fruitList[index]}',
+            height: 100,
+          );
+        },
       ),
       bottomNavigationBar: BottomNavigationBar(
           currentIndex: _currentIndex,
