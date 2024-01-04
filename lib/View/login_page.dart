@@ -14,55 +14,57 @@ class LoginPage extends StatelessWidget {
 
     return Scaffold(
       body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            SizedBox(
-              child: Image.asset(
-                "images/pacs.png",
-                width: 80,
-                height: 80,
-                fit: BoxFit.cover,
-              ),
-            ),
-            loginText(
-              content: "ID",
-              textController: loginController.idController,
-            ),
-            loginText(
-              content: "Password",
-              textController: loginController.pwController,
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Padding(
-                  padding: const EdgeInsets.all(20.0),
-                  child: CupertinoButton.filled(
-                    onPressed: () {
-                      // 로그인 시도 성공 여부 따지기
-                      // errorToast(
-                      //     context: context, content: "ID나 Password를 다시 확인하세요");
-                    },
-                    child: const Text("로그인"),
-                  ),
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              SizedBox(
+                child: Image.asset(
+                  "images/pacs.png",
+                  width: 80,
+                  height: 80,
+                  fit: BoxFit.cover,
                 ),
-                            ElevatedButton(
-              onPressed: () {
-                Get.to(SecondPage());
-              }, 
-              child: const Text("두번째 페이지 이동"),
-            ),
-            ElevatedButton(
-              onPressed: () {
-                Get.to(() => const HomePage());
-              }, 
-              child: const Text("홈페이지 이동"),
-            ),
-
-              ],
-            ),
-          ],
+              ),
+              loginText(
+                content: "ID",
+                textController: loginController.idController,
+              ),
+              loginText(
+                content: "Password",
+                textController: loginController.pwController,
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.all(20.0),
+                    child: CupertinoButton.filled(
+                      onPressed: () {
+                        // 로그인 시도 성공 여부 따지기
+                        // errorToast(
+                        //     context: context, content: "ID나 Password를 다시 확인하세요");
+                      },
+                      child: const Text("로그인"),
+                    ),
+                  ),
+                              ElevatedButton(
+                onPressed: () {
+                  Get.to(SecondPage());
+                }, 
+                child: const Text("두번째 페이지 이동"),
+              ),
+              ElevatedButton(
+                onPressed: () {
+                  Get.to(() => const HomePage());
+                }, 
+                child: const Text("홈페이지 이동"),
+              ),
+                
+                ],
+              ),
+            ],
+          ),
         ),
       ),
     );
