@@ -5,13 +5,6 @@ import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 
 void main() {
-  /// 앱 초기화 및 바인딩
-  WidgetsFlutterBinding.ensureInitialized();
-  /// 화면 가로로 고정
-  SystemChrome.setPreferredOrientations([
-  DeviceOrientation.landscapeLeft,
-  DeviceOrientation.landscapeRight,
-  ]);
   runApp(const MyApp());
 }
 

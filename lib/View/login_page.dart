@@ -34,7 +34,7 @@ class LoginPage extends StatelessWidget {
                 content: "Password",
                 textController: loginController.pwController,
               ),
-              Row(
+              Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Padding(
@@ -42,6 +42,10 @@ class LoginPage extends StatelessWidget {
                     child: CupertinoButton.filled(
                       onPressed: () {
                         // 로그인 시도 성공 여부 따지기
+                        loginController.checkLogin(
+                          loginController.idController.text, 
+                          loginController.pwController.text
+                          );
                         // errorToast(
                         //     context: context, content: "ID나 Password를 다시 확인하세요");
                       },

@@ -44,6 +44,8 @@ dependencies:
 
   # http
   http: ^1.1.2
+  # dio (http와 동일한 기능)
+  dio: ^5.4.0
 
 dev_dependencies:
   flutter_test:
