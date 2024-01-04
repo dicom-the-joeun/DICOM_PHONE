@@ -93,6 +93,11 @@ class LoginPage extends StatelessWidget {
     );
   }
 
+  /// 로그인 성공여부 스낵바
+  showSnacbar({required BuildContext context, required String content, required Color resultColor}) {
+    
+  }
+
   /// 로그인 실패 Toast
   // errorToast({required BuildContext context, required String content}) {
   //   Fluttertoast.showToast(

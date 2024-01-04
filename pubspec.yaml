@@ -47,6 +47,11 @@ dependencies:
   # dio (http와 동일한 기능)
   dio: ^5.4.0
 
+  # .env 쓰기
+  flutter_dotenv: ^5.1.0
+  # log 디테일하게 보기
+  logger: ^2.0.2+1
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
