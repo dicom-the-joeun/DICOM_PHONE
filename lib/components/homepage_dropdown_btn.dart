@@ -10,36 +10,46 @@ class HomePageDropDownBtn extends StatefulWidget {
 class _HomePageDropDownBtnState extends State<HomePageDropDownBtn> {
   // property
   late List<String>  valueList;
-  late int selectedValue;
+  late String? selectedValue;
 
   @override
   void initState() {
     super.initState();
     valueList = ['환자 이름', '검사 장비', '검사 설명', '검사 일시', '판독 상태'];
-    selectedValue = 0;
+    selectedValue = null;
   }
 
   @override
   Widget build(BuildContext context) {
     return DropdownButton(
+      iconEnabledColor: Theme.of(context).colorScheme.primaryContainer,
+      dropdownColor: Theme.of(context).colorScheme.secondary,
+      focusColor: Theme.of(context).colorScheme.primaryContainer,
       hint: Text(
-        valueList[selectedValue],
+        "검색 필터",
         style: TextStyle(
-          color: Theme.of(context).colorScheme.onPrimary
+          color: Theme.of(context).colorScheme.primaryContainer
         ),
       ),
-      disabledHint: const Text("검색 필터를 선택하세요"),
+      value: selectedValue,
+      icon: const Icon(Icons.keyboard_arrow_down),
       items: valueList.map(
-        (value) {
+        (String valueList) {
           return DropdownMenuItem(
-            value: value,
-            child: Text(value),
+            value: valueList,
+            child: Text(
+              valueList,
+              style: TextStyle(
+                color: Theme.of(context).colorScheme.primaryContainer,
+                fontSize: 15
+              ),
+            ),
           );
         }
       ).toList(), 
-      onChanged: (value) {
-        selectedValue = value as int;
-        print("${valueList[selectedValue]}");
+      onChanged: (String? newValue) {
+        selectedValue = newValue!;
+        print("$selectedValue");
         setState(() {
           
         });

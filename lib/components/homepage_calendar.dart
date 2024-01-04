@@ -5,13 +5,10 @@ class HomePageCalendar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Center(
-        child: Text('달력 모달로 띄우기',
-        style: TextStyle(
-          color: Colors.white
-        ),),
-      ),
+    return AlertDialog(
+      actions: [
+        
+      ],
     );
   }
 }

@@ -19,15 +19,16 @@ class _HomePageSearchBarState extends State<HomePageSearchBar> {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      width: 400,
+      width: 300,
       height: 50,
       child: SearchBar(
-        // backgroundColor: ,
+        backgroundColor: MaterialStateProperty.all(
+          Theme.of(context).colorScheme.secondaryContainer
+        ),
         controller: searchBarEditingController,
-        // elevation: ,
         trailing: const [Icon(Icons.search)],
         shape: MaterialStateProperty.all(const ContinuousRectangleBorder(
-          borderRadius: BorderRadius.all(Radius.circular(20))
+          borderRadius: BorderRadius.all(Radius.circular(30))
         )),
       ),
     );
