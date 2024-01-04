@@ -1,3 +1,4 @@
+import 'package:dicom_phone/View/login_page.dart';
 import 'package:dicom_phone/home.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -34,6 +35,7 @@ class MyApp extends StatelessWidget {
         useMaterial3: true,
       ),
       home: const Home(),
+      // home: const LoginPage(),
       debugShowCheckedModeBanner: false,
     );
   }
