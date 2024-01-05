@@ -1,13 +1,14 @@
 import 'package:dicom_phone/View/login_page.dart';
-import 'package:dicom_phone/home.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get/get.dart';
+import 'package:intl/date_symbol_data_local.dart';
 
 void main() async {
   WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
   await dotenv.load(fileName: ".env");
+
+  await initializeDateFormatting();         // TableCalendar 언어 설정
   runApp(const MyApp());
 }
 
