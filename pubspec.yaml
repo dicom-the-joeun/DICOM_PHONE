@@ -54,6 +54,8 @@ dependencies:
 
   # Calendar
   table_calendar: ^3.0.9
+  # 날짜 및 언어 포맷
+  intl: ^0.18.1
 
 dev_dependencies:
   flutter_test:
