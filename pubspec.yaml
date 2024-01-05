@@ -51,6 +51,8 @@ dependencies:
   flutter_dotenv: ^5.1.0
   # log 디테일하게 보기
   logger: ^2.0.2+1
+  # 기기내 쿠키관리
+  shared_preferences: ^2.2.2
 
   # Calendar
   table_calendar: ^3.0.9

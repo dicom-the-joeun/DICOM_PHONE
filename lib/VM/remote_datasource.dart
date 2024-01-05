@@ -14,7 +14,14 @@ var validStatusCodes = List.generate(100, (i) => 200 + i);
 enum ResponseResult { error, success }
 
 class RemoteDatasourceImpl implements RemoteDatasource {
-  final Dio _dio = Dio();
+  // final Dio _dio = Dio();
+  Dio _dio = Dio(BaseOptions(
+  validateStatus: (status) {
+    // 404 상태 코드에 대해 예외를 던지지 않도록 설정
+    return status != null && status >= 200 && status < 500;
+  },
+));
+
   
   static final String? baseUrl = dotenv.env['baseurl'];
 
@@ -38,6 +45,7 @@ class RemoteDatasourceImpl implements RemoteDatasource {
     try {
       var res = await _dio.post('$baseUrl$addurl', options: options, data: data);
       if (!validStatusCodes.contains(res.statusCode)) return ResponseResult.error;
+      print(res.statusCode);
       return res;
     } catch (e) {
       Logger().e("$addurl\n$e");
@@ -60,7 +68,8 @@ class RemoteDatasourceImpl implements RemoteDatasource {
 
   Options addHeadersToOptions(Map<String, dynamic>? additionalHeaders) {
     Map<String, dynamic> mergedHeaders = {
-      'Content-Type': 'application/json; charset=UTF-8',
+        'accept': 'application/json',
+        'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
     };
     if (additionalHeaders != null) {
       mergedHeaders.addAll(additionalHeaders);
