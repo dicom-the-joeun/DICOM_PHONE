@@ -29,7 +29,14 @@ class _HomePageSearchBarState extends State<HomePageSearchBar> {
         trailing: const [Icon(Icons.search)],
         shape: MaterialStateProperty.all(const ContinuousRectangleBorder(
           borderRadius: BorderRadius.all(Radius.circular(30))
-        )),
+          )
+        ),
+        // onChanged: (value) {
+          
+        // },
+        // onSubmitted: (value) {
+        //   // 키보드 엔터 쳤을 때
+        // },
       ),
     );
   }

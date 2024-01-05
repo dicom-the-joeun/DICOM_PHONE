@@ -52,6 +52,9 @@ dependencies:
   # log 디테일하게 보기
   logger: ^2.0.2+1
 
+  # Calendar
+  table_calendar: ^3.0.9
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
