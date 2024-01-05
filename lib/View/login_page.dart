@@ -40,31 +40,40 @@ class LoginPage extends StatelessWidget {
                   Padding(
                     padding: const EdgeInsets.all(20.0),
                     child: CupertinoButton.filled(
-                      onPressed: () {
+                      onPressed: () async {
                         // 로그인 시도 성공 여부 따지기
-                        loginController.checkLogin(
-                          loginController.idController.text, 
-                          loginController.pwController.text
-                          );
-                        // errorToast(
-                        //     context: context, content: "ID나 Password를 다시 확인하세요");
+                        await loginController.checkLogin(
+                                loginController.idController.text,
+                                loginController.pwController.text)
+                            ? Get.to(() => const HomePage())
+                            // ignore: use_build_context_synchronously
+                            : showSnacbar(
+                                context: context,
+                                title: "실패",
+                                content: "ID나 Password를 다시 확인하세요",
+                                resultBackColor:
+                                    // ignore: use_build_context_synchronously
+                                    Theme.of(context).colorScheme.error,
+                                resultTextColor:
+                                    // ignore: use_build_context_synchronously
+                                    Theme.of(context).colorScheme.onError,
+                              );
                       },
                       child: const Text("로그인"),
                     ),
                   ),
-                              ElevatedButton(
-                onPressed: () {
-                  Get.to(SecondPage());
-                }, 
-                child: const Text("두번째 페이지 이동"),
-              ),
-              ElevatedButton(
-                onPressed: () {
-                  Get.to(() => const HomePage());
-                }, 
-                child: const Text("홈페이지 이동"),
-              ),
-                
+                  ElevatedButton(
+                    onPressed: () {
+                      Get.to(SecondPage());
+                    },
+                    child: const Text("두번째 페이지 이동"),
+                  ),
+                  ElevatedButton(
+                    onPressed: () {
+                      Get.to(() => const HomePage());
+                    },
+                    child: const Text("홈페이지 이동"),
+                  ),
                 ],
               ),
             ],
@@ -73,7 +82,22 @@ class LoginPage extends StatelessWidget {
       ),
     );
   }
+
   // --- Functions ---
+  /// 로그인 성공여부 스낵바
+  showSnacbar(
+      {required BuildContext context,
+      required String title,
+      required String content,
+      required Color resultBackColor,
+      required Color resultTextColor}) {
+    Get.snackbar(
+      title,
+      content,
+      backgroundColor: resultBackColor,
+      colorText: resultTextColor,
+    );
+  }
 
   /// 로그인 텍스트 위젯
   loginText(
@@ -91,11 +115,6 @@ class LoginPage extends StatelessWidget {
         ),
       ),
     );
-  }
-
-  /// 로그인 성공여부 스낵바
-  showSnacbar({required BuildContext context, required String content, required Color resultColor}) {
-    
   }
 
   /// 로그인 실패 Toast
