@@ -8,31 +8,69 @@ void main() async {
   WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
   await dotenv.load(fileName: ".env");
 
-  await initializeDateFormatting();         // TableCalendar 언어 설정
+  await initializeDateFormatting(); // TableCalendar 언어 설정
   runApp(const MyApp());
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
   const MyApp({super.key});
 
   @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  ThemeMode _themeMode = ThemeMode.dark; // 기본 세팅 모드
+
+  _changeThemeMode(ThemeMode themeMode) {
+    _themeMode = themeMode;
+    setState(() {});
+  }
+
+  static const seedColor = Color.fromARGB(255, 234, 248, 248);
+  @override
   Widget build(BuildContext context) {
     return GetMaterialApp(
+      // title: 'Flutter Demo',
+      // theme: ThemeData(
+      //   scaffoldBackgroundColor: Colors.black, // 바탕화면 검은색으로 고정
+      //   appBarTheme: const AppBarTheme(
+      //     backgroundColor: Colors.black, // 검은색으로 고정
+      //     titleTextStyle: TextStyle(
+      //         color: Colors.red, //  빨간색으로 고정
+      //         fontSize: 30 // 글씨 크기
+      //         ),
+      //   ),
+
+      //   useMaterial3: true,
+      // ),
       title: 'Flutter Demo',
+      themeMode: _themeMode,
       theme: ThemeData(
-        scaffoldBackgroundColor: Colors.black, // 바탕화면 검은색으로 고정
+        colorSchemeSeed: seedColor,
+        useMaterial3: true,
+        brightness: Brightness.light,
         appBarTheme: const AppBarTheme(
-          backgroundColor: Colors.black, // 검은색으로 고정
           titleTextStyle: TextStyle(
               color: Colors.red, //  빨간색으로 고정
               fontSize: 30 // 글씨 크기
               ),
         ),
-
-        useMaterial3: true,
       ),
+      darkTheme: ThemeData(
+        colorSchemeSeed: seedColor,
+        useMaterial3: true,
+        brightness: Brightness.dark,
+        appBarTheme: const AppBarTheme(
+          titleTextStyle: TextStyle(
+              color: Colors.red, //  빨간색으로 고정
+              fontSize: 30 // 글씨 크기
+              ),
+        ),
+      ),
+
       // home: const Home(),
-      home: const LoginPage(),
+      home: LoginPage(onChangeTheme: _changeThemeMode),
       debugShowCheckedModeBanner: false,
     );
   }

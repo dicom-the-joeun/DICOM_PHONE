@@ -6,7 +6,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class LoginPage extends StatelessWidget {
-  const LoginPage({super.key});
+  final Function(ThemeMode) onChangeTheme;
+  const LoginPage({super.key, required this.onChangeTheme});
 
   @override
   Widget build(BuildContext context) {
@@ -42,22 +43,37 @@ class LoginPage extends StatelessWidget {
                     child: CupertinoButton.filled(
                       onPressed: () async {
                         // 로그인 시도 성공 여부 따지기
-                        await loginController.checkLogin(
-                                loginController.idController.text,
-                                loginController.pwController.text)
-                            ? Get.to(() => const HomePage())
-                            // ignore: use_build_context_synchronously
-                            : showSnacbar(
-                                context: context,
-                                title: "실패",
-                                content: "ID나 Password를 다시 확인하세요",
-                                resultBackColor:
-                                    // ignore: use_build_context_synchronously
-                                    Theme.of(context).colorScheme.error,
-                                resultTextColor:
-                                    // ignore: use_build_context_synchronously
-                                    Theme.of(context).colorScheme.onError,
-                              );
+                        if (loginController.idController.text.isNotEmpty &&
+                            loginController.pwController.text.isNotEmpty) {
+                          await loginController.checkLogin(
+                                  loginController.idController.text,
+                                  loginController.pwController.text)
+                              ? Get.to(() => const HomePage())
+                              // ignore: use_build_context_synchronously
+                              : showSnacbar(
+                                  context: context,
+                                  title: "실패",
+                                  content: "ID나 Password를 다시 확인하세요",
+                                  resultBackColor:
+                                      // ignore: use_build_context_synchronously
+                                      Theme.of(context).colorScheme.error,
+                                  resultTextColor:
+                                      // ignore: use_build_context_synchronously
+                                      Theme.of(context).colorScheme.onError,
+                                );
+                        } else {
+                          showSnacbar(
+                            context: context,
+                            title: "실패",
+                            content: "ID와 Password를 입력해주세요",
+                            resultBackColor:
+                                // ignore: use_build_context_synchronously
+                                Theme.of(context).colorScheme.error,
+                            resultTextColor:
+                                // ignore: use_build_context_synchronously
+                                Theme.of(context).colorScheme.onError,
+                          );
+                        }
                       },
                       child: const Text("로그인"),
                     ),

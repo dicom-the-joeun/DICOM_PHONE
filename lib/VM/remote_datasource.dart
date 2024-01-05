@@ -16,7 +16,12 @@ var validStatusCodes = List.generate(100, (i) => 200 + i);
 enum ResponseResult { error, success }
 
 class RemoteDatasourceImpl implements RemoteDatasource {
-  final Dio _dio = Dio();
+  // final Dio _dio = Dio();
+  Dio _dio = Dio(BaseOptions(
+    validateStatus: (status) {
+      return status != null && status >= 200 && status <= 500;
+    },
+  ));
 
   static final String? baseUrl = dotenv.env['baseurl'];
 
@@ -37,11 +42,14 @@ class RemoteDatasourceImpl implements RemoteDatasource {
   }
 
   @override
-  Future post(String addurl, dynamic data, {Map<String, dynamic>? headers}) async {
+  Future post(String addurl, dynamic data,
+      {Map<String, dynamic>? headers}) async {
     var options = addHeadersToOptions(headers);
     try {
-      var res = await _dio.post('$baseUrl$addurl', options: options, data: data);
-      if (!validStatusCodes.contains(res.statusCode)) return ResponseResult.error;
+      var res =
+          await _dio.post('$baseUrl$addurl', options: options, data: data);
+      if (!validStatusCodes.contains(res.statusCode))
+        return ResponseResult.error;
       print(res.statusCode);
       return res;
     } catch (e) {
