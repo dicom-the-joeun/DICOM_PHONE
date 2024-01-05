@@ -1,14 +1,14 @@
-import 'dart:convert';
-import 'dart:io';
 
 import 'package:dicom_phone/VM/remote_datasource.dart';
 import 'package:dicom_phone/util/api_endpoint.dart';
-import 'package:dio/dio.dart';
+import 'package:dio/dio.dart' as dio;
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get/get.dart';
 import 'package:get/get_state_manager/get_state_manager.dart';
 import 'package:http/http.dart' as http;
+import 'package:logger/logger.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginController extends GetxController {
   late TextEditingController idController;
@@ -27,7 +27,7 @@ class LoginController extends GetxController {
     RemoteDatasourceImpl _datasource = RemoteDatasourceImpl();
 
     bool loginStatus = false;
-    final String url = URL.login.value;
+    String url = dotenv.env['baseurl']! + APiEndPoints.apiEndPoints.login;
     String data =
         'username=$username&password=$password&grant_type=&scope=&client_id=&client_secret=';
     final Map<String, dynamic> headers = {
@@ -36,19 +36,48 @@ class LoginController extends GetxController {
     final response = await _datasource.post(url, data, headers: headers);
     if (response != null) {
       Logger().d(response);
-      Response<dynamic> resData = response;
+      dio.Response<dynamic> resData = response;
+      print(resData.statusCode);
       Map<String, dynamic> mapData = resData.headers.map;
       String? accesstoken = mapData['access_token'].first;
       String? refreshtoken = mapData['refresh_token'].first;
       if (await _setAccessToken(accesstoken!) &&
           await _setRefreshToken(refreshtoken!)) {
-        return true;
+        return loginStatus = true;
       }
-      return false;
+      return loginStatus = false;
     }
-    return false;
     return loginStatus;
   }
+
+
+
+
+    @override
+  Future<String> getRefreshToken() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String hasSeenOnboarding = prefs.getString('refreshtoken') ?? '';
+    return hasSeenOnboarding;
+  }
+
+  Future<bool> _setRefreshToken(String refreshtoken) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    Future<bool> didsetrefreshToken =
+        prefs.setString('refreshtoken', refreshtoken);
+    return didsetrefreshToken;
+  }
+
+  Future<bool> _setAccessToken(String accesstoken) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    Future<bool> didsetaccessToken =
+        prefs.setString('accesstoken', accesstoken);
+    return didsetaccessToken;
+  }
+
+
+
+
+
 
   @override
   void dispose() {
@@ -56,7 +85,17 @@ class LoginController extends GetxController {
     pwController.dispose();
     super.dispose();
   }
+
+
 } // End
+
+
+
+
+
+
+
+
 
 // Future<bool> checkLogin(String username, String password) async {
 //   bool loginStatus = false;
