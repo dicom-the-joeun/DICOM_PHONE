@@ -15,7 +15,7 @@ class _HomePageDropDownBtnState extends State<HomePageDropDownBtn> {
   @override
   void initState() {
     super.initState();
-    valueList = ['환자 이름', '검사 장비', '검사 설명', '검사 일시', '판독 상태'];
+    valueList = ['환자 아이디', '환자 이름', '검사 장비', '검사 설명', '판독 상태'];
     selectedValue = null;
   }
 

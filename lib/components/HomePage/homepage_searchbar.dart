@@ -19,7 +19,7 @@ class _HomePageSearchBarState extends State<HomePageSearchBar> {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      width: 300,
+      width: 280,
       height: 50,
       child: SearchBar(
         backgroundColor: MaterialStateProperty.all(

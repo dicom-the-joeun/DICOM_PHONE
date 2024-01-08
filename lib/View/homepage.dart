@@ -1,142 +1,71 @@
-import 'package:dicom_phone/components/homepage_calendar.dart';
-import 'package:dicom_phone/components/homepage_dropdown_btn.dart';
-import 'package:dicom_phone/components/homepage_searchbar.dart';
+import 'package:dicom_phone/VM/homepage_controller.dart';
+import 'package:dicom_phone/components/HomePage/homepage_dropdown_btn.dart';
+import 'package:dicom_phone/components/HomePage/homepage_searchbar.dart';
+import 'package:dicom_phone/components/HomePage/homepage_select_date.dart';
 import 'package:flutter/material.dart';
-import 'package:get/route_manager.dart';
+import 'package:get/get.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
 
   @override
   Widget build(BuildContext context) {
+    HomePageController homepageController = Get.put(HomePageController());
     return Scaffold(
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const Row(
-              children: [
-                Padding(
-                  padding: EdgeInsets.all(10.0),
-                  child: HomePageDropDownBtn(),
-                ),
-                Padding(
-                  padding: EdgeInsets.all(10.0),
-                  child: HomePageSearchBar(),
-                ),
-              ],
-            ),
-            Row(
-              children: [
-                Padding(
-                  padding: const EdgeInsets.all(10.0),
-                  child: Text(
-                    "검사 일자",
-                    style: TextStyle(
-                      color: Theme.of(context).colorScheme.primaryContainer,
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold
-                    ),
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(5.0),
-                  child: IconButton(
-                    onPressed: () {
-                      Get.to(const HomePageCalendar());
-                    }, 
-                    icon: Icon(
-                      Icons.calendar_month_outlined,
-                      color: Theme.of(context).colorScheme.primaryContainer,
-                      size: 30,
-                    ),
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(10, 5, 10, 5),
-                  child: Container(
-                    width: 50,
-                    height: 50,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: Theme.of(context).colorScheme.primaryContainer
-                    ),
-                    alignment: Alignment.center,
-                    child: Text(
-                      "1일",
-                      style: TextStyle(
-                        color: Theme.of(context).colorScheme.onPrimaryContainer,
-                        fontSize: 17
-                      ),
-                    ),
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(5, 5, 10, 5),
-                  child: Container(
-                    width: 50,
-                    height: 50,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: Theme.of(context).colorScheme.primaryContainer,
-                    ),
-                    alignment: Alignment.center,
-                    child: Text(
-                      "3일",
-                      style: TextStyle(
-                        color: Theme.of(context).colorScheme.onPrimaryContainer,
-                        fontSize: 17
-                      ),
-                    ),
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(5, 5, 10, 5),
-                  child: Container(
-                    width: 50,
-                    height: 50,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: Theme.of(context).colorScheme.primaryContainer
-                    ),
-                    alignment: Alignment.center,
-                    child: Text(
-                      "1주일",
-                      style: TextStyle(
-                        color: Theme.of(context).colorScheme.onPrimaryContainer,
-                        fontSize: 17
-                      ),
-                    ),
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(5, 5, 10, 5),
-                  child: GestureDetector(
-                    onTap: () {
-                      // 검색 필터, 검색 일자 모두 reset 하기
-                    },
-                    child: Container(
-                      width: 50,
-                      height: 50,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: Theme.of(context).colorScheme.primaryContainer
-                      ),
-                      alignment: Alignment.center,
-                      child: Text(
-                        "재설정",
-                        style: TextStyle(
-                          color: Theme.of(context).colorScheme.onPrimaryContainer,
-                          fontSize: 17
-                        ),
-                      ),
-                    ),
-                  ),
-                )
-              ],
-            ),
-          ],
-        ),
+      body: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          const Row(
+            children: [
+              Padding(
+                padding: EdgeInsets.all(10.0),
+                child: HomePageDropDownBtn(),
+              ),
+              Padding(
+                padding: EdgeInsets.all(10.0),
+                child: HomePageSearchBar(),
+              ),
+            ],
+          ),
+          // const HomePageSelectDate(),
+          // DataTable(
+          //   columns: const [
+          //     // DataColumn(
+          //     //   label: Text(
+          //     //     '환자 아이디'
+          //     //   ),
+          //     // ),
+          //     DataColumn(
+          //       label: Text(
+          //         '환자 이름'
+          //       ),
+          //     ),
+          //     DataColumn(
+          //       label: Text(
+          //         '검사 장비'
+          //       ),
+          //     ),
+          //     DataColumn(
+          //       label: Text(
+          //         '검사 설명'
+          //       ),
+          //     ),
+          //     DataColumn(
+          //       label: Text(
+          //         '판독 상태'
+          //       ),
+          //     ),
+          //   ], 
+          //   rows: List.generate(homepageController.pacsData.length, (index) {
+              
+          //   }),
+          // ),
+          ElevatedButton(
+            onPressed: () {
+              homepageController.getJSONData();
+            }, 
+            child: Text('json test'))
+        ],
       ),
     );
   }
