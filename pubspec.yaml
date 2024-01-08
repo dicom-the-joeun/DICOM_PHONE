@@ -53,6 +53,8 @@ dependencies:
   logger: ^2.0.2+1
   # 기기내 쿠키관리
   shared_preferences: ^2.2.2
+  # image캐싱
+  cached_network_image: ^3.3.1
 
   # Calendar
   table_calendar: ^3.0.9
