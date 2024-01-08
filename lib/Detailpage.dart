@@ -3,10 +3,10 @@ import 'package:photo_view/photo_view.dart';
 import 'dart:math' as math;
 
 class DetailPage extends StatefulWidget {
-  const DetailPage({super.key});
+  const DetailPage({Key? key}) : super(key: key);
 
   @override
-  State<DetailPage> createState() => _DetailPageState();
+  _DetailPageState createState() => _DetailPageState();
 }
 
 class _DetailPageState extends State<DetailPage> {
@@ -15,7 +15,15 @@ class _DetailPageState extends State<DetailPage> {
   bool allowZoom = false;
   bool bllowZoom = false;
   bool cllowZoom = false;
-  double Brightness = 1.0;
+  bool dllowZoom = false;
+  double brightness = 0; //
+  bool isImageColored = true;
+
+   void _toggleImageColor() {
+    setState(() {
+      isImageColored = !isImageColored;
+    });
+  }
 
   @override
   void initState() {
@@ -37,24 +45,44 @@ class _DetailPageState extends State<DetailPage> {
         title: const Text('PACSPLUS3'),
         iconTheme: IconThemeData(color: Colors.red),
       ),
-      body: ListView.builder(
-        itemCount: fruitList.length,
-        itemBuilder: (context, index) {
-          Transform(
-            alignment: Alignment.center,
-            transform: Matrix4.rotationY(math.pi),    
-          );
-          
-          allowZoom = _currentIndex == 4; // 4번째 탭만 확대/축소
-          bllowZoom = _currentIndex == 5; // 5번째 탭만 화면전환
-          return SizedBox(
-            height: 100, // 이미지 크기
-            child: _findex(index, allowZoom, bllowZoom, cllowZoom),
-          );
-        },
+      body: Stack(
+        children: [
+          Expanded(
+            child: ListView.builder(
+              itemCount: fruitList.length,
+              itemBuilder: (context, index) {
+                return SizedBox(
+                  height: 230, // 이미지 크기
+                  child: Stack(
+                    children: [
+                      _findex(index),
+                    ],
+                  ),
+                );
+              },
+            ),
+          ),
+          if (_currentIndex == 0) // 0번째 탭에서만 슬라이더 표시
+            Positioned(
+              top: 150, // slider 오른쪽 화면 중앙에 배치
+              right: 0, // slider 오른쪽 화면에 배치
+              child: RotatedBox(
+                quarterTurns: 1,
+                child: Slider(
+                  value: brightness, 
+                  min: 0.0,
+                  max: 1.0,
+                  onChanged: (value) {
+                    setState(() {
+                      brightness = value;
+                    });
+                  },
+                ),
+              ),
+            ),
+        ],
       ),
       bottomNavigationBar: BottomNavigationBar(
-        
         currentIndex: _currentIndex,
         onTap: (index) {
           setState(() {
@@ -93,23 +121,60 @@ class _DetailPageState extends State<DetailPage> {
     );
   }
 
-  Widget _findex(int index, bool allowZoom, bool bllowZoom, bool cllowZoom) {
-     return Transform(
-      alignment: Alignment.center,
-      transform: bllowZoom
-          ? Matrix4.rotationY(math.pi) // 5번째 탭일 때 좌우반전
-          : Matrix4.identity(),
-          
-   
-      child: PhotoView(
-        imageProvider: AssetImage('images/${fruitList[index]}'),
-        minScale: allowZoom //최소 축소 비율
-            ? PhotoViewComputedScale.contained * 0.8 //true 일 때
-            : PhotoViewComputedScale.contained, // false 일 때
-        maxScale: allowZoom //최소 확대 비율
-            ? PhotoViewComputedScale.covered * 1.8 //true 일 때
-            : PhotoViewComputedScale.contained, // false 일 때
-      ),
+  Widget _findex(int index) {
+    cllowZoom = _currentIndex == 0;
+    dllowZoom = _currentIndex == 1;
+    allowZoom = _currentIndex == 4; // 4번째 탭만 확대/축소
+    bllowZoom = _currentIndex == 5; // 5번째 탭만 화면전환
+
+      return Stack(
+      children: [
+        ColorFiltered(
+          colorFilter: ColorFilter.mode(
+            Colors.white.withOpacity(1 - brightness),
+            BlendMode.modulate,
+          ),
+          child: Transform(
+            alignment: Alignment.center,
+            transform: bllowZoom
+                ? Matrix4.rotationY(math.pi) // 5번째 탭일 때 좌우반전
+                : Matrix4.identity(),
+            child: GestureDetector(
+              onTap: dllowZoom ? _toggleImageColor : null,
+              child: PhotoView(
+                imageProvider: AssetImage('images/${fruitList[index]}'),
+                minScale: allowZoom
+                    ? PhotoViewComputedScale.contained * 0.8
+                    : PhotoViewComputedScale.contained,
+                maxScale: allowZoom
+                    ? PhotoViewComputedScale.covered * 1.8
+                    : PhotoViewComputedScale.contained,
+              ),
+            ),
+          ),
+        ),
+        if (_currentIndex == 1)
+          Positioned.fill(
+            child: IgnorePointer(
+              ignoring: true,
+              child: ColorFiltered(
+                colorFilter: isImageColored
+                    ? ColorFilter.mode(
+                        Colors.transparent,
+                        BlendMode.saturation,
+                      )
+                    : ColorFilter.mode(
+                        Colors.grey,
+                        BlendMode.saturation,
+                      ),
+                child: Image.asset(
+                  'images/${fruitList[index]}',
+                  fit: BoxFit.contain,
+                ),
+              ),
+            ),
+          ),
+      ],
     );
   }
 }
