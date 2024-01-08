@@ -16,14 +16,10 @@ class _DetailPageState extends State<DetailPage> {
   bool bllowZoom = false;
   bool cllowZoom = false;
   bool dllowZoom = false;
-  double brightness = 0; //
-  bool isImageColored = true;
-
-   void _toggleImageColor() {
-    setState(() {
-      isImageColored = !isImageColored;
-    });
-  }
+  double brightness = 0;
+  bool isImageColored = false;
+  bool isImageColor = false;
+  
 
   @override
   void initState() {
@@ -37,6 +33,20 @@ class _DetailPageState extends State<DetailPage> {
       'Watermelon.png',
     ];
   }
+
+  void _toggleImageColor() {
+  setState(() {
+    isImageColored = !isImageColored;
+  });
+}
+
+void toggleImageColor() {
+  setState(() {
+    isImageColored  = !isImageColored ;
+  });
+}
+  
+
 
   @override
   Widget build(BuildContext context) {
@@ -83,11 +93,16 @@ class _DetailPageState extends State<DetailPage> {
         ],
       ),
       bottomNavigationBar: BottomNavigationBar(
-        currentIndex: _currentIndex,
-        onTap: (index) {
-          setState(() {
-            _currentIndex = index;
-          });
+         currentIndex: _currentIndex,
+  onTap: (index) {
+      if (_currentIndex == index) {
+          toggleImageColor();
+      } 
+    setState(() {
+        _currentIndex = index;
+    });
+  
+        
         },
         type: BottomNavigationBarType.fixed,
         items: const <BottomNavigationBarItem>[
@@ -122,12 +137,11 @@ class _DetailPageState extends State<DetailPage> {
   }
 
   Widget _findex(int index) {
-    cllowZoom = _currentIndex == 0;
-    dllowZoom = _currentIndex == 1;
-    allowZoom = _currentIndex == 4; // 4번째 탭만 확대/축소
-    bllowZoom = _currentIndex == 5; // 5번째 탭만 화면전환
+  dllowZoom = _currentIndex == 1; // 흑백반전 탭
+  allowZoom = _currentIndex == 4; // 확대/축소 탭
+  bllowZoom = _currentIndex == 5; // 화면전환 탭
 
-      return Stack(
+     return Stack(
       children: [
         ColorFiltered(
           colorFilter: ColorFilter.mode(
@@ -139,37 +153,37 @@ class _DetailPageState extends State<DetailPage> {
             transform: bllowZoom
                 ? Matrix4.rotationY(math.pi) // 5번째 탭일 때 좌우반전
                 : Matrix4.identity(),
-            child: GestureDetector(
-              onTap: dllowZoom ? _toggleImageColor : null,
-              child: PhotoView(
-                imageProvider: AssetImage('images/${fruitList[index]}'),
-                minScale: allowZoom
-                    ? PhotoViewComputedScale.contained * 0.8
-                    : PhotoViewComputedScale.contained,
-                maxScale: allowZoom
-                    ? PhotoViewComputedScale.covered * 1.8
-                    : PhotoViewComputedScale.contained,
-              ),
+            child: PhotoView(
+              
+              imageProvider: AssetImage('images/${fruitList[index]}'),
+              minScale: allowZoom
+                  ? PhotoViewComputedScale.contained * 0.8
+                  : PhotoViewComputedScale.contained,
+              maxScale: allowZoom
+                  ? PhotoViewComputedScale.covered * 1.8
+                  : PhotoViewComputedScale.contained,
+                  
             ),
           ),
         ),
-        if (_currentIndex == 1)
+       
+   if (_currentIndex == 1)
           Positioned.fill(
             child: IgnorePointer(
               ignoring: true,
               child: ColorFiltered(
                 colorFilter: isImageColored
-                    ? ColorFilter.mode(
+                    ? const ColorFilter.mode(
                         Colors.transparent,
                         BlendMode.saturation,
                       )
-                    : ColorFilter.mode(
+                    : const ColorFilter.mode(
                         Colors.grey,
                         BlendMode.saturation,
                       ),
                 child: Image.asset(
                   'images/${fruitList[index]}',
-                  fit: BoxFit.contain,
+                  fit: BoxFit.fitHeight,
                 ),
               ),
             ),
