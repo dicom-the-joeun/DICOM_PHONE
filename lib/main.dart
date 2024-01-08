@@ -1,3 +1,5 @@
+import 'package:dicom_phone/VM/login_ctrl.dart';
+import 'package:dicom_phone/View/homepage.dart';
 import 'package:dicom_phone/View/login_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -6,6 +8,8 @@ import 'package:intl/date_symbol_data_local.dart';
 
 void main() async {
   WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
+  
+
   await dotenv.load(fileName: ".env");
 
   await initializeDateFormatting(); // TableCalendar 언어 설정
@@ -30,6 +34,7 @@ class _MyAppState extends State<MyApp> {
   static const seedColor = Color.fromARGB(255, 234, 248, 248);
   @override
   Widget build(BuildContext context) {
+    final LoginController loginController = Get.put(LoginController());
     return GetMaterialApp(
       // title: 'Flutter Demo',
       // theme: ThemeData(
@@ -71,6 +76,11 @@ class _MyAppState extends State<MyApp> {
 
       // home: const Home(),
       home: LoginPage(onChangeTheme: _changeThemeMode),
+      // home: loginController.getAccessToken() == null
+      // ? LoginPage(onChangeTheme: _changeThemeMode)
+      // : loginController.getRefreshToken() == null
+      // ? LoginPage(onChangeTheme: _changeThemeMode)
+      // : const HomePage(),
       debugShowCheckedModeBanner: false,
     );
   }

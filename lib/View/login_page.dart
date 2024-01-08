@@ -1,5 +1,6 @@
 import 'package:dicom_phone/VM/login_ctrl.dart';
 import 'package:dicom_phone/View/homepage.dart';
+import 'package:dicom_phone/View/series_listview_page.dart';
 import 'package:dicom_phone/secondpage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -80,9 +81,9 @@ class LoginPage extends StatelessWidget {
                   ),
                   ElevatedButton(
                     onPressed: () {
-                      Get.to(SecondPage());
+                      Get.to(() => const SireisListviewPage());
                     },
-                    child: const Text("두번째 페이지 이동"),
+                    child: const Text("SireisPage(ListViewPage) 이동"),
                   ),
                   ElevatedButton(
                     onPressed: () {
@@ -112,6 +113,8 @@ class LoginPage extends StatelessWidget {
       content,
       backgroundColor: resultBackColor,
       colorText: resultTextColor,
+      // duration: const Duration(microseconds: 1000),
+      animationDuration: const Duration(microseconds: 1000),
     );
   }
 

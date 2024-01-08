@@ -1,4 +1,4 @@
-import 'package:dicom_phone/VM/remote_datasource.dart';
+import 'package:dicom_phone/DataSource/remote_datasource.dart';
 import 'package:dio/dio.dart' as dio;
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';

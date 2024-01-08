@@ -32,8 +32,7 @@ class RemoteDatasourceImpl implements RemoteDatasource {
     try {
       var res = await _dio.get('$baseUrl$addurl',
           options: options, queryParameters: query);
-      if (!validStatusCodes.contains(res.statusCode))
-        return ResponseResult.error;
+      if (!validStatusCodes.contains(res.statusCode)) return ResponseResult.error;
       return res;
     } catch (e) {
       Logger().e("$addurl\n$e");
