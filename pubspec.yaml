@@ -61,6 +61,9 @@ dependencies:
   # 날짜 및 언어 포맷
   intl: ^0.18.1
 
+  # data table Column 고정
+  data_table_2: ^2.5.10
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
