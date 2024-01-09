@@ -6,7 +6,6 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:http/http.dart' as http;
-import 'package:dio/dio.dart' as dio;
 
 class HomePageController extends GetxController {
   // property
@@ -16,8 +15,11 @@ class HomePageController extends GetxController {
 
   // 서버에서 데이터 가져와 넣어둘 
   RemoteDatasourceImpl datasourse = RemoteDatasourceImpl();
-  List pacsData = [];           // 전체 데이터
-  List homePageData = [];
+  var dataConvertedJSON;
+  RxList pacsData = [].obs;           // 전체 데이터
+  RxList<HomePageTableData> homePageData = <HomePageTableData>[].obs;
+  // RxList<HomePageTableData> studyDetailData = <HomePageTableData>[].obs;
+  RxList studyDetailData = [].obs;
 
   // late DateTime? rangeStartDay;
 
@@ -26,9 +28,9 @@ class HomePageController extends GetxController {
   // 
 
   @override
-  void onInit() {
+  void onInit() async{
     onRangeSelected(rangeStartDay.value, rangeEndDay.value, focusedDay.value);
-    getJSONData();
+    await getJSONData();
     super.onInit();
   }
 
@@ -53,24 +55,61 @@ class HomePageController extends GetxController {
     pacsData.clear();
     String addurl = 'studies/';
     String? baseUrl = dotenv.env['baseurl'];
-    Map<String, dynamic>? headers = {
-      'accept' : 'application/json'
-    };
-     var url = Uri.parse('$baseUrl$addurl');
-     var response = await http.get(url);
+    // Map<String, dynamic>? headers = {
+    //   'accept' : 'application/json'
+    // };
+    var url = Uri.parse('$baseUrl$addurl');
+    var response = await http.get(url);
     // print(response);
-    var dataConvertedJSON = json.decode(utf8.decode(response.bodyBytes));   // 소스 원본을 가져와 복호화 하기. 한글이기 때문에 꼭 해줘야 함
+    dataConvertedJSON = json.decode(utf8.decode(response.bodyBytes));   // 소스 원본을 가져와 복호화 하기. 한글이기 때문에 꼭 해줘야 함
     print(dataConvertedJSON);
-    print("studykey :  ${dataConvertedJSON[0]['STUDYKEY']}");
+    // print("studykey :  ${dataConvertedJSON[0]['PID']}");
+    pacsData.clear();
     pacsData.addAll(dataConvertedJSON);
-  }
+    // print("length of pacsDataList : ${pacsData.length}");
 
-  /// 홈페이지에서 보여줄 컬럼의 데이터만 분류
-  getHomePageData() {
-    for (var data in pacsData) {
-      // homePageData.add(HomePageTableData(pName: pName, modallity: modallity, studyDescription: studyDescription, studyDate: studyDate, examStatus: examStatus))
+    // print("studykey=5인 스터디의 모든 정보 : ${pacsData[4]}}");
+
+    /// 홈페이지에서 보여줄 컬럼의 데이터 추가
+    for (int i=0; i<pacsData.length; i++) {
+      homePageData.add(
+        HomePageTableData(
+          studyKey: dataConvertedJSON[i]['STUDYKEY'],
+          pId: dataConvertedJSON[i]['PID'],
+          pName: dataConvertedJSON[i]['PNAME'], 
+          modallity: dataConvertedJSON[i]['MODALITY'], 
+          studyDescription: dataConvertedJSON[i]['STUDYDESC'], 
+          studyDate: dataConvertedJSON[i]['STUDYDATE'], 
+          reportStatus: dataConvertedJSON[i]['REPORTSTATUS'],
+          seriesCount: dataConvertedJSON[i]['SERIESCNT'],
+          imageCount: dataConvertedJSON[i]['IMAGECNT'],
+          examStatus: dataConvertedJSON[i]['EXAMSTATUS']
+        )
+      );
     }
   }
+
+  // /// 홈페이지의 테이블을 선택했을 때 해당 검사 상세 정보 보내주기
+  // showStudyDetail(int studyKey) {
+  //   studyDetailData.clear();
+  //   // print(pacsData[studyKey]);
+  //   // studyDetailData.add(pacsData[studyKey+1]);
+  //   studyDetailData.add(pacsData[studyKey]);
+  //   // studyDetailData.add(
+  //   //   HomePageTableData(
+  //   //     pId: dataConvertedJSON[studyKey]['PID'],
+  //   //     pName: dataConvertedJSON[studyKey]['PNAME'], 
+  //   //     modallity: dataConvertedJSON[studyKey]['MODALITY'], 
+  //   //     studyDescription: dataConvertedJSON[studyKey]['STUDYDESC'], 
+  //   //     studyDate: dataConvertedJSON[studyKey]['STUDYDATE'], 
+  //   //     reportStatus: dataConvertedJSON[studyKey]['REPORTSTATUS'],
+  //   //     seriesCount: dataConvertedJSON[studyKey]['SERIESCNT'],
+  //   //     imageCount: dataConvertedJSON[studyKey]['IMAGECNT'],
+  //   //     examStatus: dataConvertedJSON[studyKey]['EXAMSTATUS']
+  //   //   )
+  //   // );
+  //   print("선택한 검사의 모든 데이터 : $studyDetailData");
+  // }
 
 
 
