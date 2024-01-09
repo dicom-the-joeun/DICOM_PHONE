@@ -1,7 +1,7 @@
 import 'dart:convert';
 
+import 'package:dicom_phone/DataSource/remote_datasource.dart';
 import 'package:dicom_phone/Model/homepage_table_data.dart';
-import 'package:dicom_phone/VM/remote_datasource.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';

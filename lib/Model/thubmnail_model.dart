@@ -2,7 +2,7 @@ import 'dart:convert';
 
 class ThumbnailModel {
   final int serieskey;
-  final String seriesdesc;
+  final String? seriesdesc;
   final String? score;
   final int imagecnt;
   final String path;
@@ -11,7 +11,7 @@ class ThumbnailModel {
 
   ThumbnailModel({
     required this.serieskey,
-    required this.seriesdesc,
+    this.seriesdesc,
     this.score,
     required this.imagecnt,
     required this.path,
@@ -19,15 +19,12 @@ class ThumbnailModel {
     required this.headers,
   });
 
-  factory ThumbnailModel.fromMap(Map<String, dynamic> res) {
-    return ThumbnailModel(
-      serieskey: res['SERIESKEY'],
-      seriesdesc: res['SERIESDESC'],
-      score: res['SCORE'],
-      imagecnt: res['IMAGECNT'],
-      path: res['PATH'],
-      fname: res['FNAME'],
-      headers: json.decode(res['HEADERS']),
-    );
-  }
+ThumbnailModel.fromMap(Map<String, dynamic> res)
+      : serieskey = res['SERIESKEY'],
+        seriesdesc = res['SERIESDESC'],
+        score = res['SCORE'],
+        imagecnt = res['IMAGECNT'],
+        path = res['PATH'],
+        fname = res['FNAME'],
+        headers = json.decode(res['HEADERS']);
 }

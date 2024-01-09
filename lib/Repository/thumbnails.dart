@@ -1,6 +1,6 @@
 import 'dart:convert';
 
-import 'package:dio/dio.dart' as dio;
+import 'package:dicom_phone/DataSource/token_handler.dart';
 import 'package:dicom_phone/DataSource/remote_datasource.dart';
 import 'package:dicom_phone/Model/thubmnail_model.dart';
 import 'package:get/get.dart';
@@ -8,66 +8,69 @@ import 'package:http/http.dart' as http;
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 abstract class Thumbnails {
-  Future getThumbnail(int studyKey, int serieskey);
+  Future getThumbnail(int studyKey);
 }
 
-class Thumbnail implements Thumbnails {
+class Thumbnail extends GetxController implements Thumbnails {
   RemoteDatasourceImpl datasource = RemoteDatasourceImpl();
-  List<ThumbnailModel> thumbnailList = [];
-  List<dynamic> resultList = [];
-  String path = "";
-  String fname = "";
+  final TokenHandler _tokenHandler = TokenHandler();
+  RxList<ThumbnailModel> seriesList = <ThumbnailModel>[].obs; // 썸네일 시리즈를 담을 리스트
+  RxString token = "".obs; // 토큰을 담을 변수
+  final String? baseUrl = dotenv.env['baseurl'];
 
-  /// 썸네일 뽑기
   @override
-  getThumbnail(int studyKey, int serieskey) async {
-    thumbnailList.clear();
-    resultList.clear();
-    final String? baseUrl = dotenv.env['baseurl'];
-    String addurl = "dcms/thumbnails?studykey=$studyKey&serieskey=$serieskey";
-    Uri url = Uri.parse('$baseUrl$addurl');
-    var response = await http.get(url);
-
-    var dataConvertedJSON = json.decode(response.body);
-
-    resultList = dataConvertedJSON;
-
-    // resultList의 각 항목을 ThumbnailModel로 변환
-    thumbnailList = resultList.map((res) {
-      return ThumbnailModel.fromMap(res);
-    }).toList();
-
-    // 변환된 리스트 확인
-    // print(thumbnailList.first.serieskey);
-    // print(thumbnailList.first.headers);
-    // print(thumbnailList.first.path);
-    // print(thumbnailList.first.fname);
-    path = thumbnailList.first.path;
-    fname = thumbnailList.first.fname;
-    await showThumbnailImage(
-        thumbnailList.first.path, thumbnailList.first.fname, "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3MDQ3MDgyMzEsInN1YiI6ImFkbWluIn0.JEX4FLY4iZxEh1Rb2O48zl6tihmYD3I-2D7cJXSUOtY");
+  void onInit() async {
+    await fetchTokenData();
+    await getThumbnail(2);
+    super.onInit();
   }
 
-  /// 썸네일 image 받아오기
-  showThumbnailImage(String path, String fname, String auth) async {
-    String addurl = "dcms/image?filepath=$path&filename=$fname";
-    final Map<String, dynamic> headers = {
-      'accept': 'application/json',
-      'Authorization': auth,
-    };
-
-    
+  /// 썸네일 정보 뽑기
+  @override
+  getThumbnail(int studyKey) async {
+    // 시리즈 리스트 초기화
+    seriesList.value = [];
+    // endpoint 가져오기
+    String addurl = "dcms/thumbnails?studykey=$studyKey";
+    Uri url = Uri.parse('$baseUrl$addurl');
     try {
-      final dio.Response<dynamic> response =
-          await datasource.get(addurl, headers: headers);
+      var response = await http.get(url);
       if (response.statusCode == 200) {
-        // json.decode(response.body);
-        print("headers: ${response.headers['']}");
-        } else {
-        print('error');
+        // 응답 결과(리스트형식)을 담기
+        String responseBody = utf8.decode(response.bodyBytes);
+        List dataConvertedJSON = jsonDecode(responseBody);
+        // 반복문으로 studies 리스트에 study 객체 담기
+        for (var series in dataConvertedJSON) {
+          // study를 Map형식으로 담아주기
+          ThumbnailModel tempSeries = ThumbnailModel.fromMap(series);
+          seriesList.add(tempSeries);
+        }
+      } else {
+        // 200 코드가 아닌 경우 빈 리스트 리턴
+        seriesList.value = [];
       }
     } catch (e) {
-      print(ResponseResult.error);
+      // 예외 처리 및 변환
+      print("서버 요청 중 오류가 발생했습니다: $e");
     }
+
+  }
+
+  /// AccessToken 가져오기
+  fetchTokenData() async {
+    token.value = await _tokenHandler.getAccessToken();
+    // print("token: $token");
+    return token;
+  }
+
+  /// 썸네일 이미지 url 받아오기
+  String getThumbnailUrl(
+      {required int index}) {
+    String resultUrl = "";
+    String imageUrl = '${baseUrl}dcms/image';
+    String path = seriesList[index].path;
+    String fname = seriesList[index].fname;
+    resultUrl = '$imageUrl?filepath=$path&filename=$fname';
+    return resultUrl;
   }
 }
