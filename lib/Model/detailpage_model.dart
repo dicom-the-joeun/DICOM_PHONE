@@ -50,7 +50,11 @@ class DetailModel {
         WindowWidth = res['WindowWidth'],
         NumberofFrames = res['NumberofFrames'],
         pixelarrayshape = res['pixelarrayshape'],
-        result = res['RES'];
+        result = ResultModel(
+          IMAGEKEY: res['IMAGEKEY'], 
+          PATH: res['PATH'],
+          FNAME: res['FNAME']);
+       
 
 }
 
