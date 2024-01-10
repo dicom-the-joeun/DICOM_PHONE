@@ -6,16 +6,16 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class SireisListviewPage extends StatelessWidget {
-  const SireisListviewPage({super.key});
-
+  final Function(ThemeMode) onChangeTheme;
+  const SireisListviewPage({super.key, required this.onChangeTheme,});
 
   @override
   Widget build(BuildContext context) {
-  final Thumbnail thumbnail = Get.put(Thumbnail());
-  var studyKey = Get.arguments ?? 1;
+    final Thumbnail thumbnail = Get.put(Thumbnail());
+    var studyKey = Get.arguments ?? 1;
 
     return Scaffold(
-      appBar: const MyAppbar(),
+      appBar: MyAppbar(onChangeTheme: onChangeTheme),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -82,7 +82,13 @@ class SireisListviewPage extends StatelessWidget {
                                       'Authorization':
                                           "Bearer ${thumbnail.token}",
                                     },
-                                    fit: BoxFit.cover,
+                                    fit: BoxFit.fill,
+                                    // progressIndicatorBuilder: (context, url,
+                                    //         downloadProgress) =>
+                                    //     CircularProgressIndicator(
+                                    //         value: downloadProgress.progress),
+                                    // errorWidget: (context, url, error) =>
+                                    //     const Icon(Icons.error),
                                   ),
                                 ),
                               ],

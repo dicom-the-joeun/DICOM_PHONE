@@ -7,8 +7,9 @@ import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 
 class HomePagePatientDialog extends StatelessWidget {
+  final Function(ThemeMode) onChangeTheme;
   final int studyKey;
-  const HomePagePatientDialog({super.key, required this.studyKey});
+  const HomePagePatientDialog({super.key, required this.studyKey, required this.onChangeTheme});
 
   /// 선택한 검사 상세 정보 페이지 (해당 검사의 모든 데이터 다 보여주기)
   @override
@@ -121,7 +122,7 @@ class HomePagePatientDialog extends StatelessWidget {
               ElevatedButton(
                 onPressed: () {
                   thumbnail.getThumbnail(studyKey);
-                  Get.to(() => const SireisListviewPage(), arguments: homePageData.studyKey);
+                  Get.to(() => SireisListviewPage(onChangeTheme: onChangeTheme), arguments: homePageData.studyKey);
                 }, 
                 child: const Text("상세 이미지 보기"),
               ),

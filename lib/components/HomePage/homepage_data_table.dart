@@ -7,7 +7,8 @@ import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 
 class HomePageDataTable extends StatefulWidget {
-  const HomePageDataTable({super.key});
+  final Function(ThemeMode) onChangeTheme;
+  const HomePageDataTable({super.key, required this.onChangeTheme});
 
   @override
   State<HomePageDataTable> createState() => _HomePageDataTableState();
@@ -70,7 +71,7 @@ class _HomePageDataTableState extends State<HomePageDataTable> {
                   onTap: () {
                     showDialog(
                       context: context, 
-                      builder: (context) => HomePagePatientDialog(studyKey: index),
+                      builder: (context) => HomePagePatientDialog(studyKey: index, onChangeTheme: widget.onChangeTheme),
                     );
                   },
                 ),
@@ -79,7 +80,7 @@ class _HomePageDataTableState extends State<HomePageDataTable> {
                   onTap: () {
                     showDialog(
                       context: context, 
-                      builder: (context) => HomePagePatientDialog(studyKey: index),
+                      builder: (context) => HomePagePatientDialog(studyKey: index, onChangeTheme: widget.onChangeTheme),
                     );
                   },
                 ),
@@ -88,7 +89,7 @@ class _HomePageDataTableState extends State<HomePageDataTable> {
                   onTap: () {
                     showDialog(
                       context: context, 
-                      builder: (context) => HomePagePatientDialog(studyKey: index),
+                      builder: (context) => HomePagePatientDialog(studyKey: index, onChangeTheme: widget.onChangeTheme),
                     );
                   },
                 ),
@@ -97,7 +98,7 @@ class _HomePageDataTableState extends State<HomePageDataTable> {
                   onTap: () {
                     showDialog(
                       context: context, 
-                      builder: (context) => HomePagePatientDialog(studyKey: index),
+                      builder: (context) => HomePagePatientDialog(studyKey: index, onChangeTheme: widget.onChangeTheme),
                     );
                   },
                 ),
@@ -106,7 +107,7 @@ class _HomePageDataTableState extends State<HomePageDataTable> {
                   onTap: () {
                     showDialog(
                       context: context, 
-                      builder: (context) => HomePagePatientDialog(studyKey: index),
+                      builder: (context) => HomePagePatientDialog(studyKey: index, onChangeTheme: widget.onChangeTheme),
                     );
                   },
                 ),

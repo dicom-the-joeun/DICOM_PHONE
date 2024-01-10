@@ -8,16 +8,17 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class HomePage extends StatelessWidget {
-  const HomePage({super.key});
+  final Function(ThemeMode) onChangeTheme;
+  const HomePage({super.key, required this.onChangeTheme});
 
   @override
   Widget build(BuildContext context) {
     HomePageController homepageController = Get.put(HomePageController());
-    return const Scaffold(
+    return Scaffold(
       body: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Row(
+          const Row(
             children: [
               Padding(
                 padding: EdgeInsets.all(10.0),
@@ -29,8 +30,8 @@ class HomePage extends StatelessWidget {
               ),
             ],
           ),
-          HomePageSelectDate(),
-          HomePageDataTable(),
+          const HomePageSelectDate(),
+          HomePageDataTable(onChangeTheme: onChangeTheme),
           // DataTable(
           //   columnSpacing: 10,
           //   columns: const [

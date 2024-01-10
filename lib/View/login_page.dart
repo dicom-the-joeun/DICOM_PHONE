@@ -1,6 +1,7 @@
 import 'package:dicom_phone/VM/login_ctrl.dart';
 import 'package:dicom_phone/View/homepage.dart';
 import 'package:dicom_phone/View/series_listview_page.dart';
+import 'package:dicom_phone/home.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -70,7 +71,7 @@ class LoginPage extends StatelessWidget {
                                 ? loginController.setIdText(
                                     loginController.idController.text)
                                 : loginController.deleteIdText();
-                            Get.to(() => const HomePage());
+                            Get.to(() => HomePage(onChangeTheme: onChangeTheme,));
                           } else {
                             // ignore: use_build_context_synchronously
                             showSnacbar(
@@ -105,13 +106,13 @@ class LoginPage extends StatelessWidget {
                   ),
                   ElevatedButton(
                     onPressed: () {
-                      Get.to(() => const SireisListviewPage());
+                      Get.to(() => SireisListviewPage(onChangeTheme: onChangeTheme,));
                     },
                     child: const Text("SireisPage(ListViewPage) 이동"),
                   ),
                   ElevatedButton(
                     onPressed: () {
-                      Get.to(() => const HomePage());
+                      Get.to(() => HomePage(onChangeTheme: onChangeTheme,));
                     },
                     child: const Text("홈페이지 이동"),
                   ),
