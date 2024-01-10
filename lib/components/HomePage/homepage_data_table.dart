@@ -27,89 +27,73 @@ class _HomePageDataTableState extends State<HomePageDataTable> {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: 700,
+      height: MediaQuery.of(context).size.height * 0.7,
       child: Obx(() => DataTable2(
+          showCheckboxColumn: false,
           columnSpacing: 20,
           columns: const [
             DataColumn2(
-              label: Text(
-                '환자 아이디',
-                textAlign: TextAlign.center,
+              label: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    '환자 이름',
+                    textAlign: TextAlign.center,
+                  ),
+                ],
               ),
             ),
             DataColumn2(
-              label: Text(
-                '환자 이름',
-                textAlign: TextAlign.center,
+              label: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    '검사 장비',
+                    textAlign: TextAlign.center,
+                  ),
+                ],
               ),
-            ),
+            ), 
             DataColumn2(
-              label: Text(
-                '검사 장비',
-                textAlign: TextAlign.center,
-              ),
-            ),  
-            DataColumn2(
-              label: Text(
-                '검사 설명',
-                textAlign: TextAlign.center,
-              ),
-            ),  
-            DataColumn2(
-              label: Text(
-                '검사 일시',
-                textAlign: TextAlign.center,
+              label: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    '검사 일시',
+                    textAlign: TextAlign.center,
+                  ),
+                ],
               ),
             ),
           ], 
           rows: List.generate(homepageController.homePageData.length, (index) {
             HomePageTableData homePageData = homepageController.homePageData[index];
             return DataRow(
+              onSelectChanged: (value) {
+                showDialog(
+                  context: context, 
+                  builder: (context) => HomePagePatientDialog(studyKey: index, onChangeTheme: widget.onChangeTheme),
+                );
+              },
               cells: [
                 DataCell(
-                  Text(homePageData.pId),
-                  onTap: () {
-                    showDialog(
-                      context: context, 
-                      builder: (context) => HomePagePatientDialog(studyKey: index, onChangeTheme: widget.onChangeTheme),
-                    );
-                  },
-                ),
-                DataCell(
                   Text(homePageData.pName),
-                  onTap: () {
-                    showDialog(
-                      context: context, 
-                      builder: (context) => HomePagePatientDialog(studyKey: index, onChangeTheme: widget.onChangeTheme),
-                    );
-                  },
                 ),
                 DataCell(
-                  Text(homePageData.modallity),
-                  onTap: () {
-                    showDialog(
-                      context: context, 
-                      builder: (context) => HomePagePatientDialog(studyKey: index, onChangeTheme: widget.onChangeTheme),
-                    );
-                  },
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(homePageData.modallity),
+                    ],
+                  ),
                 ),
                 DataCell(
-                  Text(homePageData.studyDescription ?? '-'),
-                  onTap: () {
-                    showDialog(
-                      context: context, 
-                      builder: (context) => HomePagePatientDialog(studyKey: index, onChangeTheme: widget.onChangeTheme),
-                    );
-                  },
-                ),
-                DataCell(
-                  Text(DateFormat('yyyy-MM-dd').format(DateTime.parse(homePageData.studyDate.toString()))),
-                  onTap: () {
-                    showDialog(
-                      context: context, 
-                      builder: (context) => HomePagePatientDialog(studyKey: index, onChangeTheme: widget.onChangeTheme),
-                    );
-                  },
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(DateFormat('yyyy-MM-dd').format(DateTime.parse(homePageData.studyDate.toString()))),
+                    ],
+                  ),
                 ),
               ],
               

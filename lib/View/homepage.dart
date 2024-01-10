@@ -1,5 +1,6 @@
 import 'package:dicom_phone/Model/homepage_table_data.dart';
 import 'package:dicom_phone/VM/homepage_controller.dart';
+import 'package:dicom_phone/View/myappbar.dart';
 import 'package:dicom_phone/components/HomePage/homepage_data_table.dart';
 import 'package:dicom_phone/components/HomePage/homepage_dropdown_btn.dart';
 import 'package:dicom_phone/components/HomePage/homepage_searchbar.dart';
@@ -15,8 +16,9 @@ class HomePage extends StatelessWidget {
   Widget build(BuildContext context) {
     HomePageController homepageController = Get.put(HomePageController());
     return Scaffold(
+      appBar: MyAppbar(onChangeTheme: onChangeTheme, backStatus: false),
       body: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.start,
         children: [
           const Row(
             children: [
