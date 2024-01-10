@@ -15,7 +15,7 @@ class SireisListviewPage extends StatelessWidget {
     var studyKey = Get.arguments ?? 1;
 
     return Scaffold(
-      appBar: MyAppbar(onChangeTheme: onChangeTheme),
+      appBar: MyAppbar(onChangeTheme: onChangeTheme, backStatus: true),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
