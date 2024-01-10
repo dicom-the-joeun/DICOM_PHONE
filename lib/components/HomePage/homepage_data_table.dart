@@ -28,7 +28,6 @@ class _HomePageDataTableState extends State<HomePageDataTable> {
     return SizedBox(
       height: 700,
       child: Obx(() => DataTable2(
-        
           columnSpacing: 20,
           columns: const [
             DataColumn2(
@@ -62,7 +61,7 @@ class _HomePageDataTableState extends State<HomePageDataTable> {
               ),
             ),
           ], 
-          rows: List.generate(homepageController.pacsData.length, (index) {
+          rows: List.generate(homepageController.homePageData.length, (index) {
             HomePageTableData homePageData = homepageController.homePageData[index];
             return DataRow(
               cells: [
