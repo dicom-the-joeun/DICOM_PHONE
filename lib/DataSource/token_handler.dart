@@ -15,10 +15,10 @@ class TokenHandler {
 
     final response = await datasource.get(url, headers: tokenheaders);
     if (response != null) {
-      Logger().d(response);
+      // Logger().d(response);
       dio.Response<dynamic> resData = response;
       Map<String, dynamic> mapData = resData.headers.map;
-      print("mapData: $mapData");
+      // print("mapData: $mapData");
       String accesstoken = mapData['access_token'].first;
       await setAccessToken(accesstoken);
       return accesstoken;

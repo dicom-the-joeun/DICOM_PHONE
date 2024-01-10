@@ -1,7 +1,6 @@
 import 'package:dicom_phone/VM/login_ctrl.dart';
 import 'package:dicom_phone/View/homepage.dart';
 import 'package:dicom_phone/View/series_listview_page.dart';
-import 'package:dicom_phone/secondpage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -31,37 +30,62 @@ class LoginPage extends StatelessWidget {
               loginText(
                 content: "ID",
                 textController: loginController.idController,
+                visiableStatus: false,
               ),
               loginText(
                 content: "Password",
                 textController: loginController.pwController,
+                visiableStatus: true,
               ),
               Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const Text("ID 기억하기"),
+                      Obx(
+                        () => Checkbox(
+                          value: loginController.idSaveStatus.value,
+                          onChanged: (value) {
+                            loginController.idSaveStatus.value = value!;
+                          },
+                        ),
+                      ),
+                    ],
+                  ),
                   Padding(
-                    padding: const EdgeInsets.all(20.0),
+                    padding: const EdgeInsets.all(10.0),
                     child: CupertinoButton.filled(
                       onPressed: () async {
                         // 로그인 시도 성공 여부 따지기
                         if (loginController.idController.text.isNotEmpty &&
                             loginController.pwController.text.isNotEmpty) {
-                          await loginController.checkLogin(
-                                  loginController.idController.text,
-                                  loginController.pwController.text)
-                              ? Get.to(() => const HomePage())
-                              // ignore: use_build_context_synchronously
-                              : showSnacbar(
-                                  context: context,
-                                  title: "실패",
-                                  content: "ID나 Password를 다시 확인하세요",
-                                  resultBackColor:
-                                      // ignore: use_build_context_synchronously
-                                      Theme.of(context).colorScheme.error,
-                                  resultTextColor:
-                                      // ignore: use_build_context_synchronously
-                                      Theme.of(context).colorScheme.onError,
-                                );
+                          if (await loginController.checkLogin(
+                              loginController.idController.text,
+                              loginController.pwController.text)) {
+                            // 체크박스에따라서 아이디 저장할지말지 정하기
+                            loginController.setSaveIdText();
+                            loginController.idSaveStatus.value == true
+                                ? loginController.setIdText(
+                                    loginController.idController.text)
+                                : loginController.deleteIdText();
+                            Get.to(() => const HomePage());
+                          } else {
+                            // ignore: use_build_context_synchronously
+                            showSnacbar(
+                              context: context,
+                              title: "실패",
+                              content: "ID나 Password를 다시 확인하세요",
+                              resultBackColor:
+                                  // ignore: use_build_context_synchronously
+                                  Theme.of(context).colorScheme.error,
+                              resultTextColor:
+                                  // ignore: use_build_context_synchronously
+                                  Theme.of(context).colorScheme.onError,
+                            );
+                          }
+                          // 로고 사진 변경, 자동로그인, 체크박스 처리@@@@@@@@@@@@@
                         } else {
                           showSnacbar(
                             context: context,
@@ -119,15 +143,18 @@ class LoginPage extends StatelessWidget {
   }
 
   /// 로그인 텍스트 위젯
-  loginText(
-      {required String content,
-      required TextEditingController textController}) {
+  loginText({
+    required String content,
+    required TextEditingController textController,
+    required bool visiableStatus,
+  }) {
     return Padding(
       padding: const EdgeInsets.all(10.0),
       child: SizedBox(
         width: 400,
         child: TextField(
           controller: textController,
+          obscureText: visiableStatus,
           decoration: InputDecoration(
             labelText: content,
           ),
@@ -135,16 +162,4 @@ class LoginPage extends StatelessWidget {
       ),
     );
   }
-
-  /// 로그인 실패 Toast
-  // errorToast({required BuildContext context, required String content}) {
-  //   Fluttertoast.showToast(
-  //     msg: content,
-  //     gravity: ToastGravity.TOP,
-  //     backgroundColor: Theme.of(context).colorScheme.error,
-  //     textColor: Theme.of(context).colorScheme.onError,
-  //     fontSize: 20,
-  //     toastLength: Toast.LENGTH_LONG,
-  //   );
-  // }
 } // End

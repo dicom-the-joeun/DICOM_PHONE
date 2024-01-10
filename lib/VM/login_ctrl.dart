@@ -3,26 +3,27 @@ import 'package:dicom_phone/DataSource/token_handler.dart';
 import 'package:dio/dio.dart' as dio;
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:get/get_state_manager/get_state_manager.dart';
-import 'package:logger/logger.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginController extends GetxController {
   late TextEditingController idController;
   late TextEditingController pwController;
   RemoteDatasourceImpl datasource = RemoteDatasourceImpl();
   final TokenHandler _tokenHandler = TokenHandler();
+  RxBool idSaveStatus = false.obs;
   bool loginStatus = false;
 
   @override
-  void onInit() {
-    super.onInit();
+  onInit() async {
     idController = TextEditingController();
     pwController = TextEditingController();
+    await getIdText();
+    await getSaveIdText();
+    super.onInit();
   }
 
   /// Login Check
   Future<bool> checkLogin(String username, String password) async {
-    
     bool loginStatus = false;
 
     const String url = "auth/login";
@@ -53,8 +54,40 @@ class LoginController extends GetxController {
   }
 
   /// logout 하기
-  logoutUser(){
+  logoutUser() {
     _tokenHandler.deleteToken();
+  }
+
+  /// id 기억하기 체크박스 status값 저장
+  setSaveIdText() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setBool('saveIdTextStatus', idSaveStatus.value);
+  }
+  
+  /// id 기억하기 체크박스 status값 불러오기
+  getSaveIdText() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    idSaveStatus.value = prefs.getBool('saveIdTextStatus') ?? false;
+  }
+
+  /// id textfeild에 저장하기
+  Future<bool> setIdText(String idText) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    Future<bool> saveIdText = prefs.setString('idText', idText);
+    print("idText: $idText");
+    return saveIdText;
+  }
+
+  /// id text 가져오기
+  getIdText() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    idController.text = prefs.getString('idText') ?? " ";
+  }
+
+  /// id text 지우기
+  deleteIdText() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.remove('idText');
   }
 
   @override

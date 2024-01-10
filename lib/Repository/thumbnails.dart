@@ -15,13 +15,13 @@ class Thumbnail extends GetxController implements Thumbnails {
   RemoteDatasourceImpl datasource = RemoteDatasourceImpl();
   final TokenHandler _tokenHandler = TokenHandler();
   RxList<ThumbnailModel> seriesList = <ThumbnailModel>[].obs; // 썸네일 시리즈를 담을 리스트
-  RxString token = "".obs; // 토큰을 담을 변수
+  String token = ""; // 토큰을 담을 변수
+  RxBool isLoading = true.obs;
   final String? baseUrl = dotenv.env['baseurl'];
 
   @override
   void onInit() async {
     await fetchTokenData();
-    await getThumbnail(2);
     super.onInit();
   }
 
@@ -30,11 +30,15 @@ class Thumbnail extends GetxController implements Thumbnails {
   getThumbnail(int studyKey) async {
     // 시리즈 리스트 초기화
     seriesList.value = [];
+    isLoading.value = true;
     // endpoint 가져오기
     String addurl = "dcms/thumbnails?studykey=$studyKey";
     Uri url = Uri.parse('$baseUrl$addurl');
     try {
-      var response = await http.get(url);
+      var response = await http.get(url, headers: {
+        'accept': 'application/json',
+        'Authorization': 'Bearer $token'
+      });
       if (response.statusCode == 200) {
         // 응답 결과(리스트형식)을 담기
         String responseBody = utf8.decode(response.bodyBytes);
@@ -45,27 +49,28 @@ class Thumbnail extends GetxController implements Thumbnails {
           ThumbnailModel tempSeries = ThumbnailModel.fromMap(series);
           seriesList.add(tempSeries);
         }
+        print(seriesList[0].fname);
+        print(seriesList[0].path);
+        isLoading.value = false;
       } else {
         // 200 코드가 아닌 경우 빈 리스트 리턴
+        isLoading.value = true;
         seriesList.value = [];
       }
     } catch (e) {
       // 예외 처리 및 변환
       print("서버 요청 중 오류가 발생했습니다: $e");
+      isLoading.value = true;
     }
-
   }
 
   /// AccessToken 가져오기
   fetchTokenData() async {
-    token.value = await _tokenHandler.getAccessToken();
-    // print("token: $token");
-    return token;
+    token = await _tokenHandler.getAccessToken();
   }
 
   /// 썸네일 이미지 url 받아오기
-  String getThumbnailUrl(
-      {required int index}) {
+  String getThumbnailUrl({required int index}) {
     String resultUrl = "";
     String imageUrl = '${baseUrl}dcms/image';
     String path = seriesList[index].path;

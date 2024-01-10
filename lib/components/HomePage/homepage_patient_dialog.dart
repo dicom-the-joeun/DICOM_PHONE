@@ -1,4 +1,5 @@
 import 'package:dicom_phone/Model/homepage_table_data.dart';
+import 'package:dicom_phone/Repository/thumbnails.dart';
 import 'package:dicom_phone/VM/homepage_controller.dart';
 import 'package:dicom_phone/View/series_listview_page.dart';
 import 'package:flutter/material.dart';
@@ -13,6 +14,7 @@ class HomePagePatientDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     HomePageController homepageController = Get.find<HomePageController>();
+    final Thumbnail thumbnail = Get.put(Thumbnail());
     // HomePageTableData homePageDetailData = homepageController.showStudyDetail(studyKey+1);
     HomePageTableData homePageData = homepageController.homePageData[studyKey];
     return AlertDialog(
@@ -118,6 +120,7 @@ class HomePagePatientDialog extends StatelessWidget {
               ),
               ElevatedButton(
                 onPressed: () {
+                  thumbnail.getThumbnail(studyKey);
                   Get.to(() => const SireisListviewPage(), arguments: homePageData.studyKey);
                 }, 
                 child: const Text("상세 이미지 보기"),

@@ -1,17 +1,21 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:dicom_phone/Detailpage.dart';
-import 'package:dicom_phone/Model/thubmnail_model.dart';
 import 'package:dicom_phone/Repository/thumbnails.dart';
+import 'package:dicom_phone/View/myappbar.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class SireisListviewPage extends StatelessWidget {
   const SireisListviewPage({super.key});
 
+
   @override
   Widget build(BuildContext context) {
-    final Thumbnail thumbnail = Get.put(Thumbnail());
+  final Thumbnail thumbnail = Get.put(Thumbnail());
+  var studyKey = Get.arguments ?? 1;
+
     return Scaffold(
+      appBar: const MyAppbar(),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -21,14 +25,14 @@ class SireisListviewPage extends StatelessWidget {
               child: const Text('상세페이지 이동'),
             ),
             ElevatedButton(
-              onPressed: () => thumbnail.getThumbnail(2),
+              onPressed: () => thumbnail.getThumbnail(studyKey),
               child: const Text('썸네일'),
             ),
             Obx(
-              () => thumbnail.seriesList.isEmpty
+              () => thumbnail.isLoading.value
                   ? const CircularProgressIndicator()
                   : SizedBox(
-                      // decoration: BoxDecoration(border: Border.all(color: Colors.red)),
+                      // SizedBox에 onTap해서 상세페이지 이동으로 수정하기 이동할때는 필요한 값 들고가기
                       height: MediaQuery.of(context).size.height * 0.5,
                       width: MediaQuery.of(context).size.width,
                       child: ListView.builder(
@@ -40,13 +44,10 @@ class SireisListviewPage extends StatelessWidget {
                             child: Column(
                               children: [
                                 Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
+                                  mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
                                     Text(
-                                        "검사일자: ${thumbnail.seriesList[index].headers['Study Date']}"),
-                                    Text(
-                                        "SeriesNumber: ${thumbnail.seriesList[index].headers["Series Number"]}"),
+                                        "검사장비 모델명: ${thumbnail.seriesList[index].headers["Manufacturer's Model Name"] ?? "정보없음"}"),
                                   ],
                                 ),
                                 Row(
@@ -54,9 +55,19 @@ class SireisListviewPage extends StatelessWidget {
                                       MainAxisAlignment.spaceBetween,
                                   children: [
                                     Text(
-                                        "환자명: ${thumbnail.seriesList[index].headers["Patient's Name"]}"),
+                                        "검사일자: ${thumbnail.seriesList[index].headers['Study Date'] ?? "정보없음"}"),
                                     Text(
-                                        "환자나이: 만 ${calculateAge(thumbnail.seriesList[index].headers["Patient's Birth Date"])}세"),
+                                        "SeriesNumber: ${thumbnail.seriesList[index].headers["Series Number"] ?? "정보없음"}"),
+                                  ],
+                                ),
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Text(
+                                        "환자명: ${thumbnail.seriesList[index].headers["Patient's Name"] ?? "정보없음"}"),
+                                    Text(
+                                        "환자나이: 만 ${calculateAge(thumbnail.seriesList[index].headers["Patient's Birth Date"] ?? "정보없음")}세"),
                                   ],
                                 ),
                                 Container(
@@ -69,10 +80,8 @@ class SireisListviewPage extends StatelessWidget {
                                     httpHeaders: {
                                       'accept': 'application/json',
                                       'Authorization':
-                                          "Bearer ${thumbnail.token.value}",
+                                          "Bearer ${thumbnail.token}",
                                     },
-                                    // width: 300,
-                                    // height: 300,
                                     fit: BoxFit.cover,
                                   ),
                                 ),
@@ -93,10 +102,8 @@ class SireisListviewPage extends StatelessWidget {
   calculateAge(String birthDate) {
     // 현재 날짜
     DateTime now = DateTime.now();
-
     // 생년월일을 DateTime으로 변환
     DateTime birthday = DateTime.parse(birthDate);
-
     // 현재 나이 계산
     int age = now.year - birthday.year;
 
