@@ -74,11 +74,11 @@ class HomePageController extends GetxController {
         'accept': 'application/json',
         'Authorization': 'Bearer $token'
       });
-      print(response.statusCode);
+      // print(response.statusCode);
       if (response.statusCode == 200) {
         dataConvertedJSON = json.decode(utf8
           .decode(response.bodyBytes)); // 소스 원본을 가져와 복호화 하기. 한글이기 때문에 꼭 해줘야 함
-      print(dataConvertedJSON);
+      // print(dataConvertedJSON);
       // print("studykey :  ${dataConvertedJSON[0]['PID']}");
       pacsData.clear();
       pacsData.addAll(dataConvertedJSON);

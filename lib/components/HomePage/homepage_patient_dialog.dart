@@ -16,11 +16,11 @@ class HomePagePatientDialog extends StatelessWidget {
     // HomePageTableData homePageDetailData = homepageController.showStudyDetail(studyKey+1);
     HomePageTableData homePageData = homepageController.homePageData[studyKey];
     return AlertDialog(
-      content: SingleChildScrollView(
-        scrollDirection: Axis.vertical,
-        child: SizedBox(
-          height: MediaQuery.of(context).size.height,
-          width: MediaQuery.of(context).size.width,
+      content: SizedBox(
+        height: MediaQuery.of(context).size.height * 0.60,
+        width: MediaQuery.of(context).size.width,
+        child: SingleChildScrollView(
+          scrollDirection: Axis.vertical,
           child: Column(
             children: [
               Text("Previous"),
@@ -122,7 +122,8 @@ class HomePagePatientDialog extends StatelessWidget {
                 }, 
                 child: const Text("상세 이미지 보기"),
               ),
-              Text("Report")
+              Text("\nReport"),
+                
             ],
           ),
         ),
