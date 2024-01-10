@@ -1,15 +1,16 @@
 import 'package:dicom_phone/DataSource/remote_datasource.dart';
+import 'package:dicom_phone/DataSource/token_handler.dart';
 import 'package:dio/dio.dart' as dio;
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get/get_state_manager/get_state_manager.dart';
 import 'package:logger/logger.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginController extends GetxController {
   late TextEditingController idController;
   late TextEditingController pwController;
   RemoteDatasourceImpl datasource = RemoteDatasourceImpl();
+  final TokenHandler _tokenHandler = TokenHandler();
   bool loginStatus = false;
 
   @override
@@ -17,23 +18,6 @@ class LoginController extends GetxController {
     super.onInit();
     idController = TextEditingController();
     pwController = TextEditingController();
-  }
-
-  Future<String> getAccessToken() async {
-    const String url = "auth/refresh";
-    final String token = await getRefreshToken();
-    final Map<String, dynamic> tokenheaders = {'refresh-token': token};
-
-    final response = await datasource.get(url, headers: tokenheaders);
-    if (response != null) {
-      Logger().d(response);
-      dio.Response<dynamic> resData = response;
-      Map<String, dynamic> mapData = resData.headers.map;
-      String accesstoken = mapData['access_token'].first;
-      await _setAccessToken(accesstoken);
-      return accesstoken;
-    }
-    throw Exception('Failed to get access token');
   }
 
   /// Login Check
@@ -55,8 +39,8 @@ class LoginController extends GetxController {
       if (response.statusCode == 200) {
         String? accesstoken = response.headers['access_token']?.first;
         String? refreshtoken = response.headers['refresh_token']?.first;
-        if (await _setAccessToken(accesstoken!) &&
-            await _setRefreshToken(refreshtoken!)) {
+        if (await _tokenHandler.setAccessToken(accesstoken!) &&
+            await _tokenHandler.setRefreshToken(refreshtoken!)) {
           loginStatus = true;
         }
       } else {
@@ -68,27 +52,9 @@ class LoginController extends GetxController {
     return loginStatus;
   }
 
-  /// RefreshToken 가져오기
-  Future<String> getRefreshToken() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    String hasSeenOnboarding = prefs.getString('refreshtoken') ?? '';
-    return hasSeenOnboarding;
-  }
-
-  /// RefreshToken 저장하기
-  Future<bool> _setRefreshToken(String refreshtoken) async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    Future<bool> didsetrefreshToken =
-        prefs.setString('refreshtoken', refreshtoken);
-    return didsetrefreshToken;
-  }
-
-  /// AccessToken 저장하기
-  Future<bool> _setAccessToken(String accesstoken) async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    Future<bool> didsetaccessToken =
-        prefs.setString('accesstoken', accesstoken);
-    return didsetaccessToken;
+  /// logout 하기
+  logoutUser(){
+    _tokenHandler.deleteToken();
   }
 
   @override
