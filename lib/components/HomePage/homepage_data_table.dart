@@ -28,6 +28,7 @@ class _HomePageDataTableState extends State<HomePageDataTable> {
     return SizedBox(
       height: 700,
       child: Obx(() => DataTable2(
+        
           columnSpacing: 20,
           columns: const [
             DataColumn2(
@@ -37,6 +38,7 @@ class _HomePageDataTableState extends State<HomePageDataTable> {
               ),
             ),
             DataColumn2(
+
               label: Text(
                 '검사 장비',
                 textAlign: TextAlign.center,
@@ -63,6 +65,7 @@ class _HomePageDataTableState extends State<HomePageDataTable> {
                   },
                 ),
                 DataCell(
+
                   Text(homePageData.modallity),
                   onTap: () {
                     showDialog(
