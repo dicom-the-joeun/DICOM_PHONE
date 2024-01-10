@@ -33,14 +33,25 @@ class _HomePageDataTableState extends State<HomePageDataTable> {
           columns: const [
             DataColumn2(
               label: Text(
+                '환자 아이디',
+                textAlign: TextAlign.center,
+              ),
+            ),
+            DataColumn2(
+              label: Text(
                 '환자 이름',
                 textAlign: TextAlign.center,
               ),
             ),
             DataColumn2(
-
               label: Text(
                 '검사 장비',
+                textAlign: TextAlign.center,
+              ),
+            ),  
+            DataColumn2(
+              label: Text(
+                '검사 설명',
                 textAlign: TextAlign.center,
               ),
             ),  
@@ -56,6 +67,15 @@ class _HomePageDataTableState extends State<HomePageDataTable> {
             return DataRow(
               cells: [
                 DataCell(
+                  Text(homePageData.pId),
+                  onTap: () {
+                    showDialog(
+                      context: context, 
+                      builder: (context) => HomePagePatientDialog(studyKey: index),
+                    );
+                  },
+                ),
+                DataCell(
                   Text(homePageData.pName),
                   onTap: () {
                     showDialog(
@@ -65,8 +85,16 @@ class _HomePageDataTableState extends State<HomePageDataTable> {
                   },
                 ),
                 DataCell(
-
                   Text(homePageData.modallity),
+                  onTap: () {
+                    showDialog(
+                      context: context, 
+                      builder: (context) => HomePagePatientDialog(studyKey: index),
+                    );
+                  },
+                ),
+                DataCell(
+                  Text(homePageData.studyDescription ?? '-'),
                   onTap: () {
                     showDialog(
                       context: context, 

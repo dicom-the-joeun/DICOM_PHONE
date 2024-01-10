@@ -77,15 +77,15 @@ class HomePagePatientDialog extends StatelessWidget {
                       cells: [
                         DataCell(Text("검사 설명")),
                         DataCell(
-                          Text(
-                            homePageData.studyDescription ?? '-'
-                          ),
-                          // SingleChildScrollView(
-                          //   scrollDirection: Axis.vertical,
-                          //   child: Text(
-                          //     homePageData.studyDescription ?? '-'
-                          //   ),
+                          // Text(
+                          //   homePageData.studyDescription ?? '-'
                           // ),
+                          SingleChildScrollView(
+                            scrollDirection: Axis.vertical,
+                            child: Text(
+                              homePageData.studyDescription ?? '-'
+                            ),
+                          ),
                         )
                       ],
                     ),
@@ -122,8 +122,8 @@ class HomePagePatientDialog extends StatelessWidget {
                 }, 
                 child: const Text("상세 이미지 보기"),
               ),
-              Text("\nReport"),
-                
+              // Text("\nReport"),
+              
             ],
           ),
         ),
