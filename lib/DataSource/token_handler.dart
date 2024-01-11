@@ -43,9 +43,8 @@ class TokenHandler {
     try {
       final response = await datasource.get(url, headers: tokenheaders);
       if (response != null) {
-        Logger().d(response);
+        // Logger().d(response);
         dio.Response<dynamic> resData = response;
-        print(resData.statusCode);
         if (resData.statusCode == 200) {
           Map<String, dynamic> mapData = resData.headers.map;
           String accesstoken = mapData['access_token'].first;
@@ -71,7 +70,6 @@ class TokenHandler {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     Future<bool> didsetrefreshToken =
         prefs.setString('refresh_token', refreshtoken);
-    print("refresh_token: $refreshtoken");
     return didsetrefreshToken;
   }
 

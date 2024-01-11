@@ -1,7 +1,6 @@
 import 'package:dicom_phone/DataSource/remote_datasource.dart';
 import 'package:dicom_phone/DataSource/token_handler.dart';
 import 'package:dio/dio.dart' as dio;
-import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';

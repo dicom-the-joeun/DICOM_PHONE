@@ -73,10 +73,10 @@ class _MyAppState extends State<MyApp> {
         ),
       ),
 
-      // home: LoginPage(onChangeTheme: _changeThemeMode),
-      home: widget.autoLoginStatus == true
-          ? HomePage(onChangeTheme: _changeThemeMode)
-          : LoginPage(onChangeTheme: _changeThemeMode),
+      home: LoginPage(onChangeTheme: _changeThemeMode),
+      // home: widget.autoLoginStatus == true
+      //     ? HomePage(onChangeTheme: _changeThemeMode)
+      //     : LoginPage(onChangeTheme: _changeThemeMode),
 
       debugShowCheckedModeBanner: false,
     );
