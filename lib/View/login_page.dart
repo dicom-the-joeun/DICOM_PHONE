@@ -12,7 +12,7 @@ class LoginPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final LoginController loginController = Get.put(LoginController());
+    final loginController = Get.find<LoginController>();
 
     return Scaffold(
       body: Center(
@@ -55,6 +55,20 @@ class LoginPage extends StatelessWidget {
                       ),
                     ],
                   ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const Text("자동로그인"),
+                      Obx(
+                        () => Checkbox(
+                          value: loginController.autoLoginStatus.value,
+                          onChanged: (value) {
+                            loginController.autoLoginStatus.value = value!;
+                          },
+                        ),
+                      ),
+                    ],
+                  ),
                   Padding(
                     padding: const EdgeInsets.all(10.0),
                     child: CupertinoButton.filled(
@@ -71,7 +85,9 @@ class LoginPage extends StatelessWidget {
                                 ? loginController.setIdText(
                                     loginController.idController.text)
                                 : loginController.deleteIdText();
-                            Get.to(() => HomePage(onChangeTheme: onChangeTheme,));
+                            Get.to(() => HomePage(onChangeTheme: onChangeTheme,),
+                            transition: Transition.noTransition,
+                            );
                           } else {
                             // ignore: use_build_context_synchronously
                             showSnacbar(

@@ -11,6 +11,7 @@ class LoginController extends GetxController {
   RemoteDatasourceImpl datasource = RemoteDatasourceImpl();
   final TokenHandler _tokenHandler = TokenHandler();
   RxBool idSaveStatus = false.obs;
+  RxBool autoLoginStatus = false.obs;
   bool loginStatus = false;
 
   @override
@@ -58,16 +59,22 @@ class LoginController extends GetxController {
     _tokenHandler.deleteToken();
   }
 
-  /// id 기억하기 체크박스 status값 저장
+  /// id 기억하기, 자동로그인 체크박스 status값 저장
   setSaveIdText() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.setBool('saveIdTextStatus', idSaveStatus.value);
+    prefs.setBool('saveAutoLoginStatus', autoLoginStatus.value);
   }
   
-  /// id 기억하기 체크박스 status값 불러오기
+  /// id 기억하기, 자동로그인 체크박스 status값 불러오기
   getSaveIdText() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     idSaveStatus.value = prefs.getBool('saveIdTextStatus') ?? false;
+    autoLoginStatus.value = prefs.getBool('saveAutoLoginStatus') ?? false;
+
+    print("autoLoginStatus: ${autoLoginStatus.value}");
+    // 앱 시작할때 자동로그인 적용하기위해 autoLoginStatus를 리턴
+    return autoLoginStatus.value;
   }
 
   /// id textfeild에 저장하기

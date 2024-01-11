@@ -53,7 +53,9 @@ class MyAppbar extends StatelessWidget implements PreferredSizeWidget {
         TextButton(
           onPressed: () {
             logoutUser();
-            Get.offAll(LoginPage(onChangeTheme: onChangeTheme));
+            Get.offAll(() => LoginPage(onChangeTheme: onChangeTheme),
+            transition: Transition.noTransition,
+            );
           },
           child: const Column(
             children: [

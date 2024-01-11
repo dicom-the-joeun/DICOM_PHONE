@@ -1,5 +1,6 @@
 import 'package:dicom_phone/VM/login_ctrl.dart';
 import 'package:dicom_phone/VM/theme_ctrl.dart';
+import 'package:dicom_phone/View/homepage.dart';
 import 'package:dicom_phone/View/login_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -9,17 +10,20 @@ import 'package:intl/date_symbol_data_local.dart';
 void main() async {
   WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
   final ThemeController themeController = Get.put(ThemeController());
+  final LoginController loginController = Get.put(LoginController());
 
   await dotenv.load(fileName: ".env");
 
   await initializeDateFormatting(); // TableCalendar 언어 설정
   final thmeInfo = await themeController.getThemeInfo();
-  runApp(MyApp(thmeInfo));
+  final autoLoginStatus = await loginController.getSaveIdText();
+  runApp(MyApp(thmeInfo, autoLoginStatus));
 }
 
 class MyApp extends StatefulWidget {
   final bool thmeInfo;
-  const MyApp(this.thmeInfo, {super.key});
+  final bool autoLoginStatus;
+  const MyApp(this.thmeInfo, this.autoLoginStatus, {super.key});
 
   @override
   State<MyApp> createState() => _MyAppState();
@@ -32,11 +36,6 @@ class _MyAppState extends State<MyApp> {
   @override
   void initState() {
     _themeMode = widget.thmeInfo ? ThemeMode.dark : ThemeMode.light;
-    // if (widget.thmeInfo == false) {
-    //   _themeMode = ThemeMode.light;
-    // } else {
-    //   _themeMode = ThemeMode.dark;
-    // }
     super.initState();
   }
 
@@ -48,7 +47,6 @@ class _MyAppState extends State<MyApp> {
   static const seedColor = Colors.deepPurple;
   @override
   Widget build(BuildContext context) {
-    final LoginController loginController = Get.put(LoginController());
     return GetMaterialApp(
       // title: 'Flutter Demo',
       // theme: ThemeData(
@@ -89,7 +87,10 @@ class _MyAppState extends State<MyApp> {
       ),
 
       // home: const Home(),
-      home: LoginPage(onChangeTheme: _changeThemeMode),
+      home: widget.autoLoginStatus == true
+          ? HomePage(onChangeTheme: _changeThemeMode)
+          : LoginPage(onChangeTheme: _changeThemeMode),
+
       // home: loginController.getAccessToken() == null
       // ? LoginPage(onChangeTheme: _changeThemeMode)
       // : loginController.getRefreshToken() == null
