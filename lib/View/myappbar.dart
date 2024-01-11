@@ -14,7 +14,7 @@ class MyAppbar extends StatelessWidget implements PreferredSizeWidget {
 
   @override
   Widget build(BuildContext context) {
-    final ThemeController themeController = Get.put(ThemeController());
+    final themeController = Get.find<ThemeController>();
 
     // ignore: deprecated_member_use
     return AppBar(
@@ -33,17 +33,17 @@ class MyAppbar extends StatelessWidget implements PreferredSizeWidget {
                 onPressed: () {
                   themeController.themeStatus.value =
                       !themeController.themeStatus.value;
-                  changeMode(themeController.themeStatus.value);
+                  changeMode(themeController.themeStatus.value, themeController);
                 },
                 child: Column(
                   children: [
                     Icon(
                       themeController.themeStatus.value
-                          ? Icons.light_mode
-                          : Icons.dark_mode,
+                          ? Icons.dark_mode
+                          : Icons.light_mode,
                       size: 20,
                     ),
-                    Text(themeController.themeStatus.value ? "라이트모드" : "다크모드"),
+                    Text(themeController.themeStatus.value ? "다크모드" : "라이트모드"),
                   ],
                 ),
               ),
@@ -74,12 +74,21 @@ class MyAppbar extends StatelessWidget implements PreferredSizeWidget {
   Size get preferredSize => const Size.fromHeight(60);
 
   // --- Functions ---
+
+  /// 로그아웃시 토큰 없애기
   logoutUser() {
     TokenHandler tokenHandler = TokenHandler();
     tokenHandler.deleteToken();
   }
 
-  changeMode(bool status) {
-    status ? onChangeTheme(ThemeMode.light) : onChangeTheme(ThemeMode.dark);
+  /// 테마모드 바꾸는 함수
+  changeMode(bool status, ThemeController themeController) {
+    if (status == false) {
+      onChangeTheme(ThemeMode.light);
+      themeController.saveThemeInfo();
+    } else {
+      onChangeTheme(ThemeMode.dark);
+      themeController.saveThemeInfo();
+    }
   }
 } // End
