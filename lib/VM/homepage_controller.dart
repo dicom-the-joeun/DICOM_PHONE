@@ -21,7 +21,7 @@ class HomePageController extends GetxController {
   TokenHandler tokenHandler = TokenHandler();
   String token = '';
 
-  var dataConvertedJSON;
+  late List dataConvertedJSON;
   RxList pacsData = [].obs; // 전체 데이터
   RxList<HomePageTableData> homePageData = <HomePageTableData>[].obs;
   // RxList<HomePageTableData> studyDetailData = <HomePageTableData>[].obs;
@@ -37,8 +37,8 @@ class HomePageController extends GetxController {
   void onInit() async {
     await fetchTokenData();
     onRangeSelected(rangeStartDay.value, rangeEndDay.value, focusedDay.value);
-    await getJSONData();
     super.onInit();
+    await getJSONData();
   }
 
   String formatRangeDate(DateTime? beforeFormatDate) {
@@ -65,6 +65,8 @@ class HomePageController extends GetxController {
   /// 서버에서 데이터 가져오기
   getJSONData() async {
     pacsData.clear();
+    homePageData.clear();
+    
     String addurl = 'studies/';
     String? baseUrl = dotenv.env['baseurl'];
    
@@ -74,7 +76,7 @@ class HomePageController extends GetxController {
         'accept': 'application/json',
         'Authorization': 'Bearer $token'
       });
-      // print(response.statusCode);
+      print("statusCode : ${response.statusCode}");
       if (response.statusCode == 200) {
         dataConvertedJSON = json.decode(utf8
           .decode(response.bodyBytes)); // 소스 원본을 가져와 복호화 하기. 한글이기 때문에 꼭 해줘야 함
@@ -87,6 +89,7 @@ class HomePageController extends GetxController {
         // print("studykey=5인 스터디의 모든 정보 : ${pacsData[4]}}");
 
         /// 홈페이지에서 보여줄 컬럼의 데이터 추가
+        // homePageData.clear();
         for (int i = 0; i < pacsData.length; i++) {
           homePageData.add(
             HomePageTableData(
@@ -114,10 +117,14 @@ class HomePageController extends GetxController {
     }
   }
 
-  whereTest() {
+  whereTest(String selectedSearchFilter, String searchText) {
+    var selectedFilter = selectedSearchFilter == '환자 이름' 
+      ? 'pName' :  selectedSearchFilter == '검사 장비'
+      ? 'modallity' : 'reportStatus';
     var newData = homePageData;
     print("강감찬 환자의 데이터 : ${newData.where((data) => data.pName == '강감찬').toList()}");
-
+    var filteredData = newData.where((data) => data.pName == searchText).toList();
+    return filteredData;
   }
 
   // /// 홈페이지의 테이블을 선택했을 때 해당 검사 상세 정보 보내주기

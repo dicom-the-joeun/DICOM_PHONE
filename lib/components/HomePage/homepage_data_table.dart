@@ -27,7 +27,7 @@ class _HomePageDataTableState extends State<HomePageDataTable> {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: MediaQuery.of(context).size.height * 0.7,
+      height: MediaQuery.of(context).size.height * 0.6,
       width: MediaQuery.of(context).size.width,
       child: Obx(() => DataTable2(
           showCheckboxColumn: false,
@@ -86,7 +86,7 @@ class _HomePageDataTableState extends State<HomePageDataTable> {
                   context: context, 
                   builder: (context) => HomePagePatientDialog(studyKey: homePageData.studyKey, index: index, onChangeTheme: widget.onChangeTheme),
                 );
-                print("study key : ${homePageData.studyKey}");
+                // print("study key : ${homePageData.studyKey}");
                 // print('강감찬 환자의 데이터 : ${homePageData.where().toList()}');
               },
               cells: [

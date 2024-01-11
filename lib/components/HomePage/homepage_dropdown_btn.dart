@@ -1,4 +1,6 @@
+import 'package:dicom_phone/VM/homepage_search_controller.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get_rx/src/rx_types/rx_types.dart';
 
 class HomePageDropDownBtn extends StatefulWidget {
   const HomePageDropDownBtn({super.key});
@@ -11,6 +13,8 @@ class _HomePageDropDownBtnState extends State<HomePageDropDownBtn> {
   // property
   late List<String>  valueList;
   late String? selectedValue;
+
+  HomePageSearchController searchController = HomePageSearchController();
 
   @override
   void initState() {
@@ -48,6 +52,8 @@ class _HomePageDropDownBtnState extends State<HomePageDropDownBtn> {
       onChanged: (String? newValue) {
         selectedValue = newValue!;
         // print("$selectedValue");
+        searchController.selectedSearchFilter.value = selectedValue!;
+        print("검색 컨트롤러의 선택된 필터 : ${searchController.selectedSearchFilter.value}");
         setState(() {
           
         });
