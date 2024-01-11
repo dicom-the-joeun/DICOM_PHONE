@@ -106,6 +106,7 @@ class SireisListviewPage extends StatelessWidget {
 
   // --- Functions ---
   calculateAge(String birthDate) {
+    // birthDate ?? null체크하기
     // 현재 날짜
     DateTime now = DateTime.now();
     // 생년월일을 DateTime으로 변환

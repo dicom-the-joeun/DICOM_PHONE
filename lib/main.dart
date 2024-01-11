@@ -30,7 +30,7 @@ class _MyAppState extends State<MyApp> {
     setState(() {});
   }
 
-  static const seedColor = Color.fromARGB(255, 234, 248, 248);
+  static const seedColor = Colors.deepPurple;
   @override
   Widget build(BuildContext context) {
     final LoginController loginController = Get.put(LoginController());
