@@ -31,7 +31,7 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   // ThemeMode _themeMode = ThemeMode.system; // 시스템 설정 기본 세팅 모드
-  late ThemeMode _themeMode; // 시스템 설정 기본 세팅 모드
+  late ThemeMode _themeMode;
 
   @override
   void initState() {
@@ -48,20 +48,7 @@ class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     return GetMaterialApp(
-      // title: 'Flutter Demo',
-      // theme: ThemeData(
-      //   scaffoldBackgroundColor: Colors.black, // 바탕화면 검은색으로 고정
-      //   appBarTheme: const AppBarTheme(
-      //     backgroundColor: Colors.black, // 검은색으로 고정
-      //     titleTextStyle: TextStyle(
-      //         color: Colors.red, //  빨간색으로 고정
-      //         fontSize: 30 // 글씨 크기
-      //         ),
-      //   ),
-
-      //   useMaterial3: true,
-      // ),
-      title: 'Flutter Demo',
+      title: 'DICOM_PHONE',
       themeMode: _themeMode,
       theme: ThemeData(
         colorSchemeSeed: seedColor,
@@ -86,16 +73,11 @@ class _MyAppState extends State<MyApp> {
         ),
       ),
 
-      // home: const Home(),
+      // home: LoginPage(onChangeTheme: _changeThemeMode),
       home: widget.autoLoginStatus == true
           ? HomePage(onChangeTheme: _changeThemeMode)
           : LoginPage(onChangeTheme: _changeThemeMode),
 
-      // home: loginController.getAccessToken() == null
-      // ? LoginPage(onChangeTheme: _changeThemeMode)
-      // : loginController.getRefreshToken() == null
-      // ? LoginPage(onChangeTheme: _changeThemeMode)
-      // : const HomePage(),
       debugShowCheckedModeBanner: false,
     );
   }

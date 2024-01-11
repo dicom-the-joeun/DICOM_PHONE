@@ -108,21 +108,25 @@ class SireisListviewPage extends StatelessWidget {
   calculateAge(String birthDate) {
     // birthDate ?? null체크하기
     // 현재 날짜
-    DateTime now = DateTime.now();
-    // 생년월일을 DateTime으로 변환
-    DateTime birthday = DateTime.parse(birthDate);
-    // 현재 나이 계산
-    int age = now.year - birthday.year;
+    if (birthDate != null) {
+      DateTime now = DateTime.now();
+      // 생년월일을 DateTime으로 변환
+      DateTime birthday = DateTime.parse(birthDate);
+      // 현재 나이 계산
+      int age = now.year - birthday.year;
 
-    // 현재 월과 생일 월 비교
-    if (now.month < birthday.month) {
-      // 아직 생일이 안 지났으면 1살 빼기
-      age--;
-    } else if (now.month == birthday.month && now.day < birthday.day) {
-      // 생일이 지났지만, 아직 생일이 안 지났으면 1살 빼기
-      age--;
+      // 현재 월과 생일 월 비교
+      if (now.month < birthday.month) {
+        // 아직 생일이 안 지났으면 1살 빼기
+        age--;
+      } else if (now.month == birthday.month && now.day < birthday.day) {
+        // 생일이 지났지만, 아직 생일이 안 지났으면 1살 빼기
+        age--;
+      }
+      return age;
+    } else {
+      return "정보 없음";
     }
 
-    return age;
   }
 }

@@ -1,6 +1,7 @@
 import 'package:dicom_phone/DataSource/remote_datasource.dart';
 import 'package:dicom_phone/DataSource/token_handler.dart';
 import 'package:dio/dio.dart' as dio;
+import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -18,6 +19,7 @@ class LoginController extends GetxController {
   onInit() async {
     idController = TextEditingController();
     pwController = TextEditingController();
+    // await _tokenHandler.getAccessToken();
     await getIdText();
     await getSaveIdText();
     super.onInit();
@@ -29,29 +31,30 @@ class LoginController extends GetxController {
 
     const String url = "auth/login";
     String data =
-        'username=${username.trim()}&password=${password.trim()}&grant_type=&scope=&client_id=&client_secret=';
+        'grant_type=&username=${username.trim()}&password=${password.trim()}&scope=&client_id=&client_secret=';
     final Map<String, dynamic> headers = {
       'accept': 'application/json',
-      'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
+      'Content-Type': 'application/x-www-form-urlencoded',
     };
 
     try {
-      final dio.Response<dynamic> response =
+      dio.Response<dynamic> response =
           await datasource.post(url, data, headers: headers);
       if (response.statusCode == 200) {
         String? accesstoken = response.headers['access_token']?.first;
         String? refreshtoken = response.headers['refresh_token']?.first;
-        if (await _tokenHandler.setAccessToken(accesstoken!) &&
-            await _tokenHandler.setRefreshToken(refreshtoken!)) {
-          loginStatus = true;
-        }
+        await _tokenHandler.setAccessToken(accessToken: accesstoken!);
+        await _tokenHandler.setRefreshToken(refreshtoken!);
+        loginStatus = true;
+        return loginStatus;
       } else {
         loginStatus = false;
+        return loginStatus;
       }
     } catch (e) {
       loginStatus = false;
+      return loginStatus;
     }
-    return loginStatus;
   }
 
   /// logout 하기
@@ -65,7 +68,7 @@ class LoginController extends GetxController {
     prefs.setBool('saveIdTextStatus', idSaveStatus.value);
     prefs.setBool('saveAutoLoginStatus', autoLoginStatus.value);
   }
-  
+
   /// id 기억하기, 자동로그인 체크박스 status값 불러오기
   getSaveIdText() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();

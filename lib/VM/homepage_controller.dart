@@ -35,7 +35,8 @@ class HomePageController extends GetxController {
 
   @override
   void onInit() async {
-    await fetchTokenData();
+    token = await tokenHandler.fetchData();
+    print("token: $token");
     onRangeSelected(rangeStartDay.value, rangeEndDay.value, focusedDay.value);
     super.onInit();
     await getJSONData();
@@ -57,10 +58,10 @@ class HomePageController extends GetxController {
   }
 
   /// AccessToken 가져오기
-  fetchTokenData() async {
-    token = await tokenHandler.getAccessToken();
-    // return token;
-  }
+  // fetchTokenData() async {
+  //   token = await tokenHandler.getAccessToken();
+  //   // return token;
+  // }
 
   /// 서버에서 데이터 가져오기
   getJSONData() async {

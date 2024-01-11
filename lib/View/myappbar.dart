@@ -1,6 +1,9 @@
 import 'package:dicom_phone/DataSource/token_handler.dart';
+import 'package:dicom_phone/VM/login_ctrl.dart';
 import 'package:dicom_phone/VM/theme_ctrl.dart';
+import 'package:dicom_phone/View/homepage.dart';
 import 'package:dicom_phone/View/login_page.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -18,10 +21,16 @@ class MyAppbar extends StatelessWidget implements PreferredSizeWidget {
 
     // ignore: deprecated_member_use
     return AppBar(
-      title: SizedBox(
-        width: 45,
-        height: 45,
-        child: Image.asset("images/pacs.png"),
+      title: GestureDetector(
+        onTap: () => Get.offAll(() => HomePage(onChangeTheme: onChangeTheme),
+            transition: Transition.noTransition),
+        child: SizedBox(
+          child: Image.asset(
+            width: 60,
+            height: 60,
+            "images/pacs.png",
+          ),
+        ),
       ),
       automaticallyImplyLeading: backStatus, // 뒤로가기 없애기 (false넣어줘야함)
       centerTitle: true,
@@ -33,7 +42,8 @@ class MyAppbar extends StatelessWidget implements PreferredSizeWidget {
                 onPressed: () {
                   themeController.themeStatus.value =
                       !themeController.themeStatus.value;
-                  changeMode(themeController.themeStatus.value, themeController);
+                  changeMode(
+                      themeController.themeStatus.value, themeController);
                 },
                 child: Column(
                   children: [
@@ -52,9 +62,11 @@ class MyAppbar extends StatelessWidget implements PreferredSizeWidget {
         ),
         TextButton(
           onPressed: () {
+            // logoutDialog();
             logoutUser();
-            Get.offAll(() => LoginPage(onChangeTheme: onChangeTheme),
-            transition: Transition.noTransition,
+            Get.offAll(
+              () => LoginPage(onChangeTheme: onChangeTheme),
+              transition: Transition.noTransition,
             );
           },
           child: const Column(
@@ -77,10 +89,34 @@ class MyAppbar extends StatelessWidget implements PreferredSizeWidget {
 
   // --- Functions ---
 
+  /// 로그아웃 버튼 누르면 나오는 다이얼로그
+  // logoutDialog() {
+  //   return const CupertinoAlertDialog(
+  //     title: Text("로그아웃 하시겠습니까?"),
+  //     actions: [
+  //       CupertinoDialogAction(
+  //           isDefaultAction: true,
+  //           child: Column(
+  //             children: [
+  //               CupertinoButton(
+  //                 child: const Text("확인"), 
+  //                 onPressed: () {
+
+  //                 },
+  //                 ),
+  //             ],
+  //           ),
+  //           ),
+  //     ],
+  //   );
+  // }
+
   /// 로그아웃시 토큰 없애기
-  logoutUser() {
+  logoutUser() async {
     TokenHandler tokenHandler = TokenHandler();
+    final loginController = Get.find<LoginController>();
     tokenHandler.deleteToken();
+    await loginController.setSaveIdText();
   }
 
   /// 테마모드 바꾸는 함수

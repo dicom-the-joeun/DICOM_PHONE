@@ -8,28 +8,61 @@ class TokenHandler {
 
   /// AccessToken 가져오기
   Future<String> getAccessToken() async {
+    SharedPreferences pref = await SharedPreferences.getInstance();
+
+    try {
+      return pref.getString('access_token')!;
+    } catch (e) {
+      print(e);
+      return '';
+    } finally {
+      // print('세이브토큰:  ${pref.getString('access_token')}');
+    }
+  }
+
+  /// AccessToken 기기에 저장
+  setAccessToken({
+    required String accessToken,
+  }) async {
+    SharedPreferences pref = await SharedPreferences.getInstance();
+    try {
+      pref.setString('access_token', accessToken);
+    } catch (e) {
+      print(e);
+    }
+  }
+
+  /// AccsessToken 요청해서 저장하기
+  saveAccessToken() async {
     const String url = "auth/refresh";
     final String token = await getRefreshToken();
-    // final Map<String, dynamic> tokenheaders = {'refresh-token': token};
-    final Map<String, dynamic> tokenheaders = {'Authorization': 'Bearer $token'};
+    final Map<String, dynamic> tokenheaders = {
+      'Authorization': 'Bearer $token'
+    };
 
-    final response = await datasource.get(url, headers: tokenheaders);
-    if (response != null) {
-      // Logger().d(response);
-      dio.Response<dynamic> resData = response;
-      Map<String, dynamic> mapData = resData.headers.map;
-      // print("mapData: $mapData");
-      String accesstoken = mapData['access_token'].first;
-      await setAccessToken(accesstoken);
-      return accesstoken;
+    try {
+      final response = await datasource.get(url, headers: tokenheaders);
+      if (response != null) {
+        Logger().d(response);
+        dio.Response<dynamic> resData = response;
+        print(resData.statusCode);
+        if (resData.statusCode == 200) {
+          Map<String, dynamic> mapData = resData.headers.map;
+          String accesstoken = mapData['access_token'].first;
+          print("저장할 토큰: $accesstoken");
+          await setAccessToken(accessToken: accesstoken);
+        }
+      }
+    } catch (e) {
+      print('error $e');
+      throw Exception('Failed to get access token');
     }
-    throw Exception('Failed to get access token');
   }
 
   /// RefreshToken 가져오기
   Future<String> getRefreshToken() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    String hasSeenOnboarding = prefs.getString('refreshtoken') ?? '';
+    String hasSeenOnboarding = prefs.getString('refresh_token') ?? '';
     return hasSeenOnboarding;
   }
 
@@ -37,24 +70,20 @@ class TokenHandler {
   Future<bool> setRefreshToken(String refreshtoken) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     Future<bool> didsetrefreshToken =
-        prefs.setString('refreshtoken', refreshtoken);
-        print("refreshtoken: $refreshtoken");
+        prefs.setString('refresh_token', refreshtoken);
+    print("refresh_token: $refreshtoken");
     return didsetrefreshToken;
-  }
-
-  /// AccessToken 저장하기
-  Future<bool> setAccessToken(String accesstoken) async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    Future<bool> didsetaccessToken =
-        prefs.setString('accesstoken', accesstoken);
-        print("accesstoken: $accesstoken");
-    return didsetaccessToken;
   }
 
   /// logout tokem 삭제
   deleteToken() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.remove('accesstoken');
-    await prefs.remove('refreshtoken');
+    await prefs.remove('access_token');
+    await prefs.remove('refresh_token');
+  }
+
+  Future<String> fetchData() async {
+    await TokenHandler().saveAccessToken();
+    return await TokenHandler().getAccessToken();
   }
 }
