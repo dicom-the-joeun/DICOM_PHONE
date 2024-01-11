@@ -13,7 +13,7 @@ class HomePageSelectDate extends StatelessWidget {
           child: Text(
             "검사 일자 선택",
             style: TextStyle(
-              color: Theme.of(context).colorScheme.primaryContainer,
+              color: Theme.of(context).colorScheme.primary,
               fontSize: 18,
               fontWeight: FontWeight.bold
             ),
@@ -23,7 +23,6 @@ class HomePageSelectDate extends StatelessWidget {
           padding: const EdgeInsets.fromLTRB(5, 0, 5, 0),
           child: IconButton(
             onPressed: () {
-              // Get.to(const HomePageCalendar());
               showDialog(
                 context: context, 
                 builder: (context) => const HomePageDialog(),
@@ -31,7 +30,7 @@ class HomePageSelectDate extends StatelessWidget {
             }, 
             icon: Icon(
               Icons.calendar_month_outlined,
-              color: Theme.of(context).colorScheme.primaryContainer,
+              color: Theme.of(context).colorScheme.primary,
               size: 30,
             ),
           ),
@@ -47,13 +46,13 @@ class HomePageSelectDate extends StatelessWidget {
               height: 50,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                color: Theme.of(context).colorScheme.primaryContainer
+                color: Theme.of(context).colorScheme.primary
               ),
               alignment: Alignment.center,
               child: Text(
                 "1일",
                 style: TextStyle(
-                  color: Theme.of(context).colorScheme.onPrimaryContainer,
+                  color: Theme.of(context).colorScheme.onPrimary,
                   fontSize: 18
                 ),
               ),
@@ -71,13 +70,13 @@ class HomePageSelectDate extends StatelessWidget {
               height: 50,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                color: Theme.of(context).colorScheme.primaryContainer,
+                color: Theme.of(context).colorScheme.primary,
               ),
               alignment: Alignment.center,
               child: Text(
                 "3일",
                 style: TextStyle(
-                  color: Theme.of(context).colorScheme.onPrimaryContainer,
+                  color: Theme.of(context).colorScheme.onPrimary,
                   fontSize: 18
                 ),
               ),
@@ -95,13 +94,13 @@ class HomePageSelectDate extends StatelessWidget {
               height: 50,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                color: Theme.of(context).colorScheme.primaryContainer
+                color: Theme.of(context).colorScheme.primary
               ),
               alignment: Alignment.center,
               child: Text(
                 "1주일",
                 style: TextStyle(
-                  color: Theme.of(context).colorScheme.onPrimaryContainer,
+                  color: Theme.of(context).colorScheme.onPrimary,
                   fontSize: 18
                 ),
               ),
@@ -119,13 +118,13 @@ class HomePageSelectDate extends StatelessWidget {
               height: 50,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                color: Theme.of(context).colorScheme.primaryContainer
+                color: Theme.of(context).colorScheme.primary
               ),
               alignment: Alignment.center,
               child: Text(
                 "재설정",
                 style: TextStyle(
-                  color: Theme.of(context).colorScheme.onPrimaryContainer,
+                  color: Theme.of(context).colorScheme.onPrimary,
                   fontSize: 18
                 ),
               ),

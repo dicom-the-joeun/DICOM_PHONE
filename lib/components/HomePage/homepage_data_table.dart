@@ -28,9 +28,10 @@ class _HomePageDataTableState extends State<HomePageDataTable> {
   Widget build(BuildContext context) {
     return SizedBox(
       height: MediaQuery.of(context).size.height * 0.7,
+      width: MediaQuery.of(context).size.width,
       child: Obx(() => DataTable2(
           showCheckboxColumn: false,
-          columnSpacing: 20,
+          columnSpacing: 5,
           columns: const [
             DataColumn2(
               label: Row(
@@ -65,6 +66,17 @@ class _HomePageDataTableState extends State<HomePageDataTable> {
                 ],
               ),
             ),
+            DataColumn2(
+              label: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    '판독 상태',
+                    textAlign: TextAlign.center,
+                  ),
+                ],
+              ),
+            ),
           ], 
           rows: List.generate(homepageController.homePageData.length, (index) {
             HomePageTableData homePageData = homepageController.homePageData[index];
@@ -72,8 +84,10 @@ class _HomePageDataTableState extends State<HomePageDataTable> {
               onSelectChanged: (value) {
                 showDialog(
                   context: context, 
-                  builder: (context) => HomePagePatientDialog(studyKey: index, onChangeTheme: widget.onChangeTheme),
+                  builder: (context) => HomePagePatientDialog(studyKey: homePageData.studyKey, index: index, onChangeTheme: widget.onChangeTheme),
                 );
+                print("study key : ${homePageData.studyKey}");
+                // print('강감찬 환자의 데이터 : ${homePageData.where().toList()}');
               },
               cells: [
                 DataCell(
@@ -92,6 +106,14 @@ class _HomePageDataTableState extends State<HomePageDataTable> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Text(DateFormat('yyyy-MM-dd').format(DateTime.parse(homePageData.studyDate.toString()))),
+                    ],
+                  ),
+                ),
+                DataCell(
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(homePageData.reportStatus==6? '판독' : homePageData.reportStatus==3? '읽지 않음' : '예비 판독'),
                     ],
                   ),
                 ),

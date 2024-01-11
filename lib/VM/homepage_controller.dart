@@ -78,28 +78,33 @@ class HomePageController extends GetxController {
       if (response.statusCode == 200) {
         dataConvertedJSON = json.decode(utf8
           .decode(response.bodyBytes)); // 소스 원본을 가져와 복호화 하기. 한글이기 때문에 꼭 해줘야 함
-      // print(dataConvertedJSON);
-      // print("studykey :  ${dataConvertedJSON[0]['PID']}");
-      pacsData.clear();
-      pacsData.addAll(dataConvertedJSON);
-      // print("length of pacsDataList : ${pacsData.length}");
+        // print(dataConvertedJSON);
+        // print("studykey :  ${dataConvertedJSON[0]['PID']}");
+        pacsData.clear();
+        pacsData.addAll(dataConvertedJSON);
+        // print("length of pacsDataList : ${pacsData.length}");
 
-      // print("studykey=5인 스터디의 모든 정보 : ${pacsData[4]}}");
+        // print("studykey=5인 스터디의 모든 정보 : ${pacsData[4]}}");
 
-      /// 홈페이지에서 보여줄 컬럼의 데이터 추가
-      for (int i = 0; i < pacsData.length; i++) {
-        homePageData.add(HomePageTableData(
-            studyKey: dataConvertedJSON[i]['STUDYKEY'],
-            pId: dataConvertedJSON[i]['PID'],
-            pName: dataConvertedJSON[i]['PNAME'],
-            modallity: dataConvertedJSON[i]['MODALITY'],
-            studyDescription: dataConvertedJSON[i]['STUDYDESC'],
-            studyDate: dataConvertedJSON[i]['STUDYDATE'],
-            reportStatus: dataConvertedJSON[i]['REPORTSTATUS'],
-            seriesCount: dataConvertedJSON[i]['SERIESCNT'],
-            imageCount: dataConvertedJSON[i]['IMAGECNT'],
-            examStatus: dataConvertedJSON[i]['EXAMSTATUS']));
-      }
+        /// 홈페이지에서 보여줄 컬럼의 데이터 추가
+        for (int i = 0; i < pacsData.length; i++) {
+          homePageData.add(
+            HomePageTableData(
+              studyKey: dataConvertedJSON[i]['STUDYKEY'],
+              pId: dataConvertedJSON[i]['PID'],
+              pName: dataConvertedJSON[i]['PNAME'],
+              modallity: dataConvertedJSON[i]['MODALITY'],
+              studyDescription: dataConvertedJSON[i]['STUDYDESC'],
+              studyDate: dataConvertedJSON[i]['STUDYDATE'],
+              reportStatus: dataConvertedJSON[i]['REPORTSTATUS'],
+              seriesCount: dataConvertedJSON[i]['SERIESCNT'],
+              imageCount: dataConvertedJSON[i]['IMAGECNT'],
+              examStatus: dataConvertedJSON[i]['EXAMSTATUS']
+            )
+          );
+        }
+        // print("home page data : ${homePageData[0]}");
+        // whereTest();
       } else {
         print("status is not 200");
       }
@@ -107,6 +112,12 @@ class HomePageController extends GetxController {
     } catch (e) {
       print('error : $e');
     }
+  }
+
+  whereTest() {
+    var newData = homePageData;
+    print("강감찬 환자의 데이터 : ${newData.where((data) => data.pName == '강감찬').toList()}");
+
   }
 
   // /// 홈페이지의 테이블을 선택했을 때 해당 검사 상세 정보 보내주기
