@@ -1,5 +1,6 @@
-import 'package:dicom_phone/VM/homepage_search_controller.dart';
+import 'package:dicom_phone/VM/homepage_controller.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 class HomePageSearchBar extends StatefulWidget {
   const HomePageSearchBar({super.key});
@@ -12,7 +13,7 @@ class _HomePageSearchBarState extends State<HomePageSearchBar> {
   // property
   late TextEditingController searchBarEditingController;
 
-  HomePageSearchController searchController = HomePageSearchController();
+  HomePageController homeController = Get.find<HomePageController>();
 
   @override
   void initState() {
@@ -31,9 +32,13 @@ class _HomePageSearchBarState extends State<HomePageSearchBar> {
         controller: searchBarEditingController,
         trailing: [IconButton(
           onPressed: () {
-            searchController.searchBarText.value = searchBarEditingController.text;
-            print("검색 컨트롤러의 서치바 텍스트 : ${searchController.searchBarText.value}");
-            searchController.getFilteredData(searchController.selectedSearchFilter.value, searchController.searchBarText.value);
+            homeController.searchText.value = searchBarEditingController.text.trim();
+            print("서치바 텍스트(icon) : ${homeController.searchText.value}");
+            print("현재 선택된 필터 : ${homeController.selectedFilter.value}");
+            homeController.getFilteredData();
+            setState(() {
+              
+            });
           }, 
           icon: const Icon(Icons.search)
         )],
@@ -43,9 +48,13 @@ class _HomePageSearchBarState extends State<HomePageSearchBar> {
         ),
         onSubmitted: (value) {
           // 키보드 엔터 쳤을 때
-          searchController.searchBarText.value = searchBarEditingController.text;
-          print("검색 컨트롤러의 서치바 텍스트 : ${searchController.searchBarText.value}");
-          searchController.getFilteredData(searchController.selectedSearchFilter.value, searchController.searchBarText.value);
+          homeController.searchText.value = searchBarEditingController.text.trim();
+          print("서치바 텍스트(키보드) : ${homeController.searchText.value}");
+          print("현재 선택된 필터 : ${homeController.selectedFilter.value}");
+          homeController.getFilteredData();
+          setState(() {
+            
+          });
         },
       ),
     );

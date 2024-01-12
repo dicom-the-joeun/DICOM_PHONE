@@ -10,36 +10,32 @@ import 'package:http/http.dart' as http;
 import 'package:dio/dio.dart' as dio;
 
 class HomePageController extends GetxController {
-  // property
+  /// property (서버에서 데이터 가져오기)
+  RemoteDatasourceImpl datasourse = RemoteDatasourceImpl();
+  TokenHandler tokenHandler = TokenHandler();
+  String token = '';
+  late List dataConvertedJSON;
+  RxList pacsData = [].obs; // 전체 데이터
+  RxList<HomePageTableData> homePageData = <HomePageTableData>[].obs;
+  
+  /// property (검색)
+  RxString selectedFilter = ''.obs;
+  RxString searchText = ''.obs;
+  RxList<HomePageTableData> filteredData = <HomePageTableData>[].obs;
+
+  /// property (캘린더 날짜 범위 선택)
   Rx<DateTime> focusedDay = DateTime.now().obs;
   Rx<DateTime?> rangeStartDay = DateTime.now().obs;
   Rx<DateTime?> rangeEndDay = DateTime.now().obs;
 
-  // 서버에서 데이터 가져와 넣어둘
-  RemoteDatasourceImpl datasourse = RemoteDatasourceImpl();
-
-  TokenHandler tokenHandler = TokenHandler();
-  String token = '';
-
-  late List dataConvertedJSON;
-  RxList pacsData = [].obs; // 전체 데이터
-  RxList<HomePageTableData> homePageData = <HomePageTableData>[].obs;
-  // RxList<HomePageTableData> studyDetailData = <HomePageTableData>[].obs;
-  RxList studyDetailData = [].obs;
-
-  // late DateTime? rangeStartDay;
-
-  // late DateTime? rangeEndDay;
-
-  //
 
   @override
   void onInit() async {
     token = await tokenHandler.fetchData();
     print("token: $token");
     onRangeSelected(rangeStartDay.value, rangeEndDay.value, focusedDay.value);
-    super.onInit();
     await getJSONData();
+    super.onInit();
   }
 
   String formatRangeDate(DateTime? beforeFormatDate) {
@@ -97,7 +93,7 @@ class HomePageController extends GetxController {
               studyKey: dataConvertedJSON[i]['STUDYKEY'],
               pId: dataConvertedJSON[i]['PID'],
               pName: dataConvertedJSON[i]['PNAME'],
-              modallity: dataConvertedJSON[i]['MODALITY'],
+              modality: dataConvertedJSON[i]['MODALITY'],
               studyDescription: dataConvertedJSON[i]['STUDYDESC'],
               studyDate: dataConvertedJSON[i]['STUDYDATE'],
               reportStatus: dataConvertedJSON[i]['REPORTSTATUS'],
@@ -107,8 +103,15 @@ class HomePageController extends GetxController {
             )
           );
         }
+        filteredData.addAll(homePageData);
+        // print(homePageData);
+        print("검색된 데이터 : $filteredData");
         // print("home page data : ${homePageData[0]}");
-        // whereTest();
+        // getFilteredData();
+        // print(filteredData);
+        // print("검색 환자 이름 : ${filteredData.pName}");
+        // print("검색 장비 명 : ${filteredData.modality}");
+        // print("검색 판독 상태 : ${filteredData.verify}");
       } else {
         print("status is not 200");
       }
@@ -118,35 +121,84 @@ class HomePageController extends GetxController {
     }
   }
 
-  whereTest(String selectedSearchFilter, String searchText) {
-    var selectedFilter = selectedSearchFilter == '환자 이름' 
-      ? 'pName' :  selectedSearchFilter == '검사 장비'
-      ? 'modallity' : 'reportStatus';
-    var newData = homePageData;
-    print("강감찬 환자의 데이터 : ${newData.where((data) => data.pName == '강감찬').toList()}");
-    var filteredData = newData.where((data) => data.pName == searchText).toList();
-    return filteredData;
+  // whereTest(String selectedSearchFilter, String searchText) {
+  //   var selectedFilter = selectedSearchFilter == '환자 이름' 
+  //     ? 'pName' :  selectedSearchFilter == '검사 장비'
+  //     ? 'modallity' : 'reportStatus';
+  //   var newData = homePageData;
+  //   print("강감찬 환자의 데이터 : ${newData.where((data) => data.pName == '강감찬').toList()}");
+  //   var filteredData = newData.where((data) => data.pName == searchText).toList();
+  //   return filteredData;
+  // }
+
+  /// 검색 필터와 검색어를 입력했을 때 
+  /// (검색 필터 == 검색어)인 데이터들을 불러와 
+  /// 화면에 다시 띄워주기
+  getFilteredData() {
+    filteredData.clear();
+    // filteredData.addAll(homePageData);
+    print("필터 전 검색된 데이터 : $filteredData");
+    if (selectedFilter.value == '환자 이름') {
+      filteredData.addAll(
+        RxList<HomePageTableData>.of(
+          homePageData.where((data) => data.pName.toLowerCase().contains(searchText.toLowerCase()))
+        )
+      );
+      print("1");
+    } else if (selectedFilter.value == '검사 장비') {
+      filteredData.addAll(
+        RxList<HomePageTableData>.of(
+          homePageData.where((data) => data.modality.toLowerCase() == (searchText.toLowerCase()))
+        )
+      );
+      print("2");
+    } else {
+      filteredData.addAll(
+        RxList<HomePageTableData>.of(
+          homePageData.where((data) => data.reportStatus == (searchText.contains('판독') ? 6 : searchText.contains('읽지 않음') ? 3 : 5))
+        )
+      );
+      print("3");
+    }
+    // filteredData = RxList<HomePageTableData>.of(
+    //                 homePageData.where(
+    //                   (data) => selectedFilter.value == '환자 이름' ? data.pName.toLowerCase().contains(searchText.toLowerCase())
+    //                     : selectedFilter.value == '검사 장비' ? data.modallity.toLowerCase().contains(searchText.toLowerCase())
+    //                     : data.reportStatus == (searchText.contains('판독') ? 6 : searchText.contains('읽지 않음') ? 3 : 5)
+    //                 )
+    //               );
+    // filteredData = 
+    //   selectedFilter.value == '환자 이름' ?
+    //     RxList<HomePageTableData>.of(
+    //       homePageData.where((data) => data.pName.toLowerCase().contains(searchText.toLowerCase()))
+    //     )
+    //     : selectedFilter.value == '검사 장비' ?
+    //       RxList<HomePageTableData>.of(
+    //         homePageData.where((data) => data.modality.toLowerCase() == (searchText.toLowerCase()))
+    //       )
+    //       : RxList<HomePageTableData>.of(
+    //         homePageData.where((data) => data.reportStatus == (searchText.contains('판독') ? 6 : searchText.contains('읽지 않음') ? 3 : 5))
+    //       );
+    print("필터 후 검색된 데이터 : $filteredData");
+    // filteredData.clear();
+    // var allData = homePageData;
+    
+    // var filterCondition = allData.where(
+    //                     (data) => selectedFilter == '환자 이름' 
+    //                     ? data.pName == searchText
+    //                     : selectedFilter == '검사 장비'
+    //                     ? data.modallity == searchText
+    //                     : data.reportStatus == (searchText == '판독' ? 6 : searchText == '읽지않음' ? 3 : 5)
+    //                   );
+    
+    // // print("강감찬 환자의 데이터 : ${newData.where((data) => data.pName == '강감찬').toList()}");
+    // // print("강감찬 환자의 데이터 : ${allData.where((data) => data.selectedFilter == searchText).toList()}");
+    // // var filteredData = allData.where((data) => data.pName == searchText).toList();
+    // // return filteredData;
+    // print("getFilteredData() 함수 실행 끝 : $filteredData");
   }
 
-  // /// 홈페이지의 테이블을 선택했을 때 해당 검사 상세 정보 보내주기
-  // showStudyDetail(int studyKey) {
-  //   studyDetailData.clear();
-  //   // print(pacsData[studyKey]);
-  //   // studyDetailData.add(pacsData[studyKey+1]);
-  //   studyDetailData.add(pacsData[studyKey]);
-  //   // studyDetailData.add(
-  //   //   HomePageTableData(
-  //   //     pId: dataConvertedJSON[studyKey]['PID'],
-  //   //     pName: dataConvertedJSON[studyKey]['PNAME'],
-  //   //     modallity: dataConvertedJSON[studyKey]['MODALITY'],
-  //   //     studyDescription: dataConvertedJSON[studyKey]['STUDYDESC'],
-  //   //     studyDate: dataConvertedJSON[studyKey]['STUDYDATE'],
-  //   //     reportStatus: dataConvertedJSON[studyKey]['REPORTSTATUS'],
-  //   //     seriesCount: dataConvertedJSON[studyKey]['SERIESCNT'],
-  //   //     imageCount: dataConvertedJSON[studyKey]['IMAGECNT'],
-  //   //     examStatus: dataConvertedJSON[studyKey]['EXAMSTATUS']
-  //   //   )
-  //   // );
-  //   print("선택한 검사의 모든 데이터 : $studyDetailData");
-  // }
+
+
+
 }

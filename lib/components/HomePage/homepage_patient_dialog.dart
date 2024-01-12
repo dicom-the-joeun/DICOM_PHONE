@@ -82,7 +82,7 @@ class HomePagePatientDialog extends StatelessWidget {
                     DataRow(
                       cells: [
                         const DataCell(Text("검사 장비")),
-                        DataCell(Text(homePageData.modallity))
+                        DataCell(Text(homePageData.modality))
                       ],
                     ),
                     DataRow(

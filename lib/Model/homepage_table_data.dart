@@ -2,7 +2,7 @@ class HomePageTableData{
   final int studyKey;
   final String pId;
   final String pName;
-  final String modallity;
+  final String modality;
   final String? studyDescription;
   final int studyDate;
   final int reportStatus;
@@ -15,7 +15,7 @@ class HomePageTableData{
       required this.studyKey,
       required this.pId,
       required this.pName,
-      required this.modallity,
+      required this.modality,
       required this.studyDescription,
       required this.studyDate,
       required this.reportStatus,
@@ -30,7 +30,7 @@ class HomePageTableData{
   studyKey = hpData['STUDYKEY'],
   pId = hpData['PID'],
   pName = hpData['PNAME'],
-  modallity = hpData['MODALITY'],
+  modality = hpData['MODALITY'],
   studyDescription = hpData['STUDYDESC'],
   studyDate = hpData['STUDYDATE'],
   reportStatus = hpData['REPORTSTATUS'],

@@ -21,15 +21,23 @@ class _HomePageDataTableState extends State<HomePageDataTable> {
   @override
   void initState() {
     homepageController.getJSONData();
+    // _fetchData();
     super.initState();
   }
 
+  // _fetchData() async {
+  //   await homepageController.getJSONData();
+  // }
+
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
+    print("홈페이지 데이터 : ${homepageController.homePageData}");
+    print("필터드 데이터 : ${homepageController.filteredData}");
+    return Obx(() => homepageController.filteredData.isEmpty? CircularProgressIndicator()
+    : SizedBox(
       height: MediaQuery.of(context).size.height * 0.6,
       width: MediaQuery.of(context).size.width,
-      child: Obx(() => DataTable2(
+      child: DataTable2(
           showCheckboxColumn: false,
           columnSpacing: 5,
           columns: const [
@@ -78,8 +86,8 @@ class _HomePageDataTableState extends State<HomePageDataTable> {
               ),
             ),
           ], 
-          rows: List.generate(homepageController.homePageData.length, (index) {
-            HomePageTableData homePageData = homepageController.homePageData[index];
+          rows: List.generate(homepageController.filteredData.length, (index) {
+            HomePageTableData homePageData = homepageController.filteredData[index];
             return DataRow(
               onSelectChanged: (value) {
                 showDialog(
@@ -97,7 +105,7 @@ class _HomePageDataTableState extends State<HomePageDataTable> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Text(homePageData.modallity),
+                      Text(homePageData.modality),
                     ],
                   ),
                 ),

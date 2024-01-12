@@ -1,6 +1,4 @@
-import 'package:dicom_phone/Model/homepage_table_data.dart';
 import 'package:dicom_phone/VM/homepage_controller.dart';
-import 'package:dicom_phone/VM/homepage_search_controller.dart';
 import 'package:dicom_phone/View/myappbar.dart';
 import 'package:dicom_phone/components/HomePage/homepage_data_table.dart';
 import 'package:dicom_phone/components/HomePage/homepage_dropdown_btn.dart';
@@ -16,7 +14,6 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     HomePageController homepageController = Get.put(HomePageController());
-    HomePageSearchController searchController = HomePageSearchController();
     // ignore: deprecated_member_use
     return WillPopScope( // 슬라이드로 뒤로가기 막기
       onWillPop: () async {
@@ -28,7 +25,7 @@ class HomePage extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
-              const Row(
+               const Row(
                 children: [
                   Padding(
                     padding: EdgeInsets.all(10.0),
@@ -41,10 +38,9 @@ class HomePage extends StatelessWidget {
                 ],
               ),
               const HomePageSelectDate(),
-              Obx(() => searchController.searchBarText.isEmpty? HomePageDataTable(onChangeTheme: onChangeTheme)
-              : searchController.getFilteredData(searchController.selectedSearchFilter.value, searchController.searchBarText.value)),
+              HomePageDataTable(onChangeTheme: onChangeTheme),
               Obx(() => Text(
-                "\n총 검사 건수 : ${searchController.searchBarText.isEmpty? homepageController.homePageData.length : searchController.getFilteredData(searchController.selectedSearchFilter.value, searchController.searchBarText.value).length}",
+                "\n총 검사 건수 : ${homepageController.filteredData.length}",
                 style: const TextStyle(
                   fontSize: 20,
                   fontWeight: FontWeight.bold
