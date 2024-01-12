@@ -6,6 +6,8 @@ import 'package:dicom_phone/Model/detailpage_model.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
+import 'package:intl/intl.dart';
+import 'package:path_provider/path_provider.dart';
 
 class DetailImageController extends GetxController {
   final TokenHandler _tokenHandler = TokenHandler();
@@ -23,25 +25,28 @@ class DetailImageController extends GetxController {
   }
 
   /// image zip파일 받아오기
-  // getFileLink({required int studyKey, required int seriesKey}) async {
-  //   final String addurl =
-  //       'dcms/image/compressed?studykey=$studyKey&serieskey=$seriesKey';
+  getFileLink({required int studyKey, required int seriesKey}) async {
+    final String addurl =
+        'dcms/image/compressed?studykey=$studyKey&serieskey=$seriesKey';
 
-  //   try {
-  //     var response = await http.get(Uri.parse('$baseUrl$addurl'), headers: {
-  //       'accept': 'application/json',
-  //       'Authorization': 'Bearer $token'
-  //     });
-  //     // print(response.body);
-  //     var filepath = await getTemporaryDirectory().path;
-  //     filepath += '/sample.zip';
-  //     var file = File(filepath);
-  //     await file.writeAsBytes(response.bodyBytes);
-  //     print('파일이 다운로드되었습니다.');
-  //   } catch (e) {
-  //     print('error $e');
-  //   }
-  // }
+    try {
+      var response = await http.get(Uri.parse('$baseUrl$addurl'), headers: {
+        'accept': 'application/json',
+        'Authorization': 'Bearer $token'
+      });
+
+      // 앱의 로컬 디렉토리 얻기
+      final directory = await getApplicationDocumentsDirectory();
+      String formattedDate = DateFormat('yyyy-MM-dd-HH-mm-ss').format(DateTime.now());
+      final filePath = '${directory.path}/${formattedDate}sample.zip';
+
+      var file = File(filePath);
+      await file.writeAsBytes(response.bodyBytes);
+      print('파일이 다운로드되었습니다. 경로: $filePath');
+    } catch (e) {
+      print('error $e');
+    }
+  }
 
   getDetailImage({required int studyKey, required int seriesKey}) async {
     detailList.value = [];

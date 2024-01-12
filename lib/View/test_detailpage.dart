@@ -37,13 +37,13 @@ class TestDetailPage extends StatelessWidget {
               },
               child: const Text("Test불러오기"),
             ),
-            // ElevatedButton(
-            //   onPressed: () {
-            //     detailImageController.getFileLink(
-            //         studyKey: studyKey, seriesKey: seriesKey);
-            //   },
-            //   child: const Text("FileLink"),
-            // ),
+            ElevatedButton(
+              onPressed: () {
+                detailImageController.getFileLink(
+                    studyKey: studyKey, seriesKey: seriesKey);
+              },
+              child: const Text("FileLink"),
+            ),
             Obx( ()
               => SizedBox(
                 height: MediaQuery.of(context).size.height * 0.5,

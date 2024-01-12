@@ -55,8 +55,10 @@ dependencies:
   shared_preferences: ^2.2.2
   # image캐싱
   cached_network_image: ^3.3.1
-  # 기기 path 불러오기
+  # 기기 path 불러와서 저장하는 패키지
   path_provider: ^2.1.2
+  # 파일 열기위한 패키지
+  share_plus: ^7.2.1
 
   # Calendar
   table_calendar: ^3.0.9

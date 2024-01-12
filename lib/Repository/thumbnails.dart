@@ -18,6 +18,7 @@ class Thumbnail extends GetxController implements Thumbnails {
   String token = ""; // 토큰을 담을 변수
   RxBool isLoading = true.obs;
   final String? baseUrl = dotenv.env['baseurl'];
+  String saveZipPath = "";
 
   @override
   void onInit() async {
