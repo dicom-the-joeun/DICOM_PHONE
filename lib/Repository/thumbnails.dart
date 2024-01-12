@@ -49,6 +49,8 @@ class Thumbnail extends GetxController implements Thumbnails {
           ThumbnailModel tempSeries = ThumbnailModel.fromMap(series);
           seriesList.add(tempSeries);
         }
+        // print("serieskey: ${seriesList[index.value].serieskey}");
+        print("serieskey: ${seriesList[0].headers}");
         print(seriesList[0].fname);
         print(seriesList[0].path);
         isLoading.value = false;
@@ -78,4 +80,13 @@ class Thumbnail extends GetxController implements Thumbnails {
     resultUrl = '$imageUrl?filepath=$path&filename=$fname';
     return resultUrl;
   }
+
+  /// 디테일 페이지로 헤더, 시리즈키 넘기기
+  // ThumbnailModel getSeries({required int index}){
+
+  //   for (var resultList in seriesList) {
+  //     resultList[]
+  //   return resultList;
+  //   }
+  // }
 }

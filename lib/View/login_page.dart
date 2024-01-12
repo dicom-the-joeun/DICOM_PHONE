@@ -132,14 +132,6 @@ class LoginPage extends StatelessWidget {
                     },
                     child: const Text("SireisPage(ListViewPage) 이동"),
                   ),
-                  ElevatedButton(
-                    onPressed: () {
-                      Get.to(() => HomePage(
-                            onChangeTheme: onChangeTheme,
-                          ));
-                    },
-                    child: const Text("홈페이지 이동"),
-                  ),
                 ],
               ),
             ],

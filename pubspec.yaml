@@ -55,6 +55,8 @@ dependencies:
   shared_preferences: ^2.2.2
   # image캐싱
   cached_network_image: ^3.3.1
+  # 기기 path 불러오기
+  path_provider: ^2.1.2
 
   # Calendar
   table_calendar: ^3.0.9
