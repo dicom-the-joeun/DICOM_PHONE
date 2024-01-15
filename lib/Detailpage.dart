@@ -3,7 +3,7 @@ import 'package:photo_view/photo_view.dart';
 import 'dart:math' as math;
 
 class DetailPage extends StatefulWidget {
-  const DetailPage({Key? key}) : super(key: key);
+  const DetailPage({Key? key, }) : super(key: key);
 
   @override
   _DetailPageState createState() => _DetailPageState();
@@ -14,7 +14,7 @@ class _DetailPageState extends State<DetailPage> {
   late List<String> fruitList;
   Set<int> selectedTabs = {}; // Set을 사용하여 다중 선택을 관리합니다.
   double brightness = 0;
-  
+  bool isAnimating = true;
 
   double sliderValue = 0.0;
   int currentImageIndex = 0;
@@ -31,8 +31,31 @@ class _DetailPageState extends State<DetailPage> {
       'Pineapple.png',
       'Watermelon.png',
     ];
+    
 
   }
+
+void stopAnimation() {
+  setState(() {
+    isAnimating = false;
+  });
+}
+
+void startAnimation() {
+  isAnimating = true; // 여기서 isAnimating을 다시 true로 설정
+  _animate();
+}
+
+void _animate() {
+  Future.delayed(Duration(milliseconds: 200), () {
+    if (isAnimating) {
+      setState(() {
+        currentImageIndex = (currentImageIndex + 1) % fruitList.length;
+      });
+      _animate();
+    }
+  });
+}
 
 
 
@@ -60,6 +83,36 @@ class _DetailPageState extends State<DetailPage> {
               },
             ),
           ),
+            if(selectedTabs.contains(3))
+           Positioned(
+              top: 150,
+              right: 0,
+              child: RotatedBox(
+                quarterTurns: 1,
+                child: Column(
+                  children: [
+                    ElevatedButton.icon(
+                      onPressed: () {
+                       
+                        startAnimation();
+                       
+                      },
+                      icon: Icon(Icons.play_arrow),
+                      label: Text('Start Animation'),
+                    ),
+                    SizedBox(width: 20),
+                    ElevatedButton.icon(
+                      onPressed: () {
+                        stopAnimation();
+                      },
+                      icon: Icon(Icons.stop),
+                      label: Text('Stop Animation'),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          if(selectedTabs.contains(3))
          Positioned(
             top: 150,
             right: 0,
@@ -87,7 +140,7 @@ class _DetailPageState extends State<DetailPage> {
                   });
                 },
               )
-            : Container(),
+    : Container(),
             ),
           ),
         ],
