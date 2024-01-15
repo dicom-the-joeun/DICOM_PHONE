@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:dicom_phone/DataSource/remote_datasource.dart';
 import 'package:dicom_phone/DataSource/token_handler.dart';
 import 'package:dicom_phone/Model/homepage_table_data.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
@@ -19,7 +20,10 @@ class HomePageController extends GetxController {
   RxList<HomePageTableData> homePageData = <HomePageTableData>[].obs;
   
   /// property (검색)
-  RxString selectedFilter = ''.obs;
+  final List<String>  valueList = ['환자 이름', '검사 장비', '판독 상태'];
+  RxString selectedValue = '환자 이름'.obs;
+  RxString selectedFilter = '환자 이름'.obs;
+  TextEditingController searchTextController = TextEditingController();
   RxString searchText = ''.obs;
   RxList<HomePageTableData> filteredData = <HomePageTableData>[].obs;
 
@@ -53,12 +57,6 @@ class HomePageController extends GetxController {
     rangeEndDay.value = rangeEnd;
   }
 
-  /// AccessToken 가져오기
-  // fetchTokenData() async {
-  //   token = await tokenHandler.getAccessToken();
-  //   // return token;
-  // }
-
   /// 서버에서 데이터 가져오기
   getJSONData() async {
     pacsData.clear();
@@ -77,7 +75,7 @@ class HomePageController extends GetxController {
       if (response.statusCode == 200) {
         dataConvertedJSON = json.decode(utf8
           .decode(response.bodyBytes)); // 소스 원본을 가져와 복호화 하기. 한글이기 때문에 꼭 해줘야 함
-        // print(dataConvertedJSON);
+        print(dataConvertedJSON);
         // print("studykey :  ${dataConvertedJSON[0]['PID']}");
         pacsData.clear();
         pacsData.addAll(dataConvertedJSON);
@@ -105,13 +103,6 @@ class HomePageController extends GetxController {
         }
         filteredData.addAll(homePageData);
         // print(homePageData);
-        print("검색된 데이터 : $filteredData");
-        // print("home page data : ${homePageData[0]}");
-        // getFilteredData();
-        // print(filteredData);
-        // print("검색 환자 이름 : ${filteredData.pName}");
-        // print("검색 장비 명 : ${filteredData.modality}");
-        // print("검색 판독 상태 : ${filteredData.verify}");
       } else {
         print("status is not 200");
       }
@@ -121,84 +112,30 @@ class HomePageController extends GetxController {
     }
   }
 
-  // whereTest(String selectedSearchFilter, String searchText) {
-  //   var selectedFilter = selectedSearchFilter == '환자 이름' 
-  //     ? 'pName' :  selectedSearchFilter == '검사 장비'
-  //     ? 'modallity' : 'reportStatus';
-  //   var newData = homePageData;
-  //   print("강감찬 환자의 데이터 : ${newData.where((data) => data.pName == '강감찬').toList()}");
-  //   var filteredData = newData.where((data) => data.pName == searchText).toList();
-  //   return filteredData;
-  // }
-
   /// 검색 필터와 검색어를 입력했을 때 
   /// (검색 필터 == 검색어)인 데이터들을 불러와 
   /// 화면에 다시 띄워주기
   getFilteredData() {
     filteredData.clear();
-    // filteredData.addAll(homePageData);
-    print("필터 전 검색된 데이터 : $filteredData");
     if (selectedFilter.value == '환자 이름') {
       filteredData.addAll(
         RxList<HomePageTableData>.of(
-          homePageData.where((data) => data.pName.toLowerCase().contains(searchText.toLowerCase()))
+          homePageData.where((data) => data.pName.toLowerCase().contains(searchTextController.text.trim().toLowerCase()))
         )
       );
-      print("1");
     } else if (selectedFilter.value == '검사 장비') {
       filteredData.addAll(
         RxList<HomePageTableData>.of(
-          homePageData.where((data) => data.modality.toLowerCase() == (searchText.toLowerCase()))
+          homePageData.where((data) => data.modality.toLowerCase() == (searchTextController.text.trim().toLowerCase()))
         )
       );
-      print("2");
     } else {
       filteredData.addAll(
         RxList<HomePageTableData>.of(
-          homePageData.where((data) => data.reportStatus == (searchText.contains('판독') ? 6 : searchText.contains('읽지 않음') ? 3 : 5))
+          homePageData.where((data) => data.reportStatus == (searchTextController.text.trim().contains('판독') ? 6 : searchTextController.text.trim().contains('읽지 않음') ? 3 : 5))
         )
       );
-      print("3");
     }
-    // filteredData = RxList<HomePageTableData>.of(
-    //                 homePageData.where(
-    //                   (data) => selectedFilter.value == '환자 이름' ? data.pName.toLowerCase().contains(searchText.toLowerCase())
-    //                     : selectedFilter.value == '검사 장비' ? data.modallity.toLowerCase().contains(searchText.toLowerCase())
-    //                     : data.reportStatus == (searchText.contains('판독') ? 6 : searchText.contains('읽지 않음') ? 3 : 5)
-    //                 )
-    //               );
-    // filteredData = 
-    //   selectedFilter.value == '환자 이름' ?
-    //     RxList<HomePageTableData>.of(
-    //       homePageData.where((data) => data.pName.toLowerCase().contains(searchText.toLowerCase()))
-    //     )
-    //     : selectedFilter.value == '검사 장비' ?
-    //       RxList<HomePageTableData>.of(
-    //         homePageData.where((data) => data.modality.toLowerCase() == (searchText.toLowerCase()))
-    //       )
-    //       : RxList<HomePageTableData>.of(
-    //         homePageData.where((data) => data.reportStatus == (searchText.contains('판독') ? 6 : searchText.contains('읽지 않음') ? 3 : 5))
-    //       );
-    print("필터 후 검색된 데이터 : $filteredData");
-    // filteredData.clear();
-    // var allData = homePageData;
-    
-    // var filterCondition = allData.where(
-    //                     (data) => selectedFilter == '환자 이름' 
-    //                     ? data.pName == searchText
-    //                     : selectedFilter == '검사 장비'
-    //                     ? data.modallity == searchText
-    //                     : data.reportStatus == (searchText == '판독' ? 6 : searchText == '읽지않음' ? 3 : 5)
-    //                   );
-    
-    // // print("강감찬 환자의 데이터 : ${newData.where((data) => data.pName == '강감찬').toList()}");
-    // // print("강감찬 환자의 데이터 : ${allData.where((data) => data.selectedFilter == searchText).toList()}");
-    // // var filteredData = allData.where((data) => data.pName == searchText).toList();
-    // // return filteredData;
-    // print("getFilteredData() 함수 실행 끝 : $filteredData");
   }
-
-
-
 
 }
