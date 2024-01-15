@@ -16,24 +16,29 @@ class HomePageDataTable extends StatefulWidget {
 
 class _HomePageDataTableState extends State<HomePageDataTable> {
   HomePageController homepageController = Get.find<HomePageController>();
-  // HomePageController homepageController = Get.put(HomePageController());
 
   @override
   void initState() {
     homepageController.getJSONData();
-    // _fetchData();
     super.initState();
   }
 
-  // _fetchData() async {
-  //   await homepageController.getJSONData();
-  // }
-
   @override
   Widget build(BuildContext context) {
-    print("홈페이지 데이터 : ${homepageController.homePageData}");
-    print("필터드 데이터 : ${homepageController.filteredData}");
-    return Obx(() => homepageController.filteredData.isEmpty? CircularProgressIndicator()
+    return Obx(() => homepageController.filteredData.isEmpty
+    ? SizedBox(
+      height: MediaQuery.of(context).size.height * 0.6,
+      width: MediaQuery.of(context).size.width,
+      child: const Center(
+        child: Text(
+          "검색 결과가 없습니다.",
+          style: TextStyle(
+            fontSize: 25,
+            fontWeight: FontWeight.bold
+          ),
+        )
+      )
+    )
     : SizedBox(
       height: MediaQuery.of(context).size.height * 0.6,
       width: MediaQuery.of(context).size.width,
@@ -94,8 +99,6 @@ class _HomePageDataTableState extends State<HomePageDataTable> {
                   context: context, 
                   builder: (context) => HomePagePatientDialog(studyKey: homePageData.studyKey, index: index, onChangeTheme: widget.onChangeTheme),
                 );
-                // print("study key : ${homePageData.studyKey}");
-                // print('강감찬 환자의 데이터 : ${homePageData.where().toList()}');
               },
               cells: [
                 DataCell(
@@ -126,7 +129,6 @@ class _HomePageDataTableState extends State<HomePageDataTable> {
                   ),
                 ),
               ],
-              
             );
           }),
         ),

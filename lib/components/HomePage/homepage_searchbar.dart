@@ -22,7 +22,7 @@ homePageSearchBar({required BuildContext context, required HomePageController ho
       ),
       onSubmitted: (value) {
         // 키보드 엔터 쳤을 때
-
+        homePageController.getFilteredData();
       },
     ),
   );

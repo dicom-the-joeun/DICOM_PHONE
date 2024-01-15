@@ -28,11 +28,11 @@ class HomePage extends StatelessWidget {
               Row(
                 children: [
                   Padding(
-                    padding: EdgeInsets.all(10.0),
+                    padding: const EdgeInsets.all(10.0),
                     child: dropDownButton(context: context, homePageController: homepageController),
                   ),
                   Padding(
-                    padding: EdgeInsets.all(10.0),
+                    padding: const EdgeInsets.all(10.0),
                     child: homePageSearchBar(context: context, homePageController: homepageController),
                   ),
                 ],

@@ -8,7 +8,7 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:http/http.dart' as http;
-import 'package:dio/dio.dart' as dio;
+// import 'package:dio/dio.dart' as dio;
 
 class HomePageController extends GetxController {
   /// property (서버에서 데이터 가져오기)
@@ -29,15 +29,15 @@ class HomePageController extends GetxController {
 
   /// property (캘린더 날짜 범위 선택)
   Rx<DateTime> focusedDay = DateTime.now().obs;
-  Rx<DateTime?> rangeStartDay = DateTime.now().obs;
-  Rx<DateTime?> rangeEndDay = DateTime.now().obs;
+  Rx<DateTime?> rangeStartDay = null.obs;
+  Rx<DateTime?> rangeEndDay = null.obs;
 
 
   @override
   void onInit() async {
     token = await tokenHandler.fetchData();
-    print("token: $token");
-    onRangeSelected(rangeStartDay.value, rangeEndDay.value, focusedDay.value);
+    // print("token: $token");
+    // onRangeSelected(rangeStartDay.value, rangeEndDay.value, focusedDay.value);
     await getJSONData();
     super.onInit();
   }
@@ -47,14 +47,23 @@ class HomePageController extends GetxController {
     beforeFormatDate != null
         ? afterFormatDate = DateFormat('yyyy-MM-dd').format(beforeFormatDate)
         : afterFormatDate = "";
-
+    print("여긴 날짜 포맷 함수_startDay : ${rangeStartDay.value}");
+    print("여긴 날짜 포맷 함수_endDay : ${rangeEndDay.value}");
     return afterFormatDate;
   }
 
-  onRangeSelected(DateTime? rangeStart, DateTime? rangeEnd, DateTime focused) {
+  onRangeSelected(DateTime? rangeStart, DateTime? rangeEnd, DateTime focused) async {
     focusedDay.value = focused;
-    rangeStartDay.value = rangeStart;
-    rangeEndDay.value = rangeEnd;
+    DateTime startDay = rangeStart!;
+    DateTime endDay = rangeEnd ?? DateTime.now();
+    rangeStartDay.value = startDay;
+    rangeEndDay.value = endDay;
+    
+    // rangeStartDay.value = rangeStart;
+    // rangeEndDay.value = rangeEnd;
+    // update();
+    // print("start day : ${rangeStartDay.value}");
+    // print("end day : ${rangeEndDay.value}");
   }
 
   /// 서버에서 데이터 가져오기
@@ -71,11 +80,11 @@ class HomePageController extends GetxController {
         'accept': 'application/json',
         'Authorization': 'Bearer $token'
       });
-      print("statusCode : ${response.statusCode}");
+      // print("statusCode : ${response.statusCode}");
       if (response.statusCode == 200) {
         dataConvertedJSON = json.decode(utf8
           .decode(response.bodyBytes)); // 소스 원본을 가져와 복호화 하기. 한글이기 때문에 꼭 해줘야 함
-        print(dataConvertedJSON);
+        // print(dataConvertedJSON);
         // print("studykey :  ${dataConvertedJSON[0]['PID']}");
         pacsData.clear();
         pacsData.addAll(dataConvertedJSON);
@@ -136,6 +145,20 @@ class HomePageController extends GetxController {
         )
       );
     }
+  }
+
+  /// 캘린더에서 선택한 범위의 날짜 보여주기
+  String getSelectedRangeDate() {
+    print("함수에서 범위 시작 : ${rangeStartDay.value}");
+    print("함수에서 범위 끝 : ${rangeEndDay.value}");
+    String text = "";
+    if ((rangeStartDay.value != null) && (rangeEndDay.value != null)) {
+      text = 
+      "${DateFormat("yyyy-MM-dd").format(rangeStartDay.value!)}   ~   ${DateFormat("yyyy-MM-dd").format(rangeEndDay.value!)}";
+    } else {
+      text = "";
+    }
+    return text;
   }
 
 }
