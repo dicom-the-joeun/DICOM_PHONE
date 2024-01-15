@@ -1,7 +1,7 @@
 import 'package:dicom_phone/VM/homepage_controller.dart';
 import 'package:dicom_phone/View/myappbar.dart';
+import 'package:dicom_phone/components/HomePage/dropdown_button.dart';
 import 'package:dicom_phone/components/HomePage/homepage_data_table.dart';
-import 'package:dicom_phone/components/HomePage/homepage_dropdown_btn.dart';
 import 'package:dicom_phone/components/HomePage/homepage_searchbar.dart';
 import 'package:dicom_phone/components/HomePage/homepage_select_date.dart';
 import 'package:flutter/material.dart';
@@ -25,15 +25,15 @@ class HomePage extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
-               const Row(
+              Row(
                 children: [
                   Padding(
                     padding: EdgeInsets.all(10.0),
-                    child: HomePageDropDownBtn(),
+                    child: dropDownButton(context: context, homePageController: homepageController),
                   ),
                   Padding(
                     padding: EdgeInsets.all(10.0),
-                    child: HomePageSearchBar(),
+                    child: homePageSearchBar(context: context, homePageController: homepageController),
                   ),
                 ],
               ),

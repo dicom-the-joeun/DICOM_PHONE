@@ -10,8 +10,6 @@ class HomePageDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // property
-    // String rangeStartDay = Message.rangeStartDay.toString() ?? "";
-    // String rangeEndDay = Message.rangeEndDay.toString() ?? "";
     final dialogController = Get.find<HomePageController>();
     return AlertDialog(
       backgroundColor: Theme.of(context).colorScheme.secondaryContainer,
