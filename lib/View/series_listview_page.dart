@@ -26,10 +26,10 @@ class SireisListviewPage extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            ElevatedButton(
-              onPressed: () => Get.to(() => const DetailPage()),
-              child: const Text('상세페이지 이동'),
-            ),
+            // ElevatedButton(
+            //   // onPressed: () => Get.to(() => const DetailPage(onChangeTheme: onChangeTheme )),
+            //   child: const Text('상세페이지 이동'),
+            // ),
             Obx(
               () => Column(
                 children: [
@@ -73,7 +73,7 @@ class SireisListviewPage extends StatelessWidget {
                                   ImageKey.studyKey = studyKey;
                                   ImageKey.seriesKey = currentSeries.serieskey;
                                   Get.to(
-                                    () => TestDetailPage(
+                                    () => DetailPage(
                                         onChangeTheme: onChangeTheme),
                                   );
                                 },
@@ -125,6 +125,12 @@ class SireisListviewPage extends StatelessWidget {
                                                 "Bearer ${thumbnail.token}",
                                           },
                                           fit: BoxFit.fill,
+                                          // progressIndicatorBuilder: (context, url,
+                                          //         downloadProgress) =>
+                                          //     CircularProgressIndicator(
+                                          //         value: downloadProgress.progress),
+                                          // errorWidget: (context, url, error) =>
+                                          //     const Icon(Icons.error),
                                         ),
                                       ),
                                     ],
