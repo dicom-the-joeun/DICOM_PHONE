@@ -59,6 +59,8 @@ dependencies:
   path_provider: ^2.1.2
   # 파일 열기위한 패키지
   share_plus: ^7.2.1
+  # 이미지 압축 풀기
+  archive: ^3.4.10
 
   # Calendar
   table_calendar: ^3.0.9

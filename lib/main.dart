@@ -31,6 +31,7 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   // ThemeMode _themeMode = ThemeMode.system; // 시스템 설정 기본 세팅 모드
+  
   late ThemeMode _themeMode;
 
   @override

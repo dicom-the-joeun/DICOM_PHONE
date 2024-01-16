@@ -19,6 +19,7 @@ class Thumbnail extends GetxController implements Thumbnails {
   RxBool isLoading = true.obs;
   final String? baseUrl = dotenv.env['baseurl'];
   String saveZipPath = "";
+  RxBool listMode = false.obs;
 
   @override
   void onInit() async {
