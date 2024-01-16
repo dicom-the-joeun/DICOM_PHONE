@@ -17,16 +17,18 @@ homePageDialogCalendar({required BuildContext context, required HomePageControll
             titleCentered: true,            
           ),
           calendarStyle: CalendarStyle(
-            rangeHighlightColor: Theme.of(context).colorScheme.primaryContainer,
+            rangeHighlightColor: Theme.of(context).colorScheme.tertiaryContainer,
             rangeStartDecoration: BoxDecoration(
-              color: Theme.of(context).colorScheme.primary,
+              color: Theme.of(context).colorScheme.tertiary,
+              shape: BoxShape.circle
             ),
             rangeEndDecoration: BoxDecoration(
-              color: Theme.of(context).colorScheme.primary,
+              color: Theme.of(context).colorScheme.tertiary,
+              shape: BoxShape.circle
             ),
             weekendTextStyle: const TextStyle(color: Colors.red),
-            
           ),
+          // daysOfWeekVisible: true,
           rangeStartDay: homePageController.rangeStartDay.value,
           rangeEndDay: homePageController.rangeEndDay.value,
           onRangeSelected: homePageController.onRangeSelected,

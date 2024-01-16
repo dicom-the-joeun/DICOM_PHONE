@@ -1,8 +1,11 @@
+import 'package:dicom_phone/View/homepage.dart';
 import 'package:dicom_phone/components/HomePage/homepage_dialog.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 class HomePageSelectDate extends StatelessWidget {
-  const HomePageSelectDate({super.key});
+  final Function(ThemeMode) onChangeTheme;
+  const HomePageSelectDate({super.key, required this.onChangeTheme});
 
   @override
   Widget build(BuildContext context) {
@@ -11,7 +14,7 @@ class HomePageSelectDate extends StatelessWidget {
         Padding(
           padding: const EdgeInsets.fromLTRB(10, 5, 5, 0),
           child: Text(
-            "검사 일자 선택",
+            "검사 일시 검색",
             style: TextStyle(
               color: Theme.of(context).colorScheme.primary,
               fontSize: 18,
@@ -26,7 +29,7 @@ class HomePageSelectDate extends StatelessWidget {
               showDialog(
                 context: context, 
                 // builder: (context) => homePageDialog(context: context),
-                builder: (context) => HomePageDialog(),
+                builder: (context) => const HomePageDialog(),
               );
             }, 
             icon: Icon(
@@ -40,7 +43,7 @@ class HomePageSelectDate extends StatelessWidget {
           padding: const EdgeInsets.fromLTRB(5, 0, 5, 0),
           child: GestureDetector(
             onTap: () {
-              // 오늘자 데이터 보여주기
+              // 어제 ~ 오늘 데이터 보여주기
             },
             child: Container(
               width: 50,
@@ -112,7 +115,11 @@ class HomePageSelectDate extends StatelessWidget {
           padding: const EdgeInsets.fromLTRB(5, 0, 5, 0),
           child: GestureDetector(
             onTap: () {
-              // 검색 필터, 검색 일자 모두 reset 하기
+              Get.offAll(
+                HomePage(onChangeTheme: onChangeTheme),
+                transition: Transition.noTransition
+              );
+
             },
             child: Container(
               width: 50,
@@ -123,7 +130,7 @@ class HomePageSelectDate extends StatelessWidget {
               ),
               alignment: Alignment.center,
               child: Text(
-                "재설정",
+                "초기화",
                 style: TextStyle(
                   color: Theme.of(context).colorScheme.onPrimary,
                   fontSize: 18

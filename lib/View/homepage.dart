@@ -37,7 +37,7 @@ class HomePage extends StatelessWidget {
                   ),
                 ],
               ),
-              const HomePageSelectDate(),
+              HomePageSelectDate(onChangeTheme: onChangeTheme),
               HomePageDataTable(onChangeTheme: onChangeTheme),
               Obx(() => Text(
                 "\n총 검사 건수 : ${homepageController.filteredData.length}",

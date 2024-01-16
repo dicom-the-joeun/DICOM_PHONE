@@ -55,7 +55,10 @@ class HomePagePatientDialog extends StatelessWidget {
                           thumbnail.getThumbnail(studyKey);
                           Get.to(() => SireisListviewPage(onChangeTheme: onChangeTheme), arguments: studyKey);
                         }, 
-                        child: const Text("상세 이미지 보기"),
+                        child: const Text(
+                          "상세 이미지 보기",
+                          textAlign: TextAlign.end,
+                        ),
                       ),
                     ),
                   ], 

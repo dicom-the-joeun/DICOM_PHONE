@@ -11,7 +11,7 @@ class HomePageDialog extends StatelessWidget {
   HomePageController homepageController = Get.find<HomePageController>();
     return AlertDialog(
       backgroundColor: Theme.of(context).colorScheme.onSecondary,
-      title: const Text("검사 일자 검색"),
+      title: const Text("검사 일시 검색"),
       content: SizedBox(
         width: 500,
         height: 490,
@@ -52,6 +52,8 @@ class HomePageDialog extends StatelessWidget {
           children: [
             TextButton(
               onPressed: () {
+                homepageController.rangeStartDay.value = DateTime.now();
+                homepageController.rangeEndDay.value = DateTime.now();
                 Get.back();
               }, 
               child: const Text("취소"),
@@ -60,7 +62,7 @@ class HomePageDialog extends StatelessWidget {
               onPressed: () {
                 
               }, 
-              child: const Text("적용"),
+              child: const Text("검색"),
             ),
           ],
         )
