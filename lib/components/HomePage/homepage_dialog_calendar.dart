@@ -14,7 +14,7 @@ homePageDialogCalendar({required BuildContext context, required HomePageControll
           locale: 'ko_KR',                        // 언어 설정
           headerStyle: const HeaderStyle(
             formatButtonVisible: false,
-            titleCentered: true
+            titleCentered: true,            
           ),
           calendarStyle: CalendarStyle(
             rangeHighlightColor: Theme.of(context).colorScheme.primaryContainer,
@@ -24,6 +24,8 @@ homePageDialogCalendar({required BuildContext context, required HomePageControll
             rangeEndDecoration: BoxDecoration(
               color: Theme.of(context).colorScheme.primary,
             ),
+            weekendTextStyle: const TextStyle(color: Colors.red),
+            
           ),
           rangeStartDay: homePageController.rangeStartDay.value,
           rangeEndDay: homePageController.rangeEndDay.value,

@@ -25,7 +25,8 @@ class HomePageSelectDate extends StatelessWidget {
             onPressed: () {
               showDialog(
                 context: context, 
-                builder: (context) => homePageDialog(context: context),
+                // builder: (context) => homePageDialog(context: context),
+                builder: (context) => HomePageDialog(),
               );
             }, 
             icon: Icon(

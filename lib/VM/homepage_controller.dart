@@ -29,8 +29,8 @@ class HomePageController extends GetxController {
 
   /// property (캘린더 날짜 범위 선택)
   Rx<DateTime> focusedDay = DateTime.now().obs;
-  Rx<DateTime?> rangeStartDay = null.obs;
-  Rx<DateTime?> rangeEndDay = null.obs;
+  Rx<DateTime?> rangeStartDay = DateTime.now().obs;
+  Rx<DateTime?> rangeEndDay = DateTime.now().obs;
 
 
   @override
@@ -52,18 +52,32 @@ class HomePageController extends GetxController {
     return afterFormatDate;
   }
 
+  /// 캘린더 - 범위 선택 함수
   onRangeSelected(DateTime? rangeStart, DateTime? rangeEnd, DateTime focused) async {
     focusedDay.value = focused;
-    DateTime startDay = rangeStart!;
-    DateTime endDay = rangeEnd ?? DateTime.now();
-    rangeStartDay.value = startDay;
-    rangeEndDay.value = endDay;
+  // DateTime startDay = rangeStart!;
+  //   DateTime endDay = rangeEnd ?? DateTime.now();
+  //   rangeStartDay.value = startDay;
+  //   rangeEndDay.value = endDay;
     
     // rangeStartDay.value = rangeStart;
     // rangeEndDay.value = rangeEnd;
     // update();
     // print("start day : ${rangeStartDay.value}");
     // print("end day : ${rangeEndDay.value}");
+    DateTime startDay;
+    DateTime endDay;
+    if (rangeEnd == null) {
+      startDay = rangeStart!;
+      endDay = rangeStart;
+      // rangeStartDay.value = rangeStart;
+      // rangeEndDay.value = rangeStart;
+    } else {
+      startDay = rangeStart!;
+      endDay = rangeEnd;
+    }
+    rangeStartDay.value = startDay;
+    rangeEndDay.value = endDay;
   }
 
   /// 서버에서 데이터 가져오기
@@ -73,7 +87,7 @@ class HomePageController extends GetxController {
     
     String addurl = 'studies/';
     String? baseUrl = dotenv.env['baseurl'];
-   
+    
     var url = Uri.parse('$baseUrl$addurl');
     try {
       var response = await http.get(url, headers: {
@@ -149,14 +163,17 @@ class HomePageController extends GetxController {
 
   /// 캘린더에서 선택한 범위의 날짜 보여주기
   String getSelectedRangeDate() {
-    print("함수에서 범위 시작 : ${rangeStartDay.value}");
-    print("함수에서 범위 끝 : ${rangeEndDay.value}");
+    // print("함수에서 범위 시작 : ${rangeStartDay.value}");
+    // print("함수에서 범위 끝 : ${rangeEndDay.value}");
     String text = "";
     if ((rangeStartDay.value != null) && (rangeEndDay.value != null)) {
       text = 
       "${DateFormat("yyyy-MM-dd").format(rangeStartDay.value!)}   ~   ${DateFormat("yyyy-MM-dd").format(rangeEndDay.value!)}";
     } else {
       text = "";
+    }
+    if (DateFormat("yyyy-MM-dd").format(rangeStartDay.value!) == DateFormat("yyyy-MM-dd").format(rangeEndDay.value!)) {
+      text = DateFormat("yyyy-MM-dd").format(rangeStartDay.value!);
     }
     return text;
   }
