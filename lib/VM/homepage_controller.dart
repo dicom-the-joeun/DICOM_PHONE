@@ -13,7 +13,8 @@ import 'package:http/http.dart' as http;
 class HomePageController extends GetxController {
   /// property (서버에서 데이터 가져오기)
   RemoteDatasourceImpl datasourse = RemoteDatasourceImpl();
-  TokenHandler tokenHandler = TokenHandler();
+  // TokenHandler tokenHandler = TokenHandler();
+  final TokenHandler _tokenHandler = Get.put(TokenHandler());
   String token = '';
   late List dataConvertedJSON;
   RxList pacsData = [].obs; // 전체 데이터
@@ -35,8 +36,8 @@ class HomePageController extends GetxController {
 
   @override
   void onInit() async {
-    token = await tokenHandler.fetchData();
-    // print("token: $token");
+    await _tokenHandler.init();
+    token = _tokenHandler.token;
     // onRangeSelected(rangeStartDay.value, rangeEndDay.value, focusedDay.value);
     await getJSONData();
     super.onInit();

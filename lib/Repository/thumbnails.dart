@@ -13,7 +13,9 @@ abstract class Thumbnails {
 
 class Thumbnail extends GetxController implements Thumbnails {
   RemoteDatasourceImpl datasource = RemoteDatasourceImpl();
-  final TokenHandler _tokenHandler = TokenHandler();
+  // final TokenHandler _tokenHandler = TokenHandler();
+  final TokenHandler _tokenHandler = Get.find();
+  
   RxList<ThumbnailModel> seriesList = <ThumbnailModel>[].obs; // 썸네일 시리즈를 담을 리스트
   String token = ""; // 토큰을 담을 변수
   RxBool isLoading = true.obs;
@@ -23,7 +25,9 @@ class Thumbnail extends GetxController implements Thumbnails {
 
   @override
   void onInit() async {
-    await fetchTokenData();
+    await _tokenHandler.init();
+    token = _tokenHandler.token;
+
     super.onInit();
   }
 
@@ -52,7 +56,7 @@ class Thumbnail extends GetxController implements Thumbnails {
           seriesList.add(tempSeries);
         }
         // print("serieskey: ${seriesList[index.value].serieskey}");
-        print("serieskey: ${seriesList[0].headers}");
+        // print("serieskey: ${seriesList[0].headers}");
         print(seriesList[0].fname);
         print(seriesList[0].path);
         isLoading.value = false;
@@ -66,11 +70,6 @@ class Thumbnail extends GetxController implements Thumbnails {
       print("서버 요청 중 오류가 발생했습니다: $e");
       isLoading.value = true;
     }
-  }
-
-  /// AccessToken 가져오기
-  fetchTokenData() async {
-    token = await _tokenHandler.getAccessToken();
   }
 
   /// 썸네일 이미지 url 받아오기

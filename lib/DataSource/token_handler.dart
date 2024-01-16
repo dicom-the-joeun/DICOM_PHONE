@@ -1,10 +1,17 @@
 import 'package:dicom_phone/DataSource/remote_datasource.dart';
+import 'package:get/get.dart';
 import 'package:logger/logger.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:dio/dio.dart' as dio;
 
-class TokenHandler {
+class TokenHandler extends GetxService {
   RemoteDatasourceImpl datasource = RemoteDatasourceImpl();
+  String token = "";
+
+  Future<void> init() async {
+    token = await TokenHandler().fetchData();
+    print("갱신된 token: $token");
+  }
 
   /// AccessToken 가져오기
   Future<String> getAccessToken() async {
@@ -80,8 +87,10 @@ class TokenHandler {
     await prefs.remove('refresh_token');
   }
 
-  Future<String> fetchData() async {
+  // Future<String>
+   fetchData() async {
     await TokenHandler().saveAccessToken();
+    // token = await TokenHandler().getAccessToken();
     return await TokenHandler().getAccessToken();
   }
 }

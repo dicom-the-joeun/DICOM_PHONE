@@ -13,7 +13,9 @@ import 'package:intl/intl.dart';
 import 'package:path_provider/path_provider.dart';
 
 class DetailImageController extends GetxController {
-  final TokenHandler _tokenHandler = TokenHandler();
+  // final TokenHandler _tokenHandler = TokenHandler();
+  final TokenHandler _tokenHandler = Get.find();
+
   final String? baseUrl = dotenv.env['baseurl'];
   String token = "";
   String fname = "";
@@ -24,10 +26,16 @@ class DetailImageController extends GetxController {
   String zipFilePath = ""; // 파일 경로를 저장할 변수를 함수 밖에서 선언
   RxString destinationDirectory = "".obs;
   RxList<String> imagePathList = <String>[].obs;
+  RxBool zipStatus = false.obs;
+
+  // Slider 변수
+  RxDouble sliderValue = 0.0.obs;
+  RxInt currentIndex = 0.obs;
 
   @override
   void onInit() async {
-    token = await _tokenHandler.fetchData();
+    await _tokenHandler.init();
+    token = _tokenHandler.token;
     await getFileLink(
         studyKey: ImageKey.studyKey, seriesKey: ImageKey.seriesKey);
     super.onInit();
@@ -35,6 +43,7 @@ class DetailImageController extends GetxController {
 
   /// image zip파일 받아오기
   getFileLink({required int studyKey, required int seriesKey}) async {
+    zipStatus.value = false;
     final String addurl =
         'dcms/image/compressed?studykey=$studyKey&serieskey=$seriesKey';
     saveFilePath = "";
@@ -54,10 +63,11 @@ class DetailImageController extends GetxController {
       var file = File(zipFilePath);
       await file.writeAsBytes(response.bodyBytes);
       print('파일이 다운로드되었습니다. 경로: $zipFilePath');
-      // await _openFile(zipFilePath);
       await zipOpen();
+      zipStatus.value = true;
     } catch (e) {
       print('error $e');
+      zipStatus.value = false;
     }
   }
 
@@ -65,9 +75,9 @@ class DetailImageController extends GetxController {
   zipOpen() async {
     final directory = await getApplicationDocumentsDirectory();
     imagePathList.clear();
-    // print("@@@@ directory: ${directory.path}");
     String formattedDate =
         DateFormat('yyyy-MM-dd-HH-mm-ss').format(DateTime.now());
+    // file이름을 현재시간으로 설정   
     final destinationDirectory = '${directory.path}/${formattedDate}sample';
     File zipFile = File(zipFilePath);
 
@@ -75,6 +85,7 @@ class DetailImageController extends GetxController {
       List<int> bytes = zipFile.readAsBytesSync();
       Archive archive = ZipDecoder().decodeBytes(Uint8List.fromList(bytes));
 
+      // 파일 내부에서 파일 이름을 뽑는 부분
       for (ArchiveFile file in archive) {
         String fileName = '$destinationDirectory/${file.name}';
         File outFile = File(fileName);
@@ -84,7 +95,6 @@ class DetailImageController extends GetxController {
           outFile.writeAsBytesSync(file.content as List<int>);
           // imagePathList에 파일 경로 추가
           imagePathList.add(outFile.path);
-          print("imagePathList: $imagePathList");
         } else {
           Directory(fileName).create(recursive: true);
         }
@@ -121,12 +131,8 @@ class DetailImageController extends GetxController {
           fname = imageInfo['FNAME'];
           path = imageInfo['PATH'];
 
-          // 이제 fname와 path를 사용할 수 있습니다.
           print('FNAME: $fname, PATH: $path');
 
-          // 필요한 경우 DetailModel을 초기화하여 리스트에 추가
-          // DetailModel tempModel = DetailModel.fromMap(imageInfo);
-          // detailList.add(tempModel);
         }
         isLoading.value = false;
       } else {
@@ -143,18 +149,24 @@ class DetailImageController extends GetxController {
   deleteDirectoryFile() async {
     final directory = await getApplicationDocumentsDirectory();
 
-    // 디렉토리 내용을 확인하고 삭제
+    // 디렉토리 내용을 확인하고 파일을 삭제
     if (directory.existsSync()) {
       directory.listSync().forEach((FileSystemEntity file) {
         if (file is File) {
           file.deleteSync();
-          print('File deleted: ${file.path}');
         } else if (file is Directory) {
           file.deleteSync(recursive: true);
-          print('Directory deleted: ${file.path}');
         }
       });
     }
+  }
+
+  /// slider의 index를 바꿔주는 함수
+  void changeImage(double value) {
+    int index = (value * (imagePathList.length - 1)).round();
+
+    currentIndex.value = index;
+    sliderValue.value = value;
   }
 
   /// 썸네일 이미지 url 받아오기
