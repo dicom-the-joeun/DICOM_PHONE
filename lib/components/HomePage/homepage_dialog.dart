@@ -30,19 +30,19 @@ class HomePageDialog extends StatelessWidget {
             ),
             // 선택한 날짜 보여주기
             Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const Text("\n\n"),
-                  Obx(()
-                  => Text(
-                      homepageController.getSelectedRangeDate(),
-                      style: const TextStyle(
-                        fontSize: 20
-                      ),
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const Text("\n\n"),
+                Obx(()
+                => Text(
+                    homepageController.getSelectedRangeDate(),
+                    style: const TextStyle(
+                      fontSize: 20
                     ),
                   ),
-                ],
-              ),
+                ),
+              ],
+            ),
           ],
         ),
       ),
@@ -54,13 +54,19 @@ class HomePageDialog extends StatelessWidget {
               onPressed: () {
                 homepageController.rangeStartDay.value = DateTime.now();
                 homepageController.rangeEndDay.value = DateTime.now();
+                homepageController.focusedDay.value = DateTime.now();
+                homepageController.selectedValue.value = '환자 이름';
+                homepageController.selectedFilter.value = '환자 이름';
                 Get.back();
               }, 
               child: const Text("취소"),
             ),
             TextButton(
               onPressed: () {
-                
+                // 홈페이지 컨트롤러의 선택된 날짜에 값 넣어야함
+                Get.back();
+                homepageController.searchTextController.text = homepageController.getSelectedRangeDate();
+                homepageController.getFilteredData();
               }, 
               child: const Text("검색"),
             ),

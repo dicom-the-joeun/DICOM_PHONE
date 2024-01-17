@@ -21,7 +21,7 @@ class HomePageController extends GetxController {
   RxList<HomePageTableData> homePageData = <HomePageTableData>[].obs;
   
   /// property (검색)
-  final List<String>  valueList = ['환자 이름', '검사 장비', '판독 상태'];
+  final List<String>  valueList = ['환자 이름', '검사 장비', '검사 일시', '판독 상태'];
   RxString selectedValue = '환자 이름'.obs;
   RxString selectedFilter = '환자 이름'.obs;
   TextEditingController searchTextController = TextEditingController();
@@ -32,53 +32,14 @@ class HomePageController extends GetxController {
   Rx<DateTime> focusedDay = DateTime.now().obs;
   Rx<DateTime?> rangeStartDay = DateTime.now().obs;
   Rx<DateTime?> rangeEndDay = DateTime.now().obs;
-
+  // RxInt searchDate = RxInt(int.parse(DateFormat('yyyyMMdd').format(DateTime.now())));
 
   @override
   void onInit() async {
     await _tokenHandler.init();
     token = _tokenHandler.token;
-    // onRangeSelected(rangeStartDay.value, rangeEndDay.value, focusedDay.value);
     await getJSONData();
     super.onInit();
-  }
-
-  String formatRangeDate(DateTime? beforeFormatDate) {
-    String afterFormatDate;
-    beforeFormatDate != null
-        ? afterFormatDate = DateFormat('yyyy-MM-dd').format(beforeFormatDate)
-        : afterFormatDate = "";
-    print("여긴 날짜 포맷 함수_startDay : ${rangeStartDay.value}");
-    print("여긴 날짜 포맷 함수_endDay : ${rangeEndDay.value}");
-    return afterFormatDate;
-  }
-
-  /// 캘린더 - 범위 선택 함수
-  onRangeSelected(DateTime? rangeStart, DateTime? rangeEnd, DateTime focused) async {
-    focusedDay.value = focused;
-  // DateTime startDay = rangeStart!;
-  //   DateTime endDay = rangeEnd ?? DateTime.now();
-  //   rangeStartDay.value = startDay;
-  //   rangeEndDay.value = endDay;
-    
-    // rangeStartDay.value = rangeStart;
-    // rangeEndDay.value = rangeEnd;
-    // update();
-    // print("start day : ${rangeStartDay.value}");
-    // print("end day : ${rangeEndDay.value}");
-    DateTime startDay;
-    DateTime endDay;
-    if (rangeEnd == null) {
-      startDay = rangeStart!;
-      endDay = rangeStart;
-      // rangeStartDay.value = rangeStart;
-      // rangeEndDay.value = rangeStart;
-    } else {
-      startDay = rangeStart!;
-      endDay = rangeEnd;
-    }
-    rangeStartDay.value = startDay;
-    rangeEndDay.value = endDay;
   }
 
   /// 서버에서 데이터 가져오기
@@ -153,19 +114,59 @@ class HomePageController extends GetxController {
           homePageData.where((data) => data.modality.toLowerCase() == (searchTextController.text.trim().toLowerCase()))
         )
       );
+    } else if (selectedFilter.value == '검사 일시') {
+      int rangeStart = int.parse('${rangeStartDay.value!.year}${rangeStartDay.value!.month.toString().padLeft(2, '0')}${rangeStartDay.value!.day.toString().padLeft(2, '0')}');
+      // int rangeEnd = int.parse('${rangeEndDay.value!.year}${rangeEndDay.value!.month.toString().padLeft(2, '0')}${rangeEndDay.value!.day.toString().padLeft(2, '0')}');
+      // filteredData.addAll(
+      //   RxList<HomePageTableData>.of(
+      //     homePageData.where((data) {
+      //       DateTime studyDate = DateTime.parse(data.toString());
+      //       studyDate.isAfter(rangeStartDay.value!) && studyDate.isBefore(rangeEndDay.value!);
+      //     })
+      //   )
+      // );
+      if (DateFormat("yyyy-MM-dd").format(rangeStartDay.value!) == DateFormat("yyyy-MM-dd").format(rangeEndDay.value!)) {
+        filteredData.addAll(
+          RxList<HomePageTableData>.of(
+            homePageData.where((data) => DateTime.parse(data.studyDate.toString()).isAtSameMomentAs(DateTime.parse(rangeStart.toString())))
+          )
+        );
+        // print("같은 날짜 비교");
+      } else {
+        filteredData.addAll(
+          RxList<HomePageTableData>.of(
+            homePageData.where((data) => DateTime.parse(data.studyDate.toString()).isAfter(rangeStartDay.value!) && DateTime.parse(data.studyDate.toString()).isBefore(rangeEndDay.value!))
+          )
+        );
+      }
+      // print("필터링 후 날짜 : ${filteredData[0].studyDate}");
     } else {
       filteredData.addAll(
         RxList<HomePageTableData>.of(
-          homePageData.where((data) => data.reportStatus == (searchTextController.text.trim().contains('판독') ? 6 : searchTextController.text.trim().contains('읽지 않음') ? 3 : 5))
+          homePageData.where((data) => data.reportStatus == (((searchTextController.text.trim().startsWith('판독')) || (searchTextController.text.trim().contains('읽음'))) ? 6 : ((searchTextController.text.trim().contains('읽지않음')) || (searchTextController.text.trim().contains('읽지 않음')) || searchTextController.text.trim().contains('않음')) ? 3 : ((searchTextController.text.trim().contains('예비판독')) || (searchTextController.text.trim().contains('예비')) || (searchTextController.text.trim().contains('예비 판독'))) ? 5 : 999))
         )
       );
     }
   }
 
+  /// 캘린더 - 범위 선택 함수
+  onRangeSelected(DateTime? rangeStart, DateTime? rangeEnd, DateTime focused) async {
+    focusedDay.value = focused;
+    DateTime startDay;
+    DateTime endDay;
+    if (rangeEnd == null) {
+      startDay = rangeStart!;
+      endDay = rangeStart;
+    } else {
+      startDay = rangeStart!;
+      endDay = rangeEnd;
+    }
+    rangeStartDay.value = startDay;
+    rangeEndDay.value = endDay;
+  }
+
   /// 캘린더에서 선택한 범위의 날짜 보여주기
   String getSelectedRangeDate() {
-    // print("함수에서 범위 시작 : ${rangeStartDay.value}");
-    // print("함수에서 범위 끝 : ${rangeEndDay.value}");
     String text = "";
     if ((rangeStartDay.value != null) && (rangeEndDay.value != null)) {
       text = 
@@ -174,9 +175,12 @@ class HomePageController extends GetxController {
       text = "";
     }
     if (DateFormat("yyyy-MM-dd").format(rangeStartDay.value!) == DateFormat("yyyy-MM-dd").format(rangeEndDay.value!)) {
+    // if (DateFormat("yyyy-MM-dd").format(rangeStartDay.value!) == DateFormat("yyyy-MM-dd").format(rangeEndDay.value!)) {
       text = DateFormat("yyyy-MM-dd").format(rangeStartDay.value!);
     }
     return text;
   }
+
+  /// 캘린더에서 선택한 범위의 검사 
 
 }

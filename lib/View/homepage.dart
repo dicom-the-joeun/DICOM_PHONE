@@ -35,9 +35,36 @@ class HomePage extends StatelessWidget {
                     padding: const EdgeInsets.all(10.0),
                     child: homePageSearchBar(context: context, homePageController: homepageController),
                   ),
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(5, 0, 5, 0),
+                    child: GestureDetector(
+                      onTap: () {
+                        Get.offAll(
+                          HomePage(onChangeTheme: onChangeTheme),
+                          transition: Transition.noTransition
+                        );
+                      },
+                      child: Container(
+                        width: 50,
+                        height: 50,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: Theme.of(context).colorScheme.primary
+                        ),
+                        alignment: Alignment.center,
+                        child: Text(
+                          "초기화",
+                          style: TextStyle(
+                            color: Theme.of(context).colorScheme.onPrimary,
+                            fontSize: 18
+                          ),
+                        ),
+                      ),
+                    ),
+                  )
                 ],
               ),
-              HomePageSelectDate(onChangeTheme: onChangeTheme),
+              // HomePageSelectDate(onChangeTheme: onChangeTheme),
               HomePageDataTable(onChangeTheme: onChangeTheme),
               Obx(() => Text(
                 "\n총 검사 건수 : ${homepageController.filteredData.length}",

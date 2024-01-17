@@ -72,10 +72,10 @@ class SireisListviewPage extends StatelessWidget {
                                 onTap: () {
                                   ImageKey.studyKey = studyKey;
                                   ImageKey.seriesKey = currentSeries.serieskey;
-                                  Get.to(
-                                    () => DetailPage(
-                                        onChangeTheme: onChangeTheme),
-                                  );
+                                  // Get.to(
+                                  //   () => DetailPage(
+                                  //       onChangeTheme: onChangeTheme),
+                                  // );
                                 },
                                 child: Padding(
                                   padding: const EdgeInsets.all(8.0),
