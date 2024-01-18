@@ -46,6 +46,7 @@ class DetailImageController extends GetxController {
     zipStatus.value = false;
     final String addurl =
         'dcms/image/compressed?studykey=$studyKey&serieskey=$seriesKey';
+        // 'dcms/image/compressed?studykey=$studyKey';
     saveFilePath = "";
 
     try {

@@ -39,11 +39,7 @@ class SireisListviewPage extends StatelessWidget {
                       thumbnail.listMode.value = value;
                     },
                   ),
-                  Text(
-                    thumbnail.listMode.value
-                    ? "시리즈 모드"
-                    : "리스트 모드"
-                  ),
+                  Text(thumbnail.listMode.value ? "시리즈 모드" : "리스트 모드"),
                 ],
               ),
             ),
@@ -203,7 +199,9 @@ class SireisListviewPage extends StatelessWidget {
   calculateAge(String birthDate) {
     // birthDate ?? null체크하기
     // 현재 날짜
-    if (birthDate != "" || birthDate != 'UNKNOWN') {
+    if (birthDate == "" || birthDate == 'UNKNOWN' || birthDate.isEmpty) {
+      return "정보없음";
+    } else {
       DateTime now = DateTime.now();
       // 생년월일을 DateTime으로 변환
       DateTime birthday = DateTime.parse(birthDate);
@@ -224,8 +222,6 @@ class SireisListviewPage extends StatelessWidget {
         return "정보없음";
       }
       return "만 $age세";
-    } else {
-      return "정보없음";
     }
   }
 }
