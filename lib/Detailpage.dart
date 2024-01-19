@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:dicom_phone/Model/imagekey.dart';
 import 'package:dicom_phone/VM/detail_image_ctrl.dart';
+import 'package:dicom_phone/View/myappbar.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
 
@@ -12,8 +13,8 @@ import 'package:photo_view/photo_view.dart';
 import 'dart:math' as math;
 
 class DetailPage extends StatefulWidget {
+  
   final Function(ThemeMode) onChangeTheme;
-  // final Function(ThemeMode) onChangeTheme;
   const DetailPage({super.key, required this.onChangeTheme});
 
   @override
@@ -21,7 +22,6 @@ class DetailPage extends StatefulWidget {
 }
 
 class _DetailPageState extends State<DetailPage> {
-   
   final DetailImageController detailImageController =
       Get.put(DetailImageController());
   late List<int> currentIndex;
@@ -30,7 +30,7 @@ class _DetailPageState extends State<DetailPage> {
   double brightness = 0;
   bool isAnimating = true;
 
-  double sliderValue = 0.5;
+  double sliderValue = 0.0;
   int currentImageIndex = 0;
 
   @override
@@ -85,10 +85,11 @@ class _DetailPageState extends State<DetailPage> {
              
       },
       child: Scaffold(
-        // appBar: MyAppbar(
-        //   onChangeTheme: onChangeTheme,
-        //     backStatus: true,
-        // ),
+        appBar: MyAppbar(
+          key: (UniqueKey()),
+          onChangeTheme: widget.onChangeTheme,
+            backStatus: true,
+        ),
         body: Stack(
           children: [
             Obx(
@@ -100,18 +101,10 @@ class _DetailPageState extends State<DetailPage> {
                         Text("이미지 불러오는중 ...")
                       ],
                     )
-                  : ListView.builder(
-                      itemCount: detailImageController.imagePathList.length,
-                      itemBuilder: (context, index) {
-                        return SizedBox(
-                          height: MediaQuery.of(context).size.height * 0.8,
-                          width: MediaQuery.of(context).size.width,
-                          child: _buildImage(index), 
-                          
-                        );
-                      },
-                    ),
-            ),
+                  : _buildImage(currentImageIndex), 
+                              
+                            ),
+                      
             Positioned(
               top: 150,
               right: 0,
@@ -134,7 +127,6 @@ class _DetailPageState extends State<DetailPage> {
                               // detailImageController.changeImage(value);
                               changeImages(value);
                             }
-                              Transform(transform: Matrix4.rotationY(math.pi));
                           });
                         },
                       )
