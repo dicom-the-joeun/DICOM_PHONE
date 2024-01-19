@@ -1,4 +1,5 @@
 import 'package:dicom_phone/VM/homepage_controller.dart';
+import 'package:dicom_phone/components/HomePage/homepage_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -26,6 +27,14 @@ dropDownButton({
         onChanged: (value) {
           homePageController.selectedValue.value = value!;
           homePageController.selectedFilter.value = value;
+          if (value == '검사 일시') {
+            showDialog(
+              context: context, 
+              builder: (context) => const HomePageDialog(),
+            );
+          } else {
+            homePageController.searchTextController.text = '';
+          }
         },
       ),
     );

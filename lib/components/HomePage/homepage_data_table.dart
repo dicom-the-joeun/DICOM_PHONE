@@ -27,7 +27,7 @@ class _HomePageDataTableState extends State<HomePageDataTable> {
   Widget build(BuildContext context) {
     return Obx(() => homepageController.filteredData.isEmpty
     ? SizedBox(
-      height: MediaQuery.of(context).size.height * 0.6,
+      height: MediaQuery.of(context).size.height * 0.7,
       width: MediaQuery.of(context).size.width,
       child: const Center(
         child: Text(
@@ -40,7 +40,7 @@ class _HomePageDataTableState extends State<HomePageDataTable> {
       )
     )
     : SizedBox(
-      height: MediaQuery.of(context).size.height * 0.6,
+      height: MediaQuery.of(context).size.height * 0.7,
       width: MediaQuery.of(context).size.width,
       child: DataTable2(
           showCheckboxColumn: false,

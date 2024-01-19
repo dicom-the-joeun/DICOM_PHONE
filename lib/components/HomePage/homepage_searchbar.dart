@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 
 homePageSearchBar({required BuildContext context, required HomePageController homePageController}) {
   return SizedBox(
-    width: 280,
+    width: 240, // 이전 값 : 280
     height: 50,
     child: SearchBar(
       backgroundColor: MaterialStateProperty.all(
@@ -23,6 +23,14 @@ homePageSearchBar({required BuildContext context, required HomePageController ho
       onSubmitted: (value) {
         // 키보드 엔터 쳤을 때
         homePageController.getFilteredData();
+      },
+      onChanged: (value) {
+        if (value.isNotEmpty) {
+          homePageController.getFilteredData();
+        } else {
+          homePageController.filteredData.clear();
+          homePageController.getJSONData();
+        }
       },
     ),
   );
