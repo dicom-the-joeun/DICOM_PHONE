@@ -18,7 +18,7 @@ class SireisListviewPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final Thumbnail thumbnail = Get.put(Thumbnail());
-    var studyKey = Get.arguments ?? 1;
+    var studyKey = Get.arguments ?? 0;
 
     return Scaffold(
       appBar: MyAppbar(onChangeTheme: onChangeTheme, backStatus: true),

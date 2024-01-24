@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
 
@@ -9,7 +8,6 @@ import 'package:dicom_phone/Model/imagekey.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
-import 'package:intl/intl.dart';
 import 'package:path_provider/path_provider.dart';
 
 class DetailImageController extends GetxController {
@@ -36,9 +34,39 @@ class DetailImageController extends GetxController {
   void onInit() async {
     await _tokenHandler.init();
     token = _tokenHandler.token;
-    await getFileLink(
+    await findDuplicationDirectory(
         studyKey: ImageKey.studyKey, seriesKey: ImageKey.seriesKey);
+
     super.onInit();
+  }
+
+  /// 중복된 파일을 찾아서 있으면 그 파일로 이미지쓰고 아니면 zip파일 받아서 풀기
+  findDuplicationDirectory(
+      {required int studyKey, required int seriesKey}) async {
+    final directory = await getApplicationDocumentsDirectory();
+    String fileName = '${studyKey}_$seriesKey';
+    print('fileName: $fileName');
+    bool result = false;
+
+    final destinationDirectory = '${directory.path}/$fileName';
+    Directory folder = Directory(destinationDirectory);
+
+    if (folder.existsSync()) {
+      for (FileSystemEntity file in folder.listSync()) {
+        if (file is File) {
+          print('중복된 파일이 존재');
+          await getSavedFile(fileName: fileName);
+          result = true;
+          break; // 중복된 파일을 찾았으면 반복문 종료
+        }
+      }
+    }
+
+    if (!result) {
+      print('중복된 파일이 없음');
+      await getFileLink(studyKey: studyKey, seriesKey: seriesKey);
+    }
+    return result;
   }
 
   /// image zip파일 받아오기
@@ -46,7 +74,7 @@ class DetailImageController extends GetxController {
     zipStatus.value = false;
     final String addurl =
         'dcms/image/compressed?studykey=$studyKey&serieskey=$seriesKey';
-        // 'dcms/image/compressed?studykey=$studyKey';
+
     saveFilePath = "";
 
     try {
@@ -57,14 +85,14 @@ class DetailImageController extends GetxController {
 
       // 앱의 로컬 디렉토리 얻기
       final directory = await getApplicationDocumentsDirectory();
-      String formattedDate =
-          DateFormat('yyyy-MM-dd-HH-mm-ss').format(DateTime.now());
+
       zipFilePath =
-          '${directory.path}/${formattedDate}sample.zip'; // zipFilePath에 파일 경로 저장
+          '${directory.path}/${studyKey}_$seriesKey.zip'; // zipFilePath에 파일 경로 저장
       var file = File(zipFilePath);
       await file.writeAsBytes(response.bodyBytes);
       print('파일이 다운로드되었습니다. 경로: $zipFilePath');
-      await zipOpen();
+
+      await zipOpen(studyKey: studyKey, seriesKey: seriesKey);
       zipStatus.value = true;
     } catch (e) {
       print('error $e');
@@ -73,13 +101,11 @@ class DetailImageController extends GetxController {
   }
 
   /// zip파일 압축풀고 절대경로에 저장하기
-  zipOpen() async {
+  zipOpen({required int studyKey, required int seriesKey}) async {
     final directory = await getApplicationDocumentsDirectory();
     imagePathList.clear();
-    String formattedDate =
-        DateFormat('yyyy-MM-dd-HH-mm-ss').format(DateTime.now());
-    // file이름을 현재시간으로 설정   
-    final destinationDirectory = '${directory.path}/${formattedDate}sample';
+
+    final destinationDirectory = '${directory.path}/${studyKey}_$seriesKey';
     File zipFile = File(zipFilePath);
 
     if (zipFile.existsSync()) {
@@ -107,42 +133,25 @@ class DetailImageController extends GetxController {
     }
   }
 
-  /// 디테일 이미지 정보, url뽑기
-  getDetailImage({required int studyKey, required int seriesKey}) async {
-    detailList.value = [];
-    final String addurl =
-        'dcms/details?studykey=$studyKey&serieskey=$seriesKey';
+  getSavedFile({required String fileName}) async {
+    final directory = await getApplicationDocumentsDirectory();
+    imagePathList.clear();
 
-    try {
-      var response = await http.get(Uri.parse('$baseUrl$addurl'), headers: {
-        'accept': 'application/json',
-        'Authorization': 'Bearer $token'
+    final destinationDirectory = '${directory.path}/$fileName';
+
+    Directory folder = Directory(destinationDirectory);
+
+    if (folder.existsSync()) {
+      // 폴더 내부의 파일들을 찾아 imagePathList에 추가
+      folder.listSync().forEach((FileSystemEntity file) {
+        if (file is File) {
+          imagePathList.add(file.path);
+        }
       });
 
-      if (response.statusCode == 200) {
-        print(response.statusCode);
-        String responseBody = utf8.decode(response.bodyBytes);
-
-        // List<dynamic>에서 List<Map<String, dynamic>>로 변환
-        List<Map<String, dynamic>> result =
-            List<Map<String, dynamic>>.from(jsonDecode(responseBody)['result']);
-
-        // 각 이미지에 대한 정보를 처리
-        for (var imageInfo in result) {
-          fname = imageInfo['FNAME'];
-          path = imageInfo['PATH'];
-
-          print('FNAME: $fname, PATH: $path');
-
-        }
-        isLoading.value = false;
-      } else {
-        print("detail image 불러오기 실패");
-        isLoading.value = true;
-      }
-    } catch (e) {
-      print('error $e');
-      isLoading.value = true;
+      print('폴더 내 파일들의 경로를 성공적으로 가져왔습니다.');
+    } else {
+      print('지정된 폴더가 존재하지 않습니다.');
     }
   }
 
@@ -153,10 +162,8 @@ class DetailImageController extends GetxController {
     // 디렉토리 내용을 확인하고 파일을 삭제
     if (directory.existsSync()) {
       directory.listSync().forEach((FileSystemEntity file) {
-        if (file is File) {
+        if (file is File && file.uri.pathSegments.last.endsWith('.zip')) {
           file.deleteSync();
-        } else if (file is Directory) {
-          file.deleteSync(recursive: true);
         }
       });
     }
@@ -169,16 +176,4 @@ class DetailImageController extends GetxController {
     currentIndex.value = index;
     sliderValue.value = value;
   }
-
-  /// 썸네일 이미지 url 받아오기
-  String getThumbnailUrl({required int index}) {
-    String resultUrl = "";
-    String imageUrl = '${baseUrl}dcms/image';
-    print("@@@ imageUrl: $imageUrl");
-    // String fname = detailList[index].result.FNAME;
-    // String path = detailList[index].result.PATH;
-    resultUrl = '$imageUrl?filepath=$path&filename=$fname';
-    print("@@@ resultUrl: $resultUrl");
-    return resultUrl;
-  }
-}
+} // End
