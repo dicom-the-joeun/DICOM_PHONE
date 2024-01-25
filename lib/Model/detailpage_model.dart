@@ -34,26 +34,27 @@ class DetailModel {
       required this.pixelarrayshape,
       required this.result});
   
-    DetailModel.fromMap(Map<String, dynamic> res)
-      : studydate = res['studydate'],
-        studytime = res['studytime'],
-        manufacturer = res['manufacturer'],
-        seriesdescription = res['seriesdescription'],
-        ManufacturersModelName = res['ManufacturersModelName'],
-        PatientsName = res['PatientsName'],
-        PatientID = res['PatientID'],
-        PatientsBirthDate = res['PatientsBirthDate'],
-        SeriesNumber = res['SeriesNumber'],
-        Rows = res['Rows'],
-        Columns = res['Columns'],
-        WindowCenter = res['WindowCenter'],
-        WindowWidth = res['WindowWidth'],
-        NumberofFrames = res['NumberofFrames'],
-        pixelarrayshape = res['pixelarrayshape'],
-        result = ResultModel(
-          IMAGEKEY: res['IMAGEKEY'], 
-          PATH: res['PATH'],
-          FNAME: res['FNAME']);
+   DetailModel.fromMap(Map<String, dynamic> res)
+  : studydate = res['studydate'] ?? 0,
+    studytime = res['studytime'] ?? 0,
+    manufacturer = res['manufacturer'] ?? '',
+    seriesdescription = res['seriesdescription'] ?? '',
+    ManufacturersModelName = res['ManufacturersModelName'] ?? '',
+    PatientsName = res['PatientsName'] ?? '',
+    PatientID = res['PatientID'] ?? '',
+    PatientsBirthDate = res['PatientsBirthDate'] is int ? res['PatientsBirthDate'] : 0,
+    SeriesNumber = res['SeriesNumber'] ?? 0,
+    Rows = res['Rows'] ?? 0,
+    Columns = res['Columns'] ?? 0,
+    WindowCenter = res['WindowCenter'] ?? 0,
+    WindowWidth = res['WindowWidth'] ?? 0,
+    NumberofFrames = res['NumberofFrames'] ?? 0,
+    pixelarrayshape = res['pixelarrayshape'] ?? 0,
+    result = ResultModel(
+      IMAGEKEY: res['imagekey'] is int ? res['imagekey'] : 0,
+      PATH: res['path'] ?? '',
+      FNAME: res['fname'] ?? '');
+
        
 
 }
