@@ -22,8 +22,6 @@ class TestDetailPage extends StatelessWidget {
     return PopScope(
       onPopInvoked: (didPop) async {
         print("디테일 페이지 닫힘@@@@@@@@@");
-        ImageKey.studyKey = 0;
-        ImageKey.seriesKey = 0;
         await detailImageController
             .deleteDirectoryFile(); // 페이지 나갈때 디렉토리에서 파일 삭제
       },

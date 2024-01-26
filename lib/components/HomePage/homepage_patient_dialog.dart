@@ -1,4 +1,5 @@
 import 'package:dicom_phone/Model/homepage_table_data.dart';
+import 'package:dicom_phone/Model/imagekey.dart';
 import 'package:dicom_phone/Repository/thumbnails.dart';
 import 'package:dicom_phone/VM/homepage_controller.dart';
 import 'package:dicom_phone/View/series_listview_page.dart';
@@ -8,9 +9,8 @@ import 'package:intl/intl.dart';
 
 class HomePagePatientDialog extends StatelessWidget {
   final Function(ThemeMode) onChangeTheme;
-  final int studyKey;
   final int index;
-  const HomePagePatientDialog({super.key, required this.studyKey, required this.index, required this.onChangeTheme});
+  const HomePagePatientDialog({super.key, required this.index, required this.onChangeTheme});
 
   /// 선택한 검사 상세 정보 페이지 (해당 검사의 모든 데이터 다 보여주기)
   @override
@@ -52,8 +52,8 @@ class HomePagePatientDialog extends StatelessWidget {
                     DataColumn(
                       label: TextButton(
                         onPressed: () {
-                          thumbnail.getThumbnail(studyKey);
-                          Get.to(() => SireisListviewPage(onChangeTheme: onChangeTheme), arguments: studyKey);
+                          thumbnail.getThumbnail(ImageKey.studyKey);
+                          Get.to(() => SireisListviewPage(onChangeTheme: onChangeTheme));
                         }, 
                         child: const Text(
                           "상세 이미지 보기",

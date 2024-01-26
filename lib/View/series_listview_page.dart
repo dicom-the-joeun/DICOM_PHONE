@@ -18,7 +18,6 @@ class SireisListviewPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final Thumbnail thumbnail = Get.put(Thumbnail());
-    var studyKey = Get.arguments ?? 0;
 
     return Scaffold(
       appBar: MyAppbar(onChangeTheme: onChangeTheme, backStatus: true),
@@ -66,7 +65,6 @@ class SireisListviewPage extends StatelessWidget {
                                   thumbnail.seriesList[index];
                               return GestureDetector(
                                 onTap: () {
-                                  ImageKey.studyKey = studyKey;
                                   ImageKey.seriesKey = currentSeries.serieskey;
                                   Get.to(
                                     () => DetailPage(
@@ -159,12 +157,8 @@ class SireisListviewPage extends StatelessWidget {
                                 onTap: () {
                                   // getDetailImage();
                                   Get.to(
-                                      () => TestDetailPage(
-                                          onChangeTheme: onChangeTheme),
-                                      arguments: [
-                                        studyKey,
-                                        currentSeries.serieskey
-                                      ]);
+                                    () => TestDetailPage(
+                                        onChangeTheme: onChangeTheme),);
                                 },
                                 child: Padding(
                                   padding: const EdgeInsets.all(8.0),

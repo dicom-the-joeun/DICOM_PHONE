@@ -11,7 +11,6 @@ import 'package:http/http.dart' as http;
 import 'package:path_provider/path_provider.dart';
 
 class DetailImageController extends GetxController {
-  // final TokenHandler _tokenHandler = TokenHandler();
   final TokenHandler _tokenHandler = Get.find();
 
   final String? baseUrl = dotenv.env['baseurl'];
@@ -24,7 +23,7 @@ class DetailImageController extends GetxController {
   String zipFilePath = ""; // 파일 경로를 저장할 변수를 함수 밖에서 선언
   RxString destinationDirectory = "".obs;
   RxList<String> imagePathList = <String>[].obs;
-  RxBool zipStatus = false.obs;
+  RxBool zipStatus = true.obs;
 
   // Slider 변수
   RxDouble sliderValue = 0.0.obs;
@@ -45,7 +44,6 @@ class DetailImageController extends GetxController {
       {required int studyKey, required int seriesKey}) async {
     final directory = await getApplicationDocumentsDirectory();
     String fileName = '${studyKey}_$seriesKey';
-    print('fileName: $fileName');
     bool result = false;
 
     final destinationDirectory = '${directory.path}/$fileName';
@@ -71,7 +69,6 @@ class DetailImageController extends GetxController {
 
   /// image zip파일 받아오기
   getFileLink({required int studyKey, required int seriesKey}) async {
-    zipStatus.value = false;
     final String addurl =
         'dcms/image/compressed?studykey=$studyKey&serieskey=$seriesKey';
 
@@ -90,13 +87,13 @@ class DetailImageController extends GetxController {
           '${directory.path}/${studyKey}_$seriesKey.zip'; // zipFilePath에 파일 경로 저장
       var file = File(zipFilePath);
       await file.writeAsBytes(response.bodyBytes);
-      print('파일이 다운로드되었습니다. 경로: $zipFilePath');
+      // print('파일이 다운로드되었습니다. 경로: $zipFilePath');
 
       await zipOpen(studyKey: studyKey, seriesKey: seriesKey);
       zipStatus.value = true;
     } catch (e) {
       print('error $e');
-      zipStatus.value = false;
+      zipStatus.value = false; // view에서 zipStatus.value가 false가 되면 오류창 띄워주기
     }
   }
 
@@ -127,7 +124,6 @@ class DetailImageController extends GetxController {
         }
       }
 
-      print('압축 파일이 성공적으로 해제되었습니다.');
     } else {
       print('지정된 압축 파일이 존재하지 않습니다.');
     }
@@ -149,7 +145,6 @@ class DetailImageController extends GetxController {
         }
       });
 
-      print('폴더 내 파일들의 경로를 성공적으로 가져왔습니다.');
     } else {
       print('지정된 폴더가 존재하지 않습니다.');
     }

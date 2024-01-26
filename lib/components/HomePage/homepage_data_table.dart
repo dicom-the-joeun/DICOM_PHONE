@@ -5,6 +5,7 @@ import 'package:dicom_phone/components/HomePage/homepage_patient_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
+import 'package:dicom_phone/Model/imagekey.dart';
 
 class HomePageDataTable extends StatefulWidget {
   final Function(ThemeMode) onChangeTheme;
@@ -95,9 +96,10 @@ class _HomePageDataTableState extends State<HomePageDataTable> {
             HomePageTableData homePageData = homepageController.filteredData[index];
             return DataRow(
               onSelectChanged: (value) {
+                ImageKey.studyKey = homePageData.studyKey;
                 showDialog(
                   context: context, 
-                  builder: (context) => HomePagePatientDialog(studyKey: homePageData.studyKey, index: index, onChangeTheme: widget.onChangeTheme),
+                  builder: (context) => HomePagePatientDialog(index: index, onChangeTheme: widget.onChangeTheme),
                 );
               },
               cells: [
