@@ -15,13 +15,16 @@ class Thumbnail extends GetxController implements Thumbnails {
   RemoteDatasourceImpl datasource = RemoteDatasourceImpl();
   // final TokenHandler _tokenHandler = TokenHandler();
   final TokenHandler _tokenHandler = Get.find();
-  
+
   RxList<ThumbnailModel> seriesList = <ThumbnailModel>[].obs; // 썸네일 시리즈를 담을 리스트
   String token = ""; // 토큰을 담을 변수
   RxBool isLoading = true.obs;
   final String? baseUrl = dotenv.env['baseurl'];
   String saveZipPath = "";
   RxBool listMode = false.obs;
+
+  // collection 가로 갯수를 관리할 값
+  RxInt collectionValue = 1.obs;
 
   @override
   void onInit() async {

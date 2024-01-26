@@ -28,7 +28,7 @@ class DetailImageController extends GetxController {
   // Slider 변수
   RxDouble sliderValue = 0.0.obs;
   RxInt currentIndex = 0.obs;
-
+  
   @override
   void onInit() async {
     await _tokenHandler.init();

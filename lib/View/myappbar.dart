@@ -1,4 +1,5 @@
 import 'package:dicom_phone/DataSource/token_handler.dart';
+import 'package:dicom_phone/Repository/thumbnails.dart';
 import 'package:dicom_phone/VM/login_ctrl.dart';
 import 'package:dicom_phone/VM/theme_ctrl.dart';
 import 'package:dicom_phone/View/homepage.dart';
@@ -18,12 +19,16 @@ class MyAppbar extends StatelessWidget implements PreferredSizeWidget {
   @override
   Widget build(BuildContext context) {
     final themeController = Get.find<ThemeController>();
+    final Thumbnail thumbnail = Get.put(Thumbnail());
 
     // ignore: deprecated_member_use
     return AppBar(
       title: GestureDetector(
-        onTap: () => Get.offAll(() => HomePage(onChangeTheme: onChangeTheme),
-            transition: Transition.noTransition),
+        onTap: () {
+          thumbnail.collectionValue.value = 1;
+          Get.offAll(() => HomePage(onChangeTheme: onChangeTheme),
+              transition: Transition.noTransition);
+        },
         child: SizedBox(
           child: Image.asset(
             width: 60,
@@ -62,12 +67,7 @@ class MyAppbar extends StatelessWidget implements PreferredSizeWidget {
         ),
         TextButton(
           onPressed: () {
-            // logoutDialog();
-            logoutUser();
-            Get.offAll(
-              () => LoginPage(onChangeTheme: onChangeTheme),
-              transition: Transition.noTransition,
-            );
+            showLogoutDialog(context);
           },
           child: const Column(
             children: [
@@ -90,26 +90,50 @@ class MyAppbar extends StatelessWidget implements PreferredSizeWidget {
   // --- Functions ---
 
   /// 로그아웃 버튼 누르면 나오는 다이얼로그
-  // logoutDialog() {
-  //   return const CupertinoAlertDialog(
-  //     title: Text("로그아웃 하시겠습니까?"),
-  //     actions: [
-  //       CupertinoDialogAction(
-  //           isDefaultAction: true,
-  //           child: Column(
-  //             children: [
-  //               CupertinoButton(
-  //                 child: const Text("확인"), 
-  //                 onPressed: () {
+  /// CupertinoAlertDialog는 context타입이 존재해야해서 이런식으로 해야함
+  void showLogoutDialog(BuildContext context) {
+    showCupertinoDialog(
+      context: context,
+      barrierDismissible: true, // 다른곳 클릭시 닫기
+      builder: (BuildContext context) {
+        return logoutDialog();
+      },
+    );
+  }
 
-  //                 },
-  //                 ),
-  //             ],
-  //           ),
-  //           ),
-  //     ],
-  //   );
-  // }
+  CupertinoAlertDialog logoutDialog() {
+    return CupertinoAlertDialog(
+      title: const Text("정말 로그아웃 하시겠습니까?"),
+      actions: [
+        CupertinoDialogAction(
+          child: Column(
+            children: [
+              CupertinoButton(
+                minSize: 50,
+                child: const Text("확인"),
+                onPressed: () {
+                  logoutUser();
+                  Get.offAll(
+                    () => LoginPage(onChangeTheme: onChangeTheme),
+                    transition: Transition.noTransition,
+                  );
+                },
+              ),
+              CupertinoButton(
+                child: const Text(
+                  "취소",
+                  style: TextStyle(color: Colors.red),
+                ),
+                onPressed: () {
+                  Get.back();
+                },
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
 
   /// 로그아웃시 토큰 없애기
   logoutUser() async {

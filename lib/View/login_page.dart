@@ -1,7 +1,5 @@
 import 'package:dicom_phone/VM/login_ctrl.dart';
 import 'package:dicom_phone/View/homepage.dart';
-import 'package:dicom_phone/View/series_listview_page.dart';
-import 'package:dicom_phone/home.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -16,102 +14,96 @@ class LoginPage extends StatelessWidget {
 
     return Scaffold(
       body: Center(
-        child: SingleChildScrollView(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              SizedBox(
-                child: Image.asset(
-                  "images/pacs.png",
-                  width: 80,
-                  height: 80,
-                  fit: BoxFit.cover,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            SizedBox(
+              child: Image.asset(
+                "images/pacs.png",
+                width: 100,
+                height: 100,
+                fit: BoxFit.cover,
+              ),
+            ),
+            const SizedBox(
+              height: 80,
+            ),
+            loginText(
+              content: "ID",
+              textController: loginController.idController,
+              visiableStatus: false,
+            ),
+            loginText(
+              content: "Password",
+              textController: loginController.pwController,
+              visiableStatus: true,
+            ),
+            const SizedBox(
+              height: 30,
+            ),
+            Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Text("ID 기억하기"),
+                    Obx(
+                      () => Checkbox(
+                        value: loginController.idSaveStatus.value,
+                        onChanged: (value) {
+                          loginController.idSaveStatus.value = value!;
+                        },
+                      ),
+                    ),
+                  ],
                 ),
-              ),
-              loginText(
-                content: "ID",
-                textController: loginController.idController,
-                visiableStatus: false,
-              ),
-              loginText(
-                content: "Password",
-                textController: loginController.pwController,
-                visiableStatus: true,
-              ),
-              Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      const Text("ID 기억하기"),
-                      Obx(
-                        () => Checkbox(
-                          value: loginController.idSaveStatus.value,
-                          onChanged: (value) {
-                            loginController.idSaveStatus.value = value!;
-                          },
-                        ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Text("자동로그인"),
+                    Obx(
+                      () => Checkbox(
+                        value: loginController.autoLoginStatus.value,
+                        onChanged: (value) {
+                          loginController.autoLoginStatus.value = value!;
+                        },
                       ),
-                    ],
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      const Text("자동로그인"),
-                      Obx(
-                        () => Checkbox(
-                          value: loginController.autoLoginStatus.value,
-                          onChanged: (value) {
-                            loginController.autoLoginStatus.value = value!;
-                          },
-                        ),
-                      ),
-                    ],
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.all(10.0),
-                    child: CupertinoButton.filled(
-                      onPressed: () async {
-                        // 로그인 시도 성공 여부 따지기
-                        if (loginController.idController.text.isNotEmpty &&
-                            loginController.pwController.text.isNotEmpty) {
-                          if (await loginController.checkLogin(
-                              loginController.idController.text,
-                              loginController.pwController.text) == true) {
-                            // 체크박스에따라서 아이디 저장할지말지 정하기
-                            print(11111);
-                            loginController.setSaveIdText();
-                            loginController.idSaveStatus.value == true
-                                ? loginController.setIdText(
-                                    loginController.idController.text)
-                                : loginController.deleteIdText();
-                            Get.to(
-                              () => HomePage(
-                                onChangeTheme: onChangeTheme,
-                              ),
-                              transition: Transition.noTransition,
-                            );
-                          } else {
-                            // ignore: use_build_context_synchronously
-                            showSnacbar(
-                              context: context,
-                              title: "실패",
-                              message: "ID나 Password를 다시 확인하세요",
-                              resultBackColor:
-                                  // ignore: use_build_context_synchronously
-                                  Theme.of(context).colorScheme.error,
-                              resultTextColor:
-                                  // ignore: use_build_context_synchronously
-                                  Theme.of(context).colorScheme.onError,
-                            );
-                          }
-                          // 로고 사진 변경, 자동로그인, 체크박스 처리@@@@@@@@@@@@@
+                    ),
+                  ],
+                ),
+                const SizedBox(
+                  height: 100,
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(10.0),
+                  child: CupertinoButton.filled(
+                    onPressed: () async {
+                      // 로그인 시도 성공 여부 따지기
+                      if (loginController.idController.text.isNotEmpty &&
+                          loginController.pwController.text.isNotEmpty) {
+                        if (await loginController.checkLogin(
+                                loginController.idController.text,
+                                loginController.pwController.text) ==
+                            true) {
+                          // 체크박스에따라서 아이디 저장할지말지 정하기
+                          loginController.setSaveIdText();
+                          loginController.idSaveStatus.value == true
+                              ? loginController
+                                  .setIdText(loginController.idController.text)
+                              : loginController.deleteIdText();
+                          Get.to(
+                            () => HomePage(
+                              onChangeTheme: onChangeTheme,
+                            ),
+                            transition: Transition.noTransition,
+                          );
                         } else {
+                          // ignore: use_build_context_synchronously
                           showSnacbar(
                             context: context,
                             title: "실패",
-                            message: "ID와 Password를 입력해주세요",
+                            message: "ID나 Password를 다시 확인하세요",
                             resultBackColor:
                                 // ignore: use_build_context_synchronously
                                 Theme.of(context).colorScheme.error,
@@ -120,22 +112,30 @@ class LoginPage extends StatelessWidget {
                                 Theme.of(context).colorScheme.onError,
                           );
                         }
-                      },
-                      child: const Text("로그인"),
-                    ),
-                  ),
-                  ElevatedButton(
-                    onPressed: () {
-                      Get.to(() => SireisListviewPage(
-                            onChangeTheme: onChangeTheme,
-                          ));
+                      } else {
+                        showSnacbar(
+                          context: context,
+                          title: "실패",
+                          message: "ID와 Password를 입력해주세요",
+                          resultBackColor:
+                              // ignore: use_build_context_synchronously
+                              Theme.of(context).colorScheme.error,
+                          resultTextColor:
+                              // ignore: use_build_context_synchronously
+                              Theme.of(context).colorScheme.onError,
+                        );
+                      }
                     },
-                    child: const Text("SireisPage(ListViewPage) 이동"),
+                    child: const Text("로그인"),
                   ),
-                ],
-              ),
-            ],
-          ),
+                ),
+                const SizedBox(
+                  height: 20,
+                ),
+                const Text("ver.1.0.0"),
+              ],
+            ),
+          ],
         ),
       ),
     );
@@ -174,7 +174,6 @@ class LoginPage extends StatelessWidget {
         snackPosition: SnackPosition.TOP,
         borderRadius: 50, // 둥글게하기
         margin: const EdgeInsets.fromLTRB(60, 10, 60, 10), // 마진값으로 사이즈 조절
-        // animationDuration: const Duration(microseconds: 1000),
       ),
     );
   }
@@ -186,7 +185,7 @@ class LoginPage extends StatelessWidget {
     required bool visiableStatus,
   }) {
     return Padding(
-      padding: const EdgeInsets.all(10.0),
+      padding: const EdgeInsets.all(20.0),
       child: SizedBox(
         width: 400,
         child: TextField(
@@ -194,6 +193,7 @@ class LoginPage extends StatelessWidget {
           obscureText: visiableStatus,
           decoration: InputDecoration(
             labelText: content,
+            border: OutlineInputBorder(borderRadius: BorderRadius.circular(20)),
           ),
         ),
       ),
