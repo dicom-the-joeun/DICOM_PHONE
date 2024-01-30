@@ -111,8 +111,8 @@ class MyAppbar extends StatelessWidget implements PreferredSizeWidget {
               CupertinoButton(
                 minSize: 50,
                 child: const Text("확인"),
-                onPressed: () {
-                  logoutUser();
+                onPressed: () async {
+                  await logoutUser();
                   Get.offAll(
                     () => LoginPage(onChangeTheme: onChangeTheme),
                     transition: Transition.noTransition,
@@ -137,10 +137,9 @@ class MyAppbar extends StatelessWidget implements PreferredSizeWidget {
 
   /// 로그아웃시 토큰 없애기
   logoutUser() async {
-    TokenHandler tokenHandler = TokenHandler();
     final loginController = Get.find<LoginController>();
-    tokenHandler.deleteToken();
-    await loginController.setSaveIdText();
+    loginController.pwController.text = "";
+    await loginController.logoutUser();
   }
 
   /// 테마모드 바꾸는 함수

@@ -18,7 +18,7 @@ class LoginController extends GetxController {
   onInit() async {
     idController = TextEditingController();
     pwController = TextEditingController();
-    // await _tokenHandler.getAccessToken();
+    await _tokenHandler.fetchData();
     await getIdText();
     await getSaveIdText();
     super.onInit();
@@ -57,8 +57,10 @@ class LoginController extends GetxController {
   }
 
   /// logout 하기
-  logoutUser() {
-    _tokenHandler.deleteToken();
+  logoutUser() async {
+    await _tokenHandler.deleteToken();
+    autoLoginStatus.value = false;
+    await setSaveIdText();
   }
 
   /// id 기억하기, 자동로그인 체크박스 status값 저장

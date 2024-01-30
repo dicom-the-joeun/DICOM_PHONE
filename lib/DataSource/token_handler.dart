@@ -1,16 +1,19 @@
 import 'package:dicom_phone/DataSource/remote_datasource.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get/get.dart';
 import 'package:logger/logger.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:dio/dio.dart' as dio;
+import 'package:http/http.dart' as http;
 
 class TokenHandler extends GetxService {
   RemoteDatasourceImpl datasource = RemoteDatasourceImpl();
+  final String? baseUrl = dotenv.env['baseurl'];
   String token = "";
 
   Future<void> init() async {
     token = await TokenHandler().fetchData();
-    print("갱신된 token: $token");
+    // print("갱신된 token: $token");
   }
 
   /// AccessToken 가져오기
@@ -23,7 +26,6 @@ class TokenHandler extends GetxService {
       print(e);
       return '';
     } finally {
-      // print('세이브토큰:  ${pref.getString('access_token')}');
     }
   }
 
@@ -43,23 +45,21 @@ class TokenHandler extends GetxService {
   saveAccessToken() async {
     const String url = "auth/refresh";
     final String token = await getRefreshToken();
-    final Map<String, dynamic> tokenheaders = {
-      'Authorization': 'Bearer $token'
-    };
 
     try {
-      final response = await datasource.get(url, headers: tokenheaders);
-      if (response != null) {
-        // Logger().d(response);
-        dio.Response<dynamic> resData = response;
-        if (resData.statusCode == 200) {
-          Map<String, dynamic> mapData = resData.headers.map;
-          String accesstoken = mapData['access_token'].first;
-          print("저장할 토큰: $accesstoken");
-          await setAccessToken(accessToken: accesstoken);
-        }
+      final response = await http.get(Uri.parse('$baseUrl$url'),
+          headers: {'Authorization': 'Bearer $token'});
+      // Logger().d(response);
+      if (response.statusCode == 200) {
+        String accessToken = response.headers['access_token']!;
+        
+        await setAccessToken(accessToken: accessToken);
+        print("저장할 토큰: $accessToken");
+      } else {
+        await setAccessToken(accessToken: '');
+        print("토큰 재발급 실패");
       }
-    } catch (e) {
+        } catch (e) {
       print('error $e');
       throw Exception('Failed to get access token');
     }
@@ -87,10 +87,9 @@ class TokenHandler extends GetxService {
     await prefs.remove('refresh_token');
   }
 
-  // Future<String>
-   fetchData() async {
+  /// 토큰 발급하기
+  fetchData() async {
     await TokenHandler().saveAccessToken();
-    // token = await TokenHandler().getAccessToken();
     return await TokenHandler().getAccessToken();
   }
 }
