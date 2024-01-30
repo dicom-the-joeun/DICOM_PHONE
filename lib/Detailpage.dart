@@ -235,25 +235,25 @@ class _DetailPageState extends State<DetailPage> {
  List<String> sortedImagePathList = getSortedImagePathList();
 
 //   // 첫 번째 밝기만 가진 파일 4개를 가져오기
-  List<String> firstBrightnessImages = [];
-for(int j = 0; j<10; j++){
-  for (int i = 0; i < 4; i++) {
-     // 각 이미지의 첫 번째 밝기의 인덱스
-   String imageindex = "4_1_${i}_${j}.png";
-    firstBrightnessImages.add(imageindex);
-    }
-  }
+//   List<String> firstBrightnessImages = [];
+// for(int j = 0; j<10; j++){
+//   for (int i = 0; i < 4; i++) {
+    
+//    String imageindex = "4_1_${i}_${j}.png";
+//     firstBrightnessImages.add(imageindex);
+//     }
+//   }
 
 
   // 현재 index에 해당하는 이미지 가져오기
-  String currentImagePath = index < firstBrightnessImages.length ? firstBrightnessImages[index] : "";
+//   String currentImagePath = index < firstBrightnessImages.length ? firstBrightnessImages[index] : "";
 
   
 
- if (currentImagePath.isNotEmpty && File(currentImagePath).existsSync()) {
+//  if (currentImagePath.isNotEmpty && File(currentImagePath).existsSync()) {
  
 
-  print('Loading image at index $index: $currentImagePath');
+//   print('Loading image at index $index: $currentImagePath');
     return ColorFiltered(
       colorFilter: selectedTabs.contains(1)
           ? const ColorFilter.mode(
@@ -282,8 +282,8 @@ for(int j = 0; j<10; j++){
     );
   } 
  
-   return Container();
-  }
+  //  return Container();
+  // }
 // }
   
 
