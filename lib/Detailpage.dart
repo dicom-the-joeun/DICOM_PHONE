@@ -1,11 +1,9 @@
 import 'dart:io';
-
-import 'package:dicom_phone/VM/detail_image.dart';
-
+import 'package:dicom_phone/Model/imagekey.dart';
+import 'package:dicom_phone/VM/detail_image_ctrl.dart';
 import 'package:dicom_phone/View/myappbar.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
@@ -20,12 +18,15 @@ class DetailPage extends StatefulWidget {
   _DetailPageState createState() => _DetailPageState();
 }
 
+int imageIndex = 1;
+int windowIndex = 1;
+
 class _DetailPageState extends State<DetailPage> {
   final DetailImageController detailImageController =
       Get.put(DetailImageController());
   late List<int> currentIndex;
   Set<int> selectedTabs = {}; // Set을 사용하여 다중 선택을 관리합니다.
-  double windowLevelSlider = 0; // 밝기
+  double windowLevelSlider = 0.0; // 밝기
   bool isAnimating = true;
   int animationSpeed = 300;
   double scrollLoopSlider = 0.0; //스크롤 루프
@@ -49,12 +50,14 @@ class _DetailPageState extends State<DetailPage> {
     _animate();
   }
 
- void _animate() {
+  void _animate() {
     Future.delayed(Duration(milliseconds: 200), () {
       if (isAnimating) {
         setState(() {
-          currentImageIndex = (currentImageIndex + 1) % detailImageController.imagePathList.length;
-         if (currentImageIndex == detailImageController.imagePathList.length - 1) {
+          currentImageIndex = (currentImageIndex + 1) %
+              detailImageController.imagePathList.length;
+          if (currentImageIndex ==
+              detailImageController.imagePathList.length - 1) {
             currentImageIndex = 0;
           }
         });
@@ -63,7 +66,6 @@ class _DetailPageState extends State<DetailPage> {
       }
     });
   }
-
 
   void setAnimationSpeed(int speed) {
     setState(() {
@@ -81,7 +83,6 @@ class _DetailPageState extends State<DetailPage> {
       },
       child: Scaffold(
         appBar: MyAppbar(
-          key: (UniqueKey()),
           onChangeTheme: widget.onChangeTheme,
           backStatus: true,
         ),
@@ -106,18 +107,20 @@ class _DetailPageState extends State<DetailPage> {
                 child: selectedTabs.contains(0) ||
                         selectedTabs.contains(2) // 0번 또는 2번 탭에서 슬라이더 표시
                     ? CupertinoSlider(
-                        value:
-                            selectedTabs.contains(0) ? windowLevelSlider : scrollLoopSlider,
+                        value: selectedTabs.contains(0)
+                            ? windowLevelSlider
+                            : scrollLoopSlider,
                         min: 0.0,
                         max: 1.0,
                         onChanged: (value) {
                           setState(() {
                             if (selectedTabs.contains(0)) {
-                              windowLevelSlider = detailImageController.sliderValue.value;
-                              // windowsLevel(value);
+                              // windowLevelSlider =
+                              //     detailImageController.sliderValue.value;
+                              windowLevel(value);
                             } else if (selectedTabs.contains(2)) {
-                              scrollLoopSlider = detailImageController.sliderValue.value;
-                              // detailImageController.changeImage(value);
+                              scrollLoopSlider =
+                                  detailImageController.sliderValue.value;
                               loop(value);
                             }
                           });
@@ -228,32 +231,9 @@ class _DetailPageState extends State<DetailPage> {
   }
 
   Widget _buildImage(int index) {
-  
     bool allowZoom = selectedTabs.contains(4); // 확대/축소 탭
     bool bllowZoom = selectedTabs.contains(5); // 화면전환 탭
 
- List<String> sortedImagePathList = getSortedImagePathList();
-
-//   // 첫 번째 밝기만 가진 파일 4개를 가져오기
-//   List<String> firstBrightnessImages = [];
-// for(int j = 0; j<10; j++){
-//   for (int i = 0; i < 4; i++) {
-    
-//    String imageindex = "4_1_${i}_${j}.png";
-//     firstBrightnessImages.add(imageindex);
-//     }
-//   }
-
-
-  // 현재 index에 해당하는 이미지 가져오기
-//   String currentImagePath = index < firstBrightnessImages.length ? firstBrightnessImages[index] : "";
-
-  
-
-//  if (currentImagePath.isNotEmpty && File(currentImagePath).existsSync()) {
- 
-
-//   print('Loading image at index $index: $currentImagePath');
     return ColorFiltered(
       colorFilter: selectedTabs.contains(1)
           ? const ColorFilter.mode(
@@ -264,101 +244,114 @@ class _DetailPageState extends State<DetailPage> {
               Colors.transparent,
               BlendMode.saturation,
             ),
-        child: Transform(
-      alignment: Alignment.center,
-      transform: bllowZoom
-          ? Matrix4.rotationY(math.pi) // 5번째 탭일 때 좌우반전
-          : Matrix4.identity(),
-      child: PhotoView(
-        imageProvider: FileImage(File(sortedImagePathList[currentImageIndex])),
-        minScale: allowZoom
-            ? PhotoViewComputedScale.contained * 0.8
-            : PhotoViewComputedScale.contained,
-        maxScale: allowZoom
-            ? PhotoViewComputedScale.covered * 1.8
-            : PhotoViewComputedScale.contained,
+      child: Transform(
+        alignment: Alignment.center,
+        transform: bllowZoom
+            ? Matrix4.rotationY(math.pi) // 5번째 탭일 때 좌우반전
+            : Matrix4.identity(),
+        child: PhotoView(
+          key: Key(currentImageIndex.toString()),
+          imageProvider: FileImage(File(
+              '${detailImageController.destinationDirectory.value}/${ImageKey.studyKey}_${ImageKey.seriesKey}_${imageIndex}_${windowIndex}.png')),
+          minScale: allowZoom
+              ? PhotoViewComputedScale.contained * 0.8
+              : PhotoViewComputedScale.contained,
+          maxScale: allowZoom
+              ? PhotoViewComputedScale.covered * 1.8
+              : PhotoViewComputedScale.contained,
         ),
       ),
     );
-  } 
- 
-  //  return Container();
-  // }
-// }
-  
+  }
+  //  imageProvider: AssetImage('${detailImageController.destinationDirectory.value}/${ImageKey.studyKey}_${ImageKey.seriesKey}_${imageIndex}_$windowIndex.png'),
+  //imageProvider: FileImage(File('/data/user/0/com.example.dicom_phone/app_flutter/4/4_1_${scrollLoopSlider}_${windowIndex}.png')),
+//imageProvider: FileImage(File('/data/user/0/com.example.dicom_phone/app_flutter/4/4_1_1_1.png')),
+// ════════ Exception caught by image resource service ════════════════════════════
+// Unable to load asset: "/data/user/0/com.example.dicom_phone/app_flutter/4/4_1_1_1.png".
+// ════════════════════════════════════════════════════════════════════════════════
+// /data/user/0/com.example.dicom_phone/app_flutter/2.zip
 
   void loop(double value) {
-    List<String> sortedImagePathList = getSortedImagePathList();
-
-    int index = (value * sortedImagePathList.length).round();
-    print('Changing image to index: $index');
-
-    setState(() {
-      currentImageIndex = index;
-      scrollLoopSlider = value;
-      if (currentImageIndex == sortedImagePathList.length - 1) {
-        currentImageIndex = 0;
-        scrollLoopSlider = 0.0; // 슬라이더 값도 초기화
+    try {
+      if (detailImageController.imagePathList.isEmpty) {
+        // 이미지가 없을 경우 예외 발생을 방지하고 종료되지 않도록 처리
+        return;
       }
-    });
-  }
 
-   double getWindowLevelFromFileName(String fileName) {
-    // 파일명에서 윈도우 레벨 값을 추출하여 반환
-    List<String> parts = fileName.split('_');
-    return double.tryParse(parts.last) ?? 0.0;
-  }
+      int index = (value * detailImageController.imagePathList.length).round();
+      if (index >= detailImageController.imagePathList.length) {
+        // index가 범위를 벗어난 경우, 처음 이미지로 돌아감
+        index = 0;
+      }
 
-  void changeImages(double value){
-
-  }
-
-void moveFileFromTo(List<String> list, int fromIndex, int toIndex) {
-    if (fromIndex >= 0 && fromIndex < list.length && toIndex >= 0 && toIndex < list.length) {
-      String removedFile = list.removeAt(fromIndex);
-      list.insert(toIndex, removedFile);
+      setState(() {
+        currentImageIndex = index;
+        scrollLoopSlider = value;
+        imageIndex = currentImageIndex + 1; // imageIndex 업데이트
+      });
+    } catch (e, stacktrace) {
+      print('Error in loop method: $e');
+      print(stacktrace);
     }
   }
 
-  List<String> getSortedImagePathList() {
-      List<String> firstBrightnessImages = [];
-    List<String> sortedList = List.from(detailImageController.imagePathList);
+  //  double getWindowLevelFromFileName(String fileName) {
+  //   // 파일명에서 윈도우 레벨 값을 추출하여 반환
+  //   List<String> parts = fileName.split('_');
+  //   return double.tryParse(parts.last) ?? 0.0;
+  // }
 
-    // 정렬 함수를 사용하여 파일명을 기준 숫자로 정렬
-    sortedList.sort((a, b) {
-      List<int> aNumbers = getNumbersFromFileName(a);
-      List<int> bNumbers = getNumbersFromFileName(b);
+  void windowLevel(double value) {
+    int index = (value * detailImageController.imagePathList.length).round();
+      print(index);
 
-      // 각 숫자를 비교하여 정렬
-      for (int i = 0; i < aNumbers.length; i++) {
-        int result = aNumbers[i].compareTo(bNumbers[i]);
-        if (result != 0) {
-          return result;
-        }
-      }
-
-      return 0;
-    });
-sortedList.removeWhere((filePath) => firstBrightnessImages.contains(filePath));
-
-    // 1번 인덱스의 파일을 10번 인덱스로 이동
-    moveFileFromTo(sortedList, 1, 9);
-    moveFileFromTo(sortedList, 10, 13);
-    moveFileFromTo(sortedList, 10, 19);
-    moveFileFromTo(sortedList, 10, 11);
-    moveFileFromTo(sortedList, 21, 29);
-    moveFileFromTo(sortedList, 31, 39);
-
-    return sortedList;
-
-    
+      // 다른 로직 추가...
+    } 
   }
 
-    List<int> getNumbersFromFileName(String fileName) {
-    // 파일명에서 언더스코어로 분리된 부분을 추출하여 정수 리스트로 반환
-    List<String> parts = fileName.split('_');
-    List<int> numbers = parts.map((part) => int.tryParse(part) ?? 0).toList();
-    return numbers;
-  }
+// void moveFileFromTo(List<String> list, int fromIndex, int toIndex) {
+//     if (fromIndex >= 0 && fromIndex < list.length && toIndex >= 0 && toIndex < list.length) {
+//       String removedFile = list.removeAt(fromIndex);
+//       list.insert(toIndex, removedFile);
+//     }
+//   }
 
-}
+//   List<String> getSortedImagePathList() {
+//       List<String> firstBrightnessImages = [];
+//     List<String> sortedList = List.from(detailImageController.imagePathList);
+
+//     // 정렬 함수를 사용하여 파일명을 기준 숫자로 정렬
+//     sortedList.sort((a, b) {
+//       List<int> aNumbers = getNumbersFromFileName(a);
+//       List<int> bNumbers = getNumbersFromFileName(b);
+
+//       // 각 숫자를 비교하여 정렬
+//       for (int i = 0; i < aNumbers.length; i++) {
+//         int result = aNumbers[i].compareTo(bNumbers[i]);
+//         if (result != 0) {
+//           return result;
+//         }
+//       }
+
+//       return 0;
+//     });
+// sortedList.removeWhere((filePath) => firstBrightnessImages.contains(filePath));
+
+//     // 1번 인덱스의 파일을 10번 인덱스로 이동
+//     moveFileFromTo(sortedList, 1, 9);
+//     moveFileFromTo(sortedList, 10, 13);
+//     moveFileFromTo(sortedList, 10, 19);
+//     moveFileFromTo(sortedList, 10, 11);
+//     moveFileFromTo(sortedList, 21, 29);
+//     moveFileFromTo(sortedList, 31, 39);
+
+//     return sortedList;
+
+//   }
+
+//     List<int> getNumbersFromFileName(String fileName) {
+//     // 파일명에서 언더스코어로 분리된 부분을 추출하여 정수 리스트로 반환
+//     List<String> parts = fileName.split('_');
+//     List<int> numbers = parts.map((part) => int.tryParse(part) ?? 0).toList();
+//     return numbers;
+//   }
