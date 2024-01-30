@@ -49,27 +49,20 @@ class _DetailPageState extends State<DetailPage> {
     _animate();
   }
 
-  void _animate() {
-  // 현재 선택된 밝기와 플레이 클립 값에 해당하는 이미지들을 구함
-  List<String> imagesAtSelectedBrightnessAndClip = detailImageController.imagePathList
-      .where((path) =>
-          getWindowLevelFromFileName(path) == detailImageController.brightnessValue.value &&
-          playClipSlider == 2.0) // 플레이 클립 값이 1.0인 경우에만 필터링
-      .toList();
-
-  Future.delayed(Duration(milliseconds: animationSpeed), () {
-    if (isAnimating && imagesAtSelectedBrightnessAndClip.isNotEmpty) {
-      // 현재 인덱스에서 시작하여 같은 밝기 및 플레이 클립 값의 이미지로만 애니메이션을 진행
-      currentImageIndex = (currentImageIndex + 1) % imagesAtSelectedBrightnessAndClip.length;
-
-      // 변경된 이미지 인덱스로 업데이트
-      setState(() {});
-
-      // 애니메이션을 계속 진행
-      _animate();
-    }
-  });
-}
+ void _animate() {
+    Future.delayed(Duration(milliseconds: 200), () {
+      if (isAnimating) {
+        setState(() {
+          currentImageIndex = (currentImageIndex + 1) % detailImageController.imagePathList.length;
+         if (currentImageIndex == detailImageController.imagePathList.length - 1) {
+            currentImageIndex = 0;
+          }
+        });
+        print(currentImageIndex);
+        _animate();
+      }
+    });
+  }
 
 
   void setAnimationSpeed(int speed) {
@@ -121,11 +114,11 @@ class _DetailPageState extends State<DetailPage> {
                           setState(() {
                             if (selectedTabs.contains(0)) {
                               windowLevelSlider = detailImageController.sliderValue.value;
-                              windowsLevel(value);
+                              // windowsLevel(value);
                             } else if (selectedTabs.contains(2)) {
                               scrollLoopSlider = detailImageController.sliderValue.value;
                               // detailImageController.changeImage(value);
-                              changeImages(value);
+                              loop(value);
                             }
                           });
                         },
@@ -239,8 +232,28 @@ class _DetailPageState extends State<DetailPage> {
     bool allowZoom = selectedTabs.contains(4); // 확대/축소 탭
     bool bllowZoom = selectedTabs.contains(5); // 화면전환 탭
 
-    List<String> sortedImagePathList = getSortedImagePathList();
+ List<String> sortedImagePathList = getSortedImagePathList();
 
+//   // 첫 번째 밝기만 가진 파일 4개를 가져오기
+  List<String> firstBrightnessImages = [];
+for(int j = 0; j<10; j++){
+  for (int i = 0; i < 4; i++) {
+     // 각 이미지의 첫 번째 밝기의 인덱스
+   String imageindex = "4_1_${i}_${j}.png";
+    firstBrightnessImages.add(imageindex);
+    }
+  }
+
+
+  // 현재 index에 해당하는 이미지 가져오기
+  String currentImagePath = index < firstBrightnessImages.length ? firstBrightnessImages[index] : "";
+
+  
+
+ if (currentImagePath.isNotEmpty && File(currentImagePath).existsSync()) {
+ 
+
+  print('Loading image at index $index: $currentImagePath');
     return ColorFiltered(
       colorFilter: selectedTabs.contains(1)
           ? const ColorFilter.mode(
@@ -251,35 +264,41 @@ class _DetailPageState extends State<DetailPage> {
               Colors.transparent,
               BlendMode.saturation,
             ),
-      child: Transform(
-        alignment: Alignment.center,
-        transform: bllowZoom
-            ? Matrix4.rotationY(math.pi) // 5번째 탭일 때 좌우반전
-            : Matrix4.identity(),
-        child: PhotoView(
-          
-          imageProvider: FileImage(File(sortedImagePathList[index])),
-          minScale: allowZoom
-              ? PhotoViewComputedScale.contained * 0.8
-              : PhotoViewComputedScale.contained,
-          maxScale: allowZoom
-              ? PhotoViewComputedScale.covered * 1.8
-              : PhotoViewComputedScale.contained,
+        child: Transform(
+      alignment: Alignment.center,
+      transform: bllowZoom
+          ? Matrix4.rotationY(math.pi) // 5번째 탭일 때 좌우반전
+          : Matrix4.identity(),
+      child: PhotoView(
+        imageProvider: FileImage(File(sortedImagePathList[currentImageIndex])),
+        minScale: allowZoom
+            ? PhotoViewComputedScale.contained * 0.8
+            : PhotoViewComputedScale.contained,
+        maxScale: allowZoom
+            ? PhotoViewComputedScale.covered * 1.8
+            : PhotoViewComputedScale.contained,
         ),
       ),
     );
+  } 
+ 
+   return Container();
   }
+// }
+  
 
-  void windowsLevel(double value) {
-    int index = (value * (detailImageController.imagePathList.length)).round();
+  void loop(double value) {
+    List<String> sortedImagePathList = getSortedImagePathList();
+
+    int index = (value * sortedImagePathList.length).round();
     print('Changing image to index: $index');
 
     setState(() {
       currentImageIndex = index;
-      windowLevelSlider = value;
-      if (currentImageIndex == detailImageController.imagePathList.length - 1) {
+      scrollLoopSlider = value;
+      if (currentImageIndex == sortedImagePathList.length - 1) {
         currentImageIndex = 0;
-        windowLevelSlider = 0.0; // 슬라이더 값도 초기화
+        scrollLoopSlider = 0.0; // 슬라이더 값도 초기화
       }
     });
   }
@@ -302,6 +321,7 @@ void moveFileFromTo(List<String> list, int fromIndex, int toIndex) {
   }
 
   List<String> getSortedImagePathList() {
+      List<String> firstBrightnessImages = [];
     List<String> sortedList = List.from(detailImageController.imagePathList);
 
     // 정렬 함수를 사용하여 파일명을 기준 숫자로 정렬
@@ -319,12 +339,15 @@ void moveFileFromTo(List<String> list, int fromIndex, int toIndex) {
 
       return 0;
     });
+sortedList.removeWhere((filePath) => firstBrightnessImages.contains(filePath));
 
     // 1번 인덱스의 파일을 10번 인덱스로 이동
     moveFileFromTo(sortedList, 1, 9);
-    moveFileFromTo(sortedList, 11, 19);
+    moveFileFromTo(sortedList, 10, 13);
+    moveFileFromTo(sortedList, 10, 19);
+    moveFileFromTo(sortedList, 10, 11);
     moveFileFromTo(sortedList, 21, 29);
-    moveFileFromTo(sortedList, 31, 40);
+    moveFileFromTo(sortedList, 31, 39);
 
     return sortedList;
 
