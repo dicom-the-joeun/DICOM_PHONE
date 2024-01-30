@@ -16,7 +16,6 @@ class SireisListviewPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // final Thumbnail thumbnail = Get.put(Thumbnail());
     final thumbnail = Get.find<Thumbnail>();
 
     return PopScope(
@@ -26,21 +25,28 @@ class SireisListviewPage extends StatelessWidget {
       child: Scaffold(
         appBar: MyAppbar(onChangeTheme: onChangeTheme, backStatus: true),
         body: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              Obx(
-                () => thumbnail.isLoading.value
-                    ? const Column(
-                        children: [
-                          Padding(
-                            padding: EdgeInsets.all(8.0),
-                            child: CircularProgressIndicator(),
-                          ),
-                          Text("이미지 불러오는중 ..."),
-                        ],
-                      )
-                    : GestureDetector(
+          child: Obx(
+            () => thumbnail.isLoading.value
+                ? const Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Padding(
+                        padding: EdgeInsets.all(8.0),
+                        child: CircularProgressIndicator.adaptive(
+                          strokeWidth: 5.0,
+                        ),
+                      ),
+                      Text(
+                        "이미지 불러오는중 ...",
+                        style: TextStyle(
+                            fontSize: 20, fontWeight: FontWeight.bold),
+                      ),
+                    ],
+                  )
+                : Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      GestureDetector(
                         onHorizontalDragEnd: (details) {
                           // 스와이프 종료 시 호출
                           if (details.primaryVelocity! < 0) {
@@ -77,79 +83,77 @@ class SireisListviewPage extends StatelessWidget {
                                         onChangeTheme: onChangeTheme),
                                   );
                                 },
-                                child: Container(
-                                  decoration: BoxDecoration(
-                                      border: Border.all(color: Colors.red)),
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(8.0),
-                                    child: Column(
-                                      children: [
-                                        Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.center,
-                                          children: [
-                                            resizeText(
-                                              text:
-                                                  "검사장비 모델명: ${thumbnail.seriesList[index].headers["Manufacturer's Model Name"] ?? "정보없음"}",
-                                              thumbnail: thumbnail,
-                                            ),
-                                            resizeText(
-                                              text:
-                                                  "   seriesKey: ${currentSeries.serieskey}",
-                                              thumbnail: thumbnail,
-                                            ),
-                                          ],
-                                        ),
-                                        Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.spaceBetween,
-                                          children: [
-                                            resizeText(
-                                              text:
-                                                  "검사일자: ${thumbnail.seriesList[index].headers['Study Date'] ?? "정보없음"}",
-                                              thumbnail: thumbnail,
-                                            ),
-                                            resizeText(
-                                              text:
-                                                  "SeriesNumber: ${thumbnail.seriesList[index].headers["Series Number"] ?? "정보없음"}",
-                                              thumbnail: thumbnail,
-                                            ),
-                                          ],
-                                        ),
-                                        Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.spaceBetween,
-                                          children: [
-                                            resizeText(
-                                              text:
-                                                  "환자명: ${thumbnail.seriesList[index].headers["Patient's Name"] ?? "정보없음"}",
-                                              thumbnail: thumbnail,
-                                            ),
-                                            resizeText(
-                                              text:
-                                                  "환자나이: ${calculateAge(thumbnail.seriesList[index].headers["Patient's Birth Date"] ?? "정보없음")}",
-                                              thumbnail: thumbnail,
-                                            ),
-                                          ],
-                                        ),
-                                        Container(
-                                          decoration: BoxDecoration(
-                                              border: Border.all(
-                                                  color: Colors.grey)),
-                                          child: CachedNetworkImage(
-                                            imageUrl: thumbnail.getThumbnailUrl(
-                                              index: index,
-                                            ),
-                                            httpHeaders: {
-                                              'accept': 'application/json',
-                                              'Authorization':
-                                                  "Bearer ${thumbnail.token}",
-                                            },
-                                            fit: BoxFit.fill,
+                                child: Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Column(
+                                    children: [
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: [
+                                          resizeText(
+                                            text:
+                                                "검사장비 모델명: ${thumbnail.seriesList[index].headers["Manufacturer's Model Name"] ?? "정보없음"}",
+                                            thumbnail: thumbnail,
                                           ),
+                                          resizeText(
+                                            text:
+                                                "   seriesKey: ${currentSeries.serieskey}",
+                                            thumbnail: thumbnail,
+                                          ),
+                                        ],
+                                      ),
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          resizeText(
+                                            text:
+                                                "검사일자: ${thumbnail.seriesList[index].headers['Study Date'] ?? "정보없음"}",
+                                            thumbnail: thumbnail,
+                                          ),
+                                          resizeText(
+                                            text:
+                                                "SeriesNumber: ${thumbnail.seriesList[index].headers["Series Number"] ?? "정보없음"}",
+                                            thumbnail: thumbnail,
+                                          ),
+                                        ],
+                                      ),
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          resizeText(
+                                            text:
+                                                "환자명: ${thumbnail.seriesList[index].headers["Patient's Name"] ?? "정보없음"}",
+                                            thumbnail: thumbnail,
+                                          ),
+                                          resizeText(
+                                            text:
+                                                "환자나이: ${calculateAge(thumbnail.seriesList[index].headers["Patient's Birth Date"] ?? "정보없음")}",
+                                            thumbnail: thumbnail,
+                                          ),
+                                        ],
+                                      ),
+                                      Container(
+                                        decoration: BoxDecoration(
+                                            border:
+                                                Border.all(color: Colors.red)),
+                                        child: CachedNetworkImage(
+                                          imageUrl: thumbnail.getThumbnailUrl(
+                                            index: index,
+                                          ),
+                                          width: MediaQuery.of(context).size.width * 1.0,
+                                          height: 500,
+                                          httpHeaders: {
+                                            'accept': 'application/json',
+                                            'Authorization':
+                                                "Bearer ${thumbnail.token}",
+                                          },
+                                          fit: BoxFit.contain,
                                         ),
-                                      ],
-                                    ),
+                                      ),
+                                    ],
                                   ),
                                 ),
                               );
@@ -157,15 +161,15 @@ class SireisListviewPage extends StatelessWidget {
                           ),
                         ),
                       ),
-              ),
-              Obx(
-                () => Text(
-                  "\n시리즈 갯수 : ${thumbnail.seriesList.length}",
-                  style: const TextStyle(
-                      fontSize: 20, fontWeight: FontWeight.bold),
-                ),
-              ),
-            ],
+                      Obx(
+                        () => Text(
+                          "\n시리즈 갯수 : ${thumbnail.seriesList.length}",
+                          style: const TextStyle(
+                              fontSize: 20, fontWeight: FontWeight.bold),
+                        ),
+                      ),
+                    ],
+                  ),
           ),
         ),
       ),

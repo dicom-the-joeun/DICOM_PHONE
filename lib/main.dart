@@ -9,10 +9,10 @@ import 'package:intl/date_symbol_data_local.dart';
 
 void main() async {
   WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
+  await dotenv.load(fileName: ".env");
   final ThemeController themeController = Get.put(ThemeController());
   final LoginController loginController = Get.put(LoginController());
 
-  await dotenv.load(fileName: ".env");
 
   await initializeDateFormatting(); // TableCalendar 언어 설정
   final thmeInfo = await themeController.getThemeInfo();
@@ -74,10 +74,10 @@ class _MyAppState extends State<MyApp> {
         ),
       ),
 
-      home: LoginPage(onChangeTheme: _changeThemeMode),
-      // home: widget.autoLoginStatus == true
-      //     ? HomePage(onChangeTheme: _changeThemeMode)
-      //     : LoginPage(onChangeTheme: _changeThemeMode),
+      // home: LoginPage(onChangeTheme: _changeThemeMode),
+      home: widget.autoLoginStatus == true
+          ? HomePage(onChangeTheme: _changeThemeMode)
+          : LoginPage(onChangeTheme: _changeThemeMode),
 
       debugShowCheckedModeBanner: false,
     );
