@@ -47,25 +47,27 @@ class _DetailPageState extends State<DetailPage> {
 
   void startAnimation() {
     isAnimating = true;
-    _animate();
-  }
+    playClip(playClipSlider);
+      }
 
-  void _animate() {
-    Future.delayed(Duration(milliseconds: 200), () {
+void playClip(double value)  async{
+   Future.delayed(Duration(milliseconds: 200), () {
       if (isAnimating) {
         setState(() {
-          currentImageIndex = (currentImageIndex + 1) %
-              detailImageController.imagePathList.length;
-          if (currentImageIndex ==
-              detailImageController.imagePathList.length - 1) {
+          currentImageIndex = (currentImageIndex + 1) % detailImageController.imagePathList.length;
+         if (currentImageIndex == detailImageController.imagePathList.length - 1) {
             currentImageIndex = 0;
           }
+          windowIndex = currentImageIndex +1;
         });
         print(currentImageIndex);
-        _animate();
+        playClip(value);
       }
     });
   }
+  
+
+
 
   void setAnimationSpeed(int speed) {
     setState(() {
@@ -119,6 +121,7 @@ class _DetailPageState extends State<DetailPage> {
                               //     detailImageController.sliderValue.value;
                               windowLevel(value);
                             } else if (selectedTabs.contains(2)) {
+                              
                               scrollLoopSlider =
                                   detailImageController.sliderValue.value;
                               loop(value);
@@ -175,7 +178,7 @@ class _DetailPageState extends State<DetailPage> {
                           onPressed: () {
                             stopAnimation();
                           },
-                          child: Text('중지'),
+                          child: Text('정지'),
                           style: ElevatedButton.styleFrom(
                             padding: EdgeInsets.zero,
                           ),
@@ -252,7 +255,7 @@ class _DetailPageState extends State<DetailPage> {
         child: PhotoView(
           key: Key(currentImageIndex.toString()),
           imageProvider: FileImage(File(
-              '${detailImageController.destinationDirectory.value}/${ImageKey.studyKey}_${ImageKey.seriesKey}_${imageIndex}_${windowIndex}.png')),
+              '${detailImageController.destinationDirectory.value}/${ImageKey.studyKey}_${ImageKey.seriesKey}_${imageIndex}_$windowIndex.png')),
           minScale: allowZoom
               ? PhotoViewComputedScale.contained * 0.8
               : PhotoViewComputedScale.contained,
@@ -270,30 +273,36 @@ class _DetailPageState extends State<DetailPage> {
 // Unable to load asset: "/data/user/0/com.example.dicom_phone/app_flutter/4/4_1_1_1.png".
 // ════════════════════════════════════════════════════════════════════════════════
 // /data/user/0/com.example.dicom_phone/app_flutter/2.zip
+void loop(double value) {
+  int index = (value * detailImageController.imagePathList.length).round();
+print('Total number of images: ${detailImageController.imagePathList.length}');
 
-  void loop(double value) {
-    try {
-      if (detailImageController.imagePathList.isEmpty) {
-        // 이미지가 없을 경우 예외 발생을 방지하고 종료되지 않도록 처리
-        return;
-      }
-
-      int index = (value * detailImageController.imagePathList.length).round();
-      if (index >= detailImageController.imagePathList.length) {
-        // index가 범위를 벗어난 경우, 처음 이미지로 돌아감
-        index = 0;
-      }
-
-      setState(() {
-        currentImageIndex = index;
-        scrollLoopSlider = value;
-        imageIndex = currentImageIndex + 1; // imageIndex 업데이트
-      });
-    } catch (e, stacktrace) {
-      print('Error in loop method: $e');
-      print(stacktrace);
+  setState(() {
+    if (index >= detailImageController.imagePathList.length) {
+      // index가 범위를 벗어난 경우, 처음 이미지로 돌아감
+      index = index % detailImageController.imagePathList.length;
     }
-  }
+
+    if (index < 0) {
+      // index가 음수인 경우, 마지막 이미지로 돌아감
+      index = detailImageController.imagePathList.length - 1;
+    }
+
+    currentImageIndex = index;
+
+    if (currentImageIndex == detailImageController.imagePathList.length - 1) {
+      // 이미지 리스트의 마지막 인덱스에 도달한 경우 초기화
+      currentImageIndex = 0;
+      scrollLoopSlider = 0.0;
+    } else {
+      scrollLoopSlider = value;
+      imageIndex = currentImageIndex + 1; // imageIndex 업데이트
+    }
+  });
+}
+
+
+  
 
   //  double getWindowLevelFromFileName(String fileName) {
   //   // 파일명에서 윈도우 레벨 값을 추출하여 반환
@@ -303,7 +312,15 @@ class _DetailPageState extends State<DetailPage> {
 
   void windowLevel(double value) {
     int index = (value * detailImageController.imagePathList.length).round();
-      print(index);
+       if (index >= detailImageController.imagePathList.length) {
+        // index가 범위를 벗어난 경우, 처음 이미지로 돌아감
+        index = 0;
+      }
+      setState(() {
+        currentImageIndex = index;
+        windowLevelSlider= value;
+        windowIndex = currentImageIndex + 1;
+      });
 
       // 다른 로직 추가...
     } 
