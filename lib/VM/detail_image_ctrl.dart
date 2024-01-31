@@ -71,7 +71,7 @@ class DetailImageController extends GetxController {
   /// image zip파일 받아오기
   getFileLink({required int studyKey}) async {
     final String addurl =
-     'dcms/images/retrieveStudyZip/${studyKey.toString()}';
+     'dcms/images/${studyKey.toString()}';
 
     saveFilePath = "";
 
@@ -86,7 +86,7 @@ class DetailImageController extends GetxController {
        final directory = await getApplicationDocumentsDirectory();
       print(directory.path);
       zipFilePath =
-          '${directory.path}/${studyKey}.zip'; // zipFilePath에 파일 경로 저장
+          '${directory.path}/${studyKey}_images.zip'; // zipFilePath에 파일 경로 저장
       var file = File(zipFilePath);
       await file.writeAsBytes(response.bodyBytes);
       print('파일이 다운로드되었습니다. 경로: $zipFilePath');
