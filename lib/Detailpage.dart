@@ -1,5 +1,7 @@
 import 'dart:io';
+import 'package:dicom_phone/Model/detailpage_model.dart';
 import 'package:dicom_phone/Model/imagekey.dart';
+import 'package:dicom_phone/Model/thubmnail_model.dart';
 import 'package:dicom_phone/VM/detail_image_ctrl.dart';
 import 'package:dicom_phone/View/myappbar.dart';
 import 'package:flutter/cupertino.dart';
@@ -10,8 +12,12 @@ import 'dart:math' as math;
 
 class DetailPage extends StatefulWidget {
   final Function(ThemeMode) onChangeTheme;
-  // final ThumbnailModel thumbnailModel
-  const DetailPage({super.key, required this.onChangeTheme});
+  final ThumbnailModel thumbnailModel;
+  const DetailPage({
+    super.key,
+    required this.onChangeTheme,
+    required this.thumbnailModel,
+  });
 
   @override
   _DetailPageState createState() => _DetailPageState();
@@ -21,21 +27,29 @@ int imageIndex = 1;
 int windowIndex = 1;
 
 class _DetailPageState extends State<DetailPage> {
-  final DetailImageController detailImageController =
+  late DetailModel detailModel = Get.put(detailModel);
+  late ThumbnailModel currentSeries;
+  DetailImageController detailImageController =
       Get.put(DetailImageController());
+
+  bool isAnimating = true;
   late List<int> currentIndex;
   Set<int> selectedTabs = {}; // Set을 사용하여 다중 선택을 관리합니다.
-  double windowLevelSlider = 0.0; // 밝기
-  bool isAnimating = true;
-  int animationSpeed = 300;
-  double scrollLoopSlider = 0.0; //스크롤 루프
+  int animationSpeed = 300; // 플레이 클립 재생 값
+  int currentImageIndex = 0; // 이미지 값
   double playClipSlider = 0.0; //플레이 클립
-  int currentImageIndex = 0;
+  double scrollLoopSlider = 1.0; //스크롤 루프
+  double windowLevelSlider = 1.0; // 밝기
 
   @override
   void initState() {
     super.initState();
     currentIndex = [0, 1, 2, 3, 4];
+    currentSeries = widget.thumbnailModel;
+    // windowIndex = 1;
+
+    // detailImageController = Get.put(DetailImageController());
+    // detailModel = detailModel.WindowCenter as DetailModel;
   }
 
   void stopAnimation() {
@@ -55,37 +69,37 @@ class _DetailPageState extends State<DetailPage> {
     });
   }
 
-   void playClip(double value) async {
-  while (isAnimating) {
-    await Future.delayed(Duration(milliseconds: animationSpeed.toInt()));
-    if (!isAnimating) {
-      break; // 종료 조건
-    }
-
-    setState(() {
-      currentImageIndex = (currentImageIndex + 1) %
-          detailImageController.imagePathList.length;
-      if (currentImageIndex ==
-          detailImageController.imagePathList.length - 1) {
-        currentImageIndex = 0;
+  void playClip(double value) async {
+    while (isAnimating) {
+      await Future.delayed(Duration(milliseconds: animationSpeed.toInt()));
+      if (!isAnimating) {
+        break; // 종료 조건
       }
-      imageIndex = currentImageIndex + 1;
-    });
 
-    print(currentImageIndex);
-
-    // 이미지 파일이 존재하는지 확인
-    String imagePath = '${detailImageController.destinationDirectory.value}/'
-        '${ImageKey.studyKey}_${ImageKey.seriesKey}_${imageIndex}_$windowIndex.png';
-    if (!File(imagePath).existsSync()) {
-      // 파일이 존재하지 않으면 초기 이미지로 돌아가기
       setState(() {
-        currentImageIndex = 0;
+        currentImageIndex = (currentImageIndex + 1) %
+            detailImageController.imagePathList.length;
+        if (currentImageIndex ==
+            detailImageController.imagePathList.length - 1) {
+          currentImageIndex = 0;
+        }
         imageIndex = currentImageIndex + 1;
       });
+
+      print(currentImageIndex);
+
+      // 이미지 파일이 존재하는지 확인
+      String imagePath = '${detailImageController.destinationDirectory.value}/'
+          '${ImageKey.studyKey}_${ImageKey.seriesKey}_${imageIndex}_$windowIndex.png';
+      if (!File(imagePath).existsSync()) {
+        // 파일이 존재하지 않으면 초기 이미지로 돌아가기
+        setState(() {
+          currentImageIndex = 0;
+          imageIndex = currentImageIndex + 1;
+        });
+      }
     }
   }
-}
 
   @override
   Widget build(BuildContext context) {
@@ -120,10 +134,9 @@ class _DetailPageState extends State<DetailPage> {
                   ? RotatedBox(
                       quarterTurns: 1,
                       child: Slider(
-                        value: windowLevelSlider, // 클램핑
-                        min: 0.0,
-                        max: 1.0,
-                        divisions: 150,
+                        value: windowLevelSlider,
+                        min: 1.0,
+                        max: isAnimating ? 10 : 0,
                         onChanged: (value) {
                           setState(() {
                             windowLevel(value);
@@ -134,18 +147,17 @@ class _DetailPageState extends State<DetailPage> {
                   : Container(),
             ),
             Positioned(
-              top: 150,
+              top: 200,
               right: 0,
               child: selectedTabs.contains(2)
                   ? RotatedBox(
                       quarterTurns: 1,
-                      child: CupertinoSlider(
+                      child: Slider(
                         value: scrollLoopSlider,
-                        min: 0.0,
-                        max: 1.0,
+                        min: 1.0,
+                        max: currentSeries.imagecnt.toDouble(),
                         onChanged: (value) {
                           setState(() {
-                            scrollLoopSlider = value;
                             loop(value);
                           });
                         },
@@ -166,7 +178,7 @@ class _DetailPageState extends State<DetailPage> {
                         children: [
                           CupertinoSlider(
                             value: animationSpeed.toDouble(),
-                            min: 0,
+                            min: 200,
                             max: 800,
                             onChanged: (value) {
                               setState(() {
@@ -242,7 +254,7 @@ class _DetailPageState extends State<DetailPage> {
             ),
             BottomNavigationBarItem(
               icon: Icon(Icons.flip),
-              label: '수평반전',
+              label: '좌우반전',
             ),
           ],
         ),
@@ -252,7 +264,6 @@ class _DetailPageState extends State<DetailPage> {
 
   Widget _buildImage(int index) {
     bool bllowZoom = selectedTabs.contains(4); // 화면전환 탭
-
     return ColorFiltered(
       colorFilter: selectedTabs.contains(1)
           ? const ColorFilter.mode(
@@ -283,19 +294,8 @@ class _DetailPageState extends State<DetailPage> {
     setState(() {
       currentImageIndex = index;
       windowLevelSlider = value;
-      windowIndex = currentImageIndex + 1;
+      windowIndex = value.toInt();
     });
-
-    String imagePath = '${detailImageController.destinationDirectory.value}/'
-        '${ImageKey.studyKey}_${ImageKey.seriesKey}_${imageIndex}_$windowIndex.png';
-    if (!File(imagePath).existsSync()) {
-      // 파일이 존재하지 않으면 초기 이미지로 돌아가기
-      setState(() {
-        windowLevelSlider = 0.0;
-        currentImageIndex = 0;
-        windowIndex = currentImageIndex + 1;
-      });
-    }
   }
 
   void loop(double value) {
@@ -303,19 +303,7 @@ class _DetailPageState extends State<DetailPage> {
     setState(() {
       currentImageIndex = index;
       scrollLoopSlider = value;
-      imageIndex = currentImageIndex + 1;
+      imageIndex = value.toInt();
     });
-
-    //화면 꺼짐 x
-    String imagePath = '${detailImageController.destinationDirectory.value}/'
-        '${ImageKey.studyKey}_${ImageKey.seriesKey}_${imageIndex}_$windowIndex.png';
-    if (!File(imagePath).existsSync()) {
-      // 파일이 존재하지 않으면 초기 이미지로 돌아가기
-      setState(() {
-        currentImageIndex = 0;
-        scrollLoopSlider = 0.0;
-        imageIndex = currentImageIndex + 1;
-      });
-    }
   }
 }
