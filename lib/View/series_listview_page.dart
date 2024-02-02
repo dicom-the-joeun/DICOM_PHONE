@@ -81,7 +81,7 @@ class SireisListviewPage extends StatelessWidget {
                                   ImageKey.seriesKey = currentSeries.serieskey;
                                   Get.to(
                                     () => DetailPage(
-                                        onChangeTheme: onChangeTheme),
+                                        onChangeTheme: onChangeTheme, thumbnailModel: currentSeries,),
                                   );
                                 },
                                 child: Container(
