@@ -70,43 +70,43 @@ class _DetailPageState extends State<DetailPage> {
     });
   }
 
-  void playClip(double value) async {
-    while (isAnimating) {
-      await Future.delayed(Duration(milliseconds: animationSpeed.toInt()));
-      if (!isAnimating) {
-        break; // 종료 조건
-      }
+void playClip(double value) async {
+  while (isAnimating && mounted) {
+    await Future.delayed(Duration(milliseconds: animationSpeed.toInt()));
+    if (!isAnimating || !mounted) {
+      break; // 종료 조건
+    }
 
+    setState(() {
+      currentImageIndex = (currentImageIndex + 1) %
+          detailImageController.imagePathList.length;
+      if (currentImageIndex ==
+          detailImageController.imagePathList.length - 1) {
+        currentImageIndex = 0;
+      }
+      imageIndex = currentImageIndex + 1;
+    });
+
+    // 이미지 파일이 존재하는지 확인
+    String imagePath = '${detailImageController.destinationDirectory.value}/'
+        '${ImageKey.studyKey}_${ImageKey.seriesKey}_${imageIndex}_$windowIndex.png';
+    if (!File(imagePath).existsSync()) {
+      // 파일이 존재하지 않으면 초기 이미지로 돌아가기
       setState(() {
-        currentImageIndex = (currentImageIndex + 1) %
-            detailImageController.imagePathList.length;
-        if (currentImageIndex ==
-            detailImageController.imagePathList.length - 1) {
-          currentImageIndex = 0;
-        }
+        currentImageIndex = 0;
         imageIndex = currentImageIndex + 1;
       });
-
-      print(currentImageIndex);
-
-      // 이미지 파일이 존재하는지 확인
-      String imagePath = '${detailImageController.destinationDirectory.value}/'
-          '${ImageKey.studyKey}_${ImageKey.seriesKey}_${imageIndex}_$windowIndex.png';
-      if (!File(imagePath).existsSync()) {
-        // 파일이 존재하지 않으면 초기 이미지로 돌아가기
-        setState(() {
-          currentImageIndex = 0;
-          imageIndex = currentImageIndex + 1;
-        });
-      }
     }
   }
+}
+
 
   @override
   Widget build(BuildContext context) {
     return PopScope(
       onPopInvoked: (didPop) async {
         print("디테일 페이지 닫힘@@@@@@@@@");
+        
         await detailImageController
             .deleteDirectoryFile(); // 페이지 나갈때 디렉토리에서 파일 삭제
       },
