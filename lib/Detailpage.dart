@@ -55,6 +55,7 @@ class _DetailPageState extends State<DetailPage> {
   void stopAnimation() {
     setState(() {
       isAnimating = false;
+      print(isAnimating);
     });
   }
 
@@ -114,114 +115,124 @@ class _DetailPageState extends State<DetailPage> {
           onChangeTheme: widget.onChangeTheme,
           backStatus: true,
         ),
-        body: Stack(
-          children: [
-            Obx(
-              () => detailImageController.imagePathList.isEmpty
-                  ? const Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        CircularProgressIndicator(),
-                        Text("이미지 불러오는중 ...")
-                      ],
-                    )
-                  : _buildImage(currentImageIndex),
-            ),
-            Positioned(
-              top: 200,
-              left: 0,
-              child: selectedTabs.contains(0)
-                  ? RotatedBox(
-                      quarterTurns: 1,
-                      child: Slider(
-                        value: windowLevelSlider,
-                        min: 1.0,
-                        max: isAnimating ? 10 : 0,
-                        onChanged: (value) {
-                          setState(() {
-                            windowLevel(value);
-                          });
-                        },
-                      ),
-                    )
-                  : Container(),
-            ),
-            Positioned(
-              top: 200,
-              right: 0,
-              child: selectedTabs.contains(2)
-                  ? RotatedBox(
-                      quarterTurns: 1,
-                      child: Slider(
-                        value: scrollLoopSlider,
-                        min: 1.0,
-                        max: currentSeries.imagecnt.toDouble(),
-                        onChanged: (value) {
-                          setState(() {
-                            loop(value);
-                          });
-                        },
-                      ),
-                    )
-                  : Container(),
-            ),
-            if (selectedTabs.contains(3))
-              Positioned(
-                bottom: MediaQuery.of(context).size.height / 50,
-                left: MediaQuery.of(context).size.width / 2.5 - 50,
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Directionality(
-                      textDirection: TextDirection.ltr,
-                      child: Column(
+        body: Center(
+          child: Stack(
+            children: [
+              Obx(
+                () => detailImageController.imagePathList.isEmpty
+                    ? const Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          CupertinoSlider(
-                            value: animationSpeed.toDouble(),
-                            min: 200,
-                            max: 800,
-                            onChanged: (value) {
-                              setState(() {
-                                setAnimationSpeed(value.toInt());
-                              });
-                            },
+                           Padding(
+                          padding: EdgeInsets.all(8.0),
+                          child: CircularProgressIndicator.adaptive(
+                            strokeWidth: 5.0,
                           ),
-                          Text(
-                            'Animation Speed: $animationSpeed',
-                            style: const TextStyle(fontSize: 16),
+                        ),
+                          Text("이미지 불러오는중 ...")
+                        ],
+                      )
+                    : _buildImage(currentImageIndex),
+              ),
+              Positioned(
+                top: 200,
+                left: 0,
+                child: selectedTabs.contains(0)
+                    ? RotatedBox(
+                        quarterTurns: 1,
+                        child: Slider(
+                          value: windowLevelSlider,
+                          min: 1.0,
+                         max: isAnimating ? 10.0 : 10.0,
+          
+                          onChanged: (value) {
+                            setState(() {
+                              
+                              windowLevel(value);
+                              // print(value);
+                            });
+                          },
+                        ),
+                      )
+                    : Container(),
+              ),
+              Positioned(
+                top: 200,
+                right: 0,
+                child: selectedTabs.contains(2)
+                    ? RotatedBox(
+                        quarterTurns: 1,
+                        child: Slider(
+                          value: scrollLoopSlider,
+                          min: 1.0,
+                          max: currentSeries.imagecnt.toDouble(),
+                          onChanged: (value) {
+                            setState(() {
+                              loop(value);
+                            });
+                          },
+                        ),
+                      )
+                    : Container(),
+              ),
+              if (selectedTabs.contains(3))
+                Positioned(
+                  bottom: MediaQuery.of(context).size.height / 50,
+                  left: MediaQuery.of(context).size.width / 2.5 - 50,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Directionality(
+                        textDirection: TextDirection.ltr,
+                        child: Column(
+                          children: [
+                            CupertinoSlider(
+                              value: animationSpeed.toDouble(),
+                              min: 200,
+                              max: 800,
+                              onChanged: (value) {
+                                setState(() {
+                                  setAnimationSpeed(value.toInt());
+                                });
+                              },
+                            ),
+                            Text(
+                              'Animation Speed: $animationSpeed',
+                              style: const TextStyle(fontSize: 16),
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(height: 20),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          ElevatedButton(
+                            onPressed: () {
+                              startAnimation();
+                            },
+                            style: ElevatedButton.styleFrom(
+                              padding: EdgeInsets.zero,
+                            ),
+                            child: const Text('시작'),
+                          ),
+                          const SizedBox(width: 20),
+                          ElevatedButton(
+                            onPressed: () {
+                              stopAnimation();
+                            },
+                            style: ElevatedButton.styleFrom(
+                              padding: EdgeInsets.zero,
+                            ),
+                            child: const Text('정지'),
                           ),
                         ],
                       ),
-                    ),
-                    const SizedBox(height: 20),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        ElevatedButton(
-                          onPressed: () {
-                            startAnimation();
-                          },
-                          style: ElevatedButton.styleFrom(
-                            padding: EdgeInsets.zero,
-                          ),
-                          child: const Text('시작'),
-                        ),
-                        const SizedBox(width: 20),
-                        ElevatedButton(
-                          onPressed: () {
-                            stopAnimation();
-                          },
-                          style: ElevatedButton.styleFrom(
-                            padding: EdgeInsets.zero,
-                          ),
-                          child: const Text('정지'),
-                        ),
-                      ],
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
-              ),
-          ],
+            ],
+          ),
         ),
         bottomNavigationBar: BottomNavigationBar(
           currentIndex: selectedTabs.isNotEmpty ? selectedTabs.first : 0,
