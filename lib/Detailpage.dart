@@ -27,10 +27,10 @@ int imageIndex = 1;
 int windowIndex = 1;
 
 class _DetailPageState extends State<DetailPage> {
-  late DetailModel detailModel = Get.put(detailModel);
+ 
   late ThumbnailModel currentSeries;
-  DetailImageController detailImageController =
-      Get.put(DetailImageController());
+  DetailImageController detailImageController = Get.put(DetailImageController());
+
 
   bool isAnimating = true;
   late List<int> currentIndex;
@@ -46,10 +46,10 @@ class _DetailPageState extends State<DetailPage> {
     super.initState();
     currentIndex = [0, 1, 2, 3, 4];
     currentSeries = widget.thumbnailModel;
-    // windowIndex = 1;
+    imageIndex = 1;
+    windowIndex = 1;
+   
 
-    // detailImageController = Get.put(DetailImageController());
-    // detailModel = detailModel.WindowCenter as DetailModel;
   }
 
   void stopAnimation() {
@@ -99,16 +99,14 @@ void playClip(double value) async {
     }
   }
 }
-
-
   @override
   Widget build(BuildContext context) {
     return PopScope(
       onPopInvoked: (didPop) async {
         print("디테일 페이지 닫힘@@@@@@@@@");
-        
         await detailImageController
             .deleteDirectoryFile(); // 페이지 나갈때 디렉토리에서 파일 삭제
+        
       },
       child: Scaffold(
         appBar: MyAppbar(
@@ -135,6 +133,7 @@ void playClip(double value) async {
                     : _buildImage(currentImageIndex),
               ),
               Positioned(
+                
                 top: 200,
                 left: 0,
                 child: selectedTabs.contains(0)
@@ -149,7 +148,7 @@ void playClip(double value) async {
                             setState(() {
                               
                               windowLevel(value);
-                              // print(value);
+                            
                             });
                           },
                         ),
@@ -278,7 +277,7 @@ void playClip(double value) async {
     return ColorFiltered(
       colorFilter: selectedTabs.contains(1)
           ? const ColorFilter.mode(
-              Colors.grey,
+              Colors.white,
               BlendMode.difference,
             )
           : const ColorFilter.mode(
