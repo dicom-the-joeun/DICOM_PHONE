@@ -69,6 +69,7 @@ dependencies:
 
   # data table Column 고정
   data_table_2: ^2.5.10
+  flutter_launcher_icons: ^0.13.1
 
 dev_dependencies:
   flutter_test:
