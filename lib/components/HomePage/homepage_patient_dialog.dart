@@ -52,6 +52,7 @@ class HomePagePatientDialog extends StatelessWidget {
                     DataColumn(
                       label: TextButton(
                         onPressed: () {
+                          Get.back();
                           thumbnail.getThumbnail(ImageKey.studyKey);
                           Get.to(() => SireisListviewPage(onChangeTheme: onChangeTheme));
                         }, 

@@ -18,7 +18,7 @@ class LoginController extends GetxController {
   onInit() async {
     idController = TextEditingController();
     pwController = TextEditingController();
-    await _tokenHandler.fetchData();
+    // await _tokenHandler.fetchData();
     await getIdText();
     await getSaveIdText();
     super.onInit();

@@ -13,8 +13,8 @@ abstract class Thumbnails {
 
 class Thumbnail extends GetxController implements Thumbnails {
   RemoteDatasourceImpl datasource = RemoteDatasourceImpl();
-  // final TokenHandler _tokenHandler = TokenHandler();
-  final TokenHandler _tokenHandler = Get.find();
+  final TokenHandler _tokenHandler = TokenHandler();
+  // final TokenHandler _tokenHandler = Get.find();
 
   RxList<ThumbnailModel> seriesList = <ThumbnailModel>[].obs; // 썸네일 시리즈를 담을 리스트
   String token = ""; // 토큰을 담을 변수
@@ -28,8 +28,8 @@ class Thumbnail extends GetxController implements Thumbnails {
 
   @override
   void onInit() async {
-    await _tokenHandler.init();
-    token = _tokenHandler.token;
+    // await _tokenHandler.init();
+    token = await _tokenHandler.fetchData();
 
     super.onInit();
   }

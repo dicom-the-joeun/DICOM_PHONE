@@ -1,4 +1,5 @@
 import 'package:dicom_phone/DataSource/remote_datasource.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get/get.dart';
 import 'package:logger/logger.dart';
@@ -6,7 +7,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:dio/dio.dart' as dio;
 import 'package:http/http.dart' as http;
 
-class TokenHandler extends GetxService {
+// class TokenHandler extends GetxService {
+class TokenHandler {
   RemoteDatasourceImpl datasource = RemoteDatasourceImpl();
   final String? baseUrl = dotenv.env['baseurl'];
   String token = "";
@@ -89,6 +91,7 @@ class TokenHandler extends GetxService {
 
   /// 토큰 발급하기
   fetchData() async {
+    debugPrint('토큰 패치됨');
     await TokenHandler().saveAccessToken();
     return await TokenHandler().getAccessToken();
   }

@@ -14,7 +14,8 @@ class HomePageController extends GetxController {
   /// property (서버에서 데이터 가져오기)
   RemoteDatasourceImpl datasourse = RemoteDatasourceImpl();
   // TokenHandler tokenHandler = TokenHandler();
-  final TokenHandler _tokenHandler = Get.put(TokenHandler());
+  // final TokenHandler _tokenHandler = Get.put(TokenHandler());
+  final TokenHandler _tokenHandler = TokenHandler();
   String token = '';
   late List dataConvertedJSON;
   RxList pacsData = [].obs; // 전체 데이터
@@ -36,8 +37,8 @@ class HomePageController extends GetxController {
 
   @override
   void onInit() async {
-    await _tokenHandler.init();
-    token = _tokenHandler.token;
+    // await _tokenHandler.init();
+    token = await _tokenHandler.fetchData();
     await getJSONData();
     super.onInit();
   }

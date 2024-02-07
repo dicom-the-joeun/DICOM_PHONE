@@ -1,3 +1,4 @@
+import 'package:dicom_phone/DataSource/token_handler.dart';
 import 'package:dicom_phone/VM/login_ctrl.dart';
 import 'package:dicom_phone/VM/theme_ctrl.dart';
 import 'package:dicom_phone/View/homepage.dart';
@@ -8,15 +9,22 @@ import 'package:get/get.dart';
 import 'package:intl/date_symbol_data_local.dart';
 
 void main() async {
+  // ignore: unused_local_variable
   WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
   await dotenv.load(fileName: ".env");
+  // Get.lazyPut(() => TokenHandler());
+  
   final ThemeController themeController = Get.put(ThemeController());
   final LoginController loginController = Get.put(LoginController());
+  final TokenHandler tokenHandler = TokenHandler();
 
 
   await initializeDateFormatting(); // TableCalendar 언어 설정
   final thmeInfo = await themeController.getThemeInfo();
   final autoLoginStatus = await loginController.getSaveIdText();
+  autoLoginStatus == true
+  ? tokenHandler.fetchData()
+  : null;
   runApp(MyApp(thmeInfo, autoLoginStatus));
 }
 

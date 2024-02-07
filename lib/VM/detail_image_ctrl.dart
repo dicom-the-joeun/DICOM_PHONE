@@ -3,7 +3,6 @@ import 'dart:typed_data';
 
 import 'package:archive/archive.dart';
 import 'package:dicom_phone/DataSource/token_handler.dart';
-import 'package:dicom_phone/Model/detailpage_model.dart';
 import 'package:dicom_phone/Model/imagekey.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get/get.dart';
@@ -11,13 +10,13 @@ import 'package:http/http.dart' as http;
 import 'package:path_provider/path_provider.dart';
 
 class DetailImageController extends GetxController {
-  final TokenHandler _tokenHandler = Get.find();
+  // final TokenHandler _tokenHandler = Get.find();
+  final TokenHandler _tokenHandler = TokenHandler();
 
   final String? baseUrl = dotenv.env['baseurl'];
   String token = "";
   String fname = "";
   String path = "";
-  RxList<DetailModel> detailList = <DetailModel>[].obs;
   RxBool isLoading = true.obs;
   String saveFilePath = "";
   String zipFilePath = ""; // 파일 경로를 저장할 변수를 함수 밖에서 선언
@@ -32,8 +31,8 @@ class DetailImageController extends GetxController {
   
   @override
   void onInit() async {
-    await _tokenHandler.init();
-    token = _tokenHandler.token;
+    // await _tokenHandler.init(); // 중복실행 때문에 제거
+    token = await _tokenHandler.fetchData();
     await findDuplicationDirectory(
         studyKey: ImageKey.studyKey);
 
