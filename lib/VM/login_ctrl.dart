@@ -18,7 +18,7 @@ class LoginController extends GetxController {
   onInit() async {
     idController = TextEditingController();
     pwController = TextEditingController();
-    // await _tokenHandler.fetchData();
+    await _tokenHandler.fetchData();
     await getIdText();
     await getSaveIdText();
     super.onInit();
@@ -44,6 +44,7 @@ class LoginController extends GetxController {
         String? refreshtoken = response.headers['refresh_token']?.first;
         await _tokenHandler.setAccessToken(accessToken: accesstoken!);
         await _tokenHandler.setRefreshToken(refreshtoken!);
+        await _tokenHandler.fetchData();
         loginStatus = true;
         return loginStatus;
       } else {
