@@ -39,6 +39,7 @@ class HomePage extends StatelessWidget {
                     padding: const EdgeInsets.fromLTRB(5, 0, 5, 0),
                     child: GestureDetector(
                       onTap: () {
+                        homepageController.filteredData.clear();
                         Get.offAll(
                           HomePage(onChangeTheme: onChangeTheme),
                           transition: Transition.noTransition

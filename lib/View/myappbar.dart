@@ -1,5 +1,6 @@
 import 'package:dicom_phone/DataSource/token_handler.dart';
 import 'package:dicom_phone/Repository/thumbnails.dart';
+import 'package:dicom_phone/VM/homepage_controller.dart';
 import 'package:dicom_phone/VM/login_ctrl.dart';
 import 'package:dicom_phone/VM/theme_ctrl.dart';
 import 'package:dicom_phone/View/homepage.dart';
@@ -19,12 +20,15 @@ class MyAppbar extends StatelessWidget implements PreferredSizeWidget {
   @override
   Widget build(BuildContext context) {
     final themeController = Get.find<ThemeController>();
+    Get.lazyPut<HomePageController>(() => HomePageController());
+    final homepageController = Get.find<HomePageController>();
     final Thumbnail thumbnail = Get.put(Thumbnail());
 
     // ignore: deprecated_member_use
     return AppBar(
       title: GestureDetector(
         onTap: () {
+          homepageController.filteredData.clear();
           thumbnail.collectionValue.value = 1;
           Get.offAll(() => HomePage(onChangeTheme: onChangeTheme),
               transition: Transition.noTransition);
